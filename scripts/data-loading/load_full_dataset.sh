@@ -96,6 +96,17 @@ load_csv_data "eurostyle_hr" "employees" "$CSV_DIR/eurostyle_hr.employees.csv.gz
 echo "📏 Loading eurostyle_webshop database..."
 load_csv_data "eurostyle_webshop" "web_sessions" "$CSV_DIR/eurostyle_webshop.web_sessions.csv.gz" || ((LOADING_ERRORS++))
 
+# Load POS database
+echo "📏 Loading eurostyle_pos database..."
+load_csv_data "eurostyle_pos" "employee_assignments" "$CSV_DIR/eurostyle_pos.employee_assignments.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "transactions" "$CSV_DIR/eurostyle_pos.transactions.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "transaction_items" "$CSV_DIR/eurostyle_pos.transaction_items.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "employee_shifts" "$CSV_DIR/eurostyle_pos.employee_shifts.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "payments" "$CSV_DIR/eurostyle_pos.payments.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "discounts" "$CSV_DIR/eurostyle_pos.discounts.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "store_daily_summaries" "$CSV_DIR/eurostyle_pos.store_daily_summaries.csv.gz" || ((LOADING_ERRORS++))
+load_csv_data "eurostyle_pos" "promotions" "$CSV_DIR/eurostyle_pos.promotions.csv.gz" || ((LOADING_ERRORS++))
+
 # Check for critical loading failures
 if [[ $LOADING_ERRORS -gt 0 ]]; then
     echo "🚨 WARNING: $LOADING_ERRORS table(s) failed to load"
@@ -127,7 +138,7 @@ echo "🔍 Running comprehensive consistency validation..."
 echo ""
 
 echo "📊 Database row counts:"
-for db in eurostyle_operational eurostyle_finance eurostyle_hr eurostyle_webshop; do
+for db in eurostyle_operational eurostyle_finance eurostyle_hr eurostyle_webshop eurostyle_pos; do
     echo "--- $db ---"
     $CLICKHOUSE_CLIENT --query="SELECT table, sum(rows) as rows FROM system.parts WHERE database = '$db' AND active = 1 GROUP BY table ORDER BY table"
     echo ""
