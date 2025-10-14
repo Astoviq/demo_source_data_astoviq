@@ -35,17 +35,18 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS eurostyle_operational.customer_activity_m
 ) ENGINE = SummingMergeTree()
 ORDER BY (country_code, customer_id)
 AS SELECT 
-    customer_id,
-    country_code,
+    o.customer_id,
+    c.country_code,
     COUNT(*) as total_orders,
-    SUM(total_amount_eur) as total_spent_eur,
-    MAX(order_date) as last_order_date,
-    AVG(total_amount_eur) as avg_order_value,
-    dateDiff('day', MAX(order_date), today()) as days_since_last_order,
-    SUM(total_amount_eur) as customer_lifetime_value
-FROM eurostyle_operational.orders
-WHERE order_status = 'delivered'
-GROUP BY customer_id, country_code;
+    SUM(o.total_amount_eur) as total_spent_eur,
+    MAX(o.order_date) as last_order_date,
+    AVG(o.total_amount_eur) as avg_order_value,
+    dateDiff('day', MAX(o.order_date), today()) as days_since_last_order,
+    SUM(o.total_amount_eur) as customer_lifetime_value
+FROM eurostyle_operational.orders o
+JOIN eurostyle_operational.customers c ON o.customer_id = c.customer_id
+WHERE o.order_status = 'delivered'
+GROUP BY o.customer_id, c.country_code;
 
 -- Product performance summary 
 CREATE MATERIALIZED VIEW IF NOT EXISTS eurostyle_operational.product_sales_mv
@@ -65,7 +66,7 @@ AS SELECT
     p.category_l1,
     p.category_l2,
     SUM(ol.quantity) as total_quantity,
-    SUM(ol.total_price_eur) as total_revenue_eur,
+    SUM(ol.line_total_eur) as total_revenue_eur,
     COUNT(DISTINCT ol.order_id) as total_orders,
     AVG(ol.unit_price_eur) as avg_price_eur,
     MAX(o.order_date) as last_sale_date

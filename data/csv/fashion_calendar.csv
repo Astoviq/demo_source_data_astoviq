@@ -1,0 +1,498 @@
+date,country_code,event_name,event_type,impact_level,expected_sales_lift,fashion_season,collection_phase,campaign_opportunity,inventory_planning,created_at,updated_at
+2020-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2020,clearance,True,False,2025-10-14 13:00:04.394753,2025-10-14 13:00:04.394754
+2020-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2020,clearance,True,False,2025-10-14 13:00:04.394755,2025-10-14 13:00:04.394755
+2020-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2020,clearance,True,False,2025-10-14 13:00:04.394756,2025-10-14 13:00:04.394757
+2020-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2020,clearance,True,False,2025-10-14 13:00:04.394757,2025-10-14 13:00:04.394758
+2020-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2020,clearance,True,False,2025-10-14 13:00:04.394759,2025-10-14 13:00:04.394759
+2020-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2020,launch,True,False,2025-10-14 13:00:04.394764,2025-10-14 13:00:04.394765
+2020-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2020,launch,True,False,2025-10-14 13:00:04.394765,2025-10-14 13:00:04.394766
+2020-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2020,launch,True,False,2025-10-14 13:00:04.394766,2025-10-14 13:00:04.394767
+2020-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2020,launch,True,False,2025-10-14 13:00:04.394767,2025-10-14 13:00:04.394768
+2020-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2020,launch,True,False,2025-10-14 13:00:04.394768,2025-10-14 13:00:04.394769
+2020-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394774,2025-10-14 13:00:04.394774
+2020-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394775,2025-10-14 13:00:04.394775
+2020-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394776,2025-10-14 13:00:04.394776
+2020-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394777,2025-10-14 13:00:04.394777
+2020-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394778,2025-10-14 13:00:04.394778
+2020-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394782,2025-10-14 13:00:04.394782
+2020-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394783,2025-10-14 13:00:04.394783
+2020-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394784,2025-10-14 13:00:04.394784
+2020-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394785,2025-10-14 13:00:04.394785
+2020-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394786,2025-10-14 13:00:04.394786
+2020-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2020,peak,True,False,2025-10-14 13:00:04.394790,2025-10-14 13:00:04.394791
+2020-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2020,peak,True,False,2025-10-14 13:00:04.394791,2025-10-14 13:00:04.394792
+2020-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2020,peak,True,False,2025-10-14 13:00:04.394792,2025-10-14 13:00:04.394793
+2020-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2020,peak,True,False,2025-10-14 13:00:04.394793,2025-10-14 13:00:04.394793
+2020-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2020,peak,True,False,2025-10-14 13:00:04.394794,2025-10-14 13:00:04.394794
+2020-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2020,markdown,True,True,2025-10-14 13:00:04.394799,2025-10-14 13:00:04.394799
+2020-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2020,markdown,True,True,2025-10-14 13:00:04.394800,2025-10-14 13:00:04.394800
+2020-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2020,markdown,True,True,2025-10-14 13:00:04.394801,2025-10-14 13:00:04.394801
+2020-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2020,markdown,True,True,2025-10-14 13:00:04.394801,2025-10-14 13:00:04.394802
+2020-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2020,markdown,True,True,2025-10-14 13:00:04.394802,2025-10-14 13:00:04.394803
+2020-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394807,2025-10-14 13:00:04.394807
+2020-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394808,2025-10-14 13:00:04.394808
+2020-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394809,2025-10-14 13:00:04.394809
+2020-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394810,2025-10-14 13:00:04.394810
+2020-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394811,2025-10-14 13:00:04.394811
+2020-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394815,2025-10-14 13:00:04.394816
+2020-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394816,2025-10-14 13:00:04.394817
+2020-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394817,2025-10-14 13:00:04.394818
+2020-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394818,2025-10-14 13:00:04.394818
+2020-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394819,2025-10-14 13:00:04.394819
+2020-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394824,2025-10-14 13:00:04.394824
+2020-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394825,2025-10-14 13:00:04.394825
+2020-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394826,2025-10-14 13:00:04.394826
+2020-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394827,2025-10-14 13:00:04.394827
+2020-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394827,2025-10-14 13:00:04.394828
+2020-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394832,2025-10-14 13:00:04.394833
+2020-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394833,2025-10-14 13:00:04.394834
+2020-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394834,2025-10-14 13:00:04.394835
+2020-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394835,2025-10-14 13:00:04.394835
+2020-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394836,2025-10-14 13:00:04.394836
+2020-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394841,2025-10-14 13:00:04.394841
+2020-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394842,2025-10-14 13:00:04.394842
+2020-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394843,2025-10-14 13:00:04.394843
+2020-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394844,2025-10-14 13:00:04.394844
+2020-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2020,peak,True,True,2025-10-14 13:00:04.394845,2025-10-14 13:00:04.394845
+2020-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2020,clearance,True,True,2025-10-14 13:00:04.394849,2025-10-14 13:00:04.394849
+2020-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2020,clearance,True,True,2025-10-14 13:00:04.394850,2025-10-14 13:00:04.394850
+2020-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2020,clearance,True,True,2025-10-14 13:00:04.394851,2025-10-14 13:00:04.394851
+2020-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2020,clearance,True,True,2025-10-14 13:00:04.394852,2025-10-14 13:00:04.394852
+2020-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2020,clearance,True,True,2025-10-14 13:00:04.394853,2025-10-14 13:00:04.394853
+2020-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2020,peak,False,False,2025-10-14 13:00:04.394857,2025-10-14 13:00:04.394858
+2020-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2020,peak,False,False,2025-10-14 13:00:04.394862,2025-10-14 13:00:04.394862
+2020-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2020,markdown,False,False,2025-10-14 13:00:04.394867,2025-10-14 13:00:04.394867
+2020-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2020,peak,False,False,2025-10-14 13:00:04.394871,2025-10-14 13:00:04.394871
+2020-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2020,launch,False,False,2025-10-14 13:00:04.394876,2025-10-14 13:00:04.394876
+2020-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2020,launch,False,False,2025-10-14 13:00:04.394880,2025-10-14 13:00:04.394880
+2020-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2020,launch,True,False,2025-10-14 13:00:04.394884,2025-10-14 13:00:04.394885
+2020-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2020,markdown,False,False,2025-10-14 13:00:04.394889,2025-10-14 13:00:04.394889
+2020-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2020,launch,True,True,2025-10-14 13:00:04.394893,2025-10-14 13:00:04.394894
+2020-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2020,launch,True,True,2025-10-14 13:00:04.394898,2025-10-14 13:00:04.394898
+2020-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2020,peak,False,False,2025-10-14 13:00:04.394902,2025-10-14 13:00:04.394902
+2021-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2021,clearance,True,False,2025-10-14 13:00:04.394907,2025-10-14 13:00:04.394907
+2021-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2021,clearance,True,False,2025-10-14 13:00:04.394908,2025-10-14 13:00:04.394908
+2021-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2021,clearance,True,False,2025-10-14 13:00:04.394909,2025-10-14 13:00:04.394909
+2021-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2021,clearance,True,False,2025-10-14 13:00:04.394910,2025-10-14 13:00:04.394911
+2021-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2021,clearance,True,False,2025-10-14 13:00:04.394911,2025-10-14 13:00:04.394911
+2021-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2021,launch,True,False,2025-10-14 13:00:04.394916,2025-10-14 13:00:04.394916
+2021-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2021,launch,True,False,2025-10-14 13:00:04.394917,2025-10-14 13:00:04.394917
+2021-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2021,launch,True,False,2025-10-14 13:00:04.394918,2025-10-14 13:00:04.394918
+2021-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2021,launch,True,False,2025-10-14 13:00:04.394919,2025-10-14 13:00:04.394919
+2021-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2021,launch,True,False,2025-10-14 13:00:04.394919,2025-10-14 13:00:04.394920
+2021-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.394924,2025-10-14 13:00:04.394924
+2021-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.394925,2025-10-14 13:00:04.394925
+2021-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.394926,2025-10-14 13:00:04.394926
+2021-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.394930,2025-10-14 13:00:04.394930
+2021-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.394931,2025-10-14 13:00:04.394932
+2021-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.394936,2025-10-14 13:00:04.394937
+2021-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.394937,2025-10-14 13:00:04.394938
+2021-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.394938,2025-10-14 13:00:04.394938
+2021-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.394939,2025-10-14 13:00:04.394939
+2021-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.394940,2025-10-14 13:00:04.394940
+2021-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2021,peak,True,False,2025-10-14 13:00:04.394944,2025-10-14 13:00:04.394945
+2021-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2021,peak,True,False,2025-10-14 13:00:04.394945,2025-10-14 13:00:04.394946
+2021-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2021,peak,True,False,2025-10-14 13:00:04.394947,2025-10-14 13:00:04.394947
+2021-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2021,peak,True,False,2025-10-14 13:00:04.394947,2025-10-14 13:00:04.394948
+2021-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2021,peak,True,False,2025-10-14 13:00:04.394948,2025-10-14 13:00:04.394949
+2021-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2021,markdown,True,True,2025-10-14 13:00:04.394953,2025-10-14 13:00:04.394953
+2021-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2021,markdown,True,True,2025-10-14 13:00:04.394954,2025-10-14 13:00:04.394954
+2021-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2021,markdown,True,True,2025-10-14 13:00:04.394955,2025-10-14 13:00:04.394955
+2021-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2021,markdown,True,True,2025-10-14 13:00:04.394956,2025-10-14 13:00:04.394956
+2021-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2021,markdown,True,True,2025-10-14 13:00:04.394957,2025-10-14 13:00:04.394957
+2021-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.394961,2025-10-14 13:00:04.394961
+2021-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.394962,2025-10-14 13:00:04.394962
+2021-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.394963,2025-10-14 13:00:04.394963
+2021-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.394964,2025-10-14 13:00:04.394964
+2021-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.394965,2025-10-14 13:00:04.394965
+2021-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.394969,2025-10-14 13:00:04.394969
+2021-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.394970,2025-10-14 13:00:04.394970
+2021-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.394971,2025-10-14 13:00:04.394971
+2021-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.394974,2025-10-14 13:00:04.394974
+2021-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.394975,2025-10-14 13:00:04.394975
+2021-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394979,2025-10-14 13:00:04.394980
+2021-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394980,2025-10-14 13:00:04.394981
+2021-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394981,2025-10-14 13:00:04.394982
+2021-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394982,2025-10-14 13:00:04.394982
+2021-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394983,2025-10-14 13:00:04.394983
+2021-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394988,2025-10-14 13:00:04.394988
+2021-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394989,2025-10-14 13:00:04.394989
+2021-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394989,2025-10-14 13:00:04.394990
+2021-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394990,2025-10-14 13:00:04.394991
+2021-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394991,2025-10-14 13:00:04.394991
+2021-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394996,2025-10-14 13:00:04.394996
+2021-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394997,2025-10-14 13:00:04.394997
+2021-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394997,2025-10-14 13:00:04.394998
+2021-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394998,2025-10-14 13:00:04.394999
+2021-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2021,peak,True,True,2025-10-14 13:00:04.394999,2025-10-14 13:00:04.395000
+2021-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2021,clearance,True,True,2025-10-14 13:00:04.395004,2025-10-14 13:00:04.395004
+2021-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2021,clearance,True,True,2025-10-14 13:00:04.395005,2025-10-14 13:00:04.395005
+2021-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2021,clearance,True,True,2025-10-14 13:00:04.395006,2025-10-14 13:00:04.395006
+2021-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2021,clearance,True,True,2025-10-14 13:00:04.395007,2025-10-14 13:00:04.395007
+2021-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2021,clearance,True,True,2025-10-14 13:00:04.395008,2025-10-14 13:00:04.395008
+2021-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2021,peak,False,False,2025-10-14 13:00:04.395012,2025-10-14 13:00:04.395012
+2021-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2021,peak,False,False,2025-10-14 13:00:04.395017,2025-10-14 13:00:04.395017
+2021-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2021,markdown,False,False,2025-10-14 13:00:04.395021,2025-10-14 13:00:04.395022
+2021-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2021,peak,False,False,2025-10-14 13:00:04.395027,2025-10-14 13:00:04.395028
+2021-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2021,launch,False,False,2025-10-14 13:00:04.395032,2025-10-14 13:00:04.395032
+2021-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2021,launch,False,False,2025-10-14 13:00:04.395037,2025-10-14 13:00:04.395037
+2021-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2021,launch,True,False,2025-10-14 13:00:04.395041,2025-10-14 13:00:04.395041
+2021-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2021,markdown,False,False,2025-10-14 13:00:04.395045,2025-10-14 13:00:04.395046
+2021-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2021,launch,True,True,2025-10-14 13:00:04.395050,2025-10-14 13:00:04.395050
+2021-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2021,launch,True,True,2025-10-14 13:00:04.395054,2025-10-14 13:00:04.395054
+2021-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2021,peak,False,False,2025-10-14 13:00:04.395058,2025-10-14 13:00:04.395059
+2022-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2022,clearance,True,False,2025-10-14 13:00:04.395063,2025-10-14 13:00:04.395063
+2022-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2022,clearance,True,False,2025-10-14 13:00:04.395064,2025-10-14 13:00:04.395064
+2022-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2022,clearance,True,False,2025-10-14 13:00:04.395065,2025-10-14 13:00:04.395065
+2022-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2022,clearance,True,False,2025-10-14 13:00:04.395066,2025-10-14 13:00:04.395066
+2022-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2022,clearance,True,False,2025-10-14 13:00:04.395067,2025-10-14 13:00:04.395067
+2022-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2022,launch,True,False,2025-10-14 13:00:04.395071,2025-10-14 13:00:04.395071
+2022-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2022,launch,True,False,2025-10-14 13:00:04.395072,2025-10-14 13:00:04.395072
+2022-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2022,launch,True,False,2025-10-14 13:00:04.395076,2025-10-14 13:00:04.395077
+2022-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2022,launch,True,False,2025-10-14 13:00:04.395077,2025-10-14 13:00:04.395078
+2022-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2022,launch,True,False,2025-10-14 13:00:04.395078,2025-10-14 13:00:04.395079
+2022-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395083,2025-10-14 13:00:04.395083
+2022-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395084,2025-10-14 13:00:04.395084
+2022-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395085,2025-10-14 13:00:04.395085
+2022-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395086,2025-10-14 13:00:04.395086
+2022-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395087,2025-10-14 13:00:04.395087
+2022-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395091,2025-10-14 13:00:04.395091
+2022-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395092,2025-10-14 13:00:04.395092
+2022-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395094,2025-10-14 13:00:04.395095
+2022-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395095,2025-10-14 13:00:04.395096
+2022-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395096,2025-10-14 13:00:04.395097
+2022-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2022,peak,True,False,2025-10-14 13:00:04.395101,2025-10-14 13:00:04.395101
+2022-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2022,peak,True,False,2025-10-14 13:00:04.395102,2025-10-14 13:00:04.395102
+2022-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2022,peak,True,False,2025-10-14 13:00:04.395103,2025-10-14 13:00:04.395103
+2022-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2022,peak,True,False,2025-10-14 13:00:04.395104,2025-10-14 13:00:04.395104
+2022-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2022,peak,True,False,2025-10-14 13:00:04.395105,2025-10-14 13:00:04.395105
+2022-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2022,markdown,True,True,2025-10-14 13:00:04.395109,2025-10-14 13:00:04.395109
+2022-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2022,markdown,True,True,2025-10-14 13:00:04.395110,2025-10-14 13:00:04.395110
+2022-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2022,markdown,True,True,2025-10-14 13:00:04.395111,2025-10-14 13:00:04.395111
+2022-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2022,markdown,True,True,2025-10-14 13:00:04.395112,2025-10-14 13:00:04.395112
+2022-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2022,markdown,True,True,2025-10-14 13:00:04.395113,2025-10-14 13:00:04.395113
+2022-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395117,2025-10-14 13:00:04.395117
+2022-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395120,2025-10-14 13:00:04.395120
+2022-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395121,2025-10-14 13:00:04.395121
+2022-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395122,2025-10-14 13:00:04.395122
+2022-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395123,2025-10-14 13:00:04.395123
+2022-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395127,2025-10-14 13:00:04.395128
+2022-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395128,2025-10-14 13:00:04.395129
+2022-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395129,2025-10-14 13:00:04.395130
+2022-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395130,2025-10-14 13:00:04.395130
+2022-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395131,2025-10-14 13:00:04.395131
+2022-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395135,2025-10-14 13:00:04.395136
+2022-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395136,2025-10-14 13:00:04.395137
+2022-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395139,2025-10-14 13:00:04.395139
+2022-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395140,2025-10-14 13:00:04.395141
+2022-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395141,2025-10-14 13:00:04.395142
+2022-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395147,2025-10-14 13:00:04.395147
+2022-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395148,2025-10-14 13:00:04.395148
+2022-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395149,2025-10-14 13:00:04.395149
+2022-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395150,2025-10-14 13:00:04.395150
+2022-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395151,2025-10-14 13:00:04.395151
+2022-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395156,2025-10-14 13:00:04.395157
+2022-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395158,2025-10-14 13:00:04.395158
+2022-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395159,2025-10-14 13:00:04.395159
+2022-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395160,2025-10-14 13:00:04.395160
+2022-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2022,peak,True,True,2025-10-14 13:00:04.395161,2025-10-14 13:00:04.395161
+2022-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2022,clearance,True,True,2025-10-14 13:00:04.395166,2025-10-14 13:00:04.395167
+2022-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2022,clearance,True,True,2025-10-14 13:00:04.395168,2025-10-14 13:00:04.395168
+2022-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2022,clearance,True,True,2025-10-14 13:00:04.395169,2025-10-14 13:00:04.395169
+2022-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2022,clearance,True,True,2025-10-14 13:00:04.395170,2025-10-14 13:00:04.395170
+2022-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2022,clearance,True,True,2025-10-14 13:00:04.395174,2025-10-14 13:00:04.395174
+2022-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2022,peak,False,False,2025-10-14 13:00:04.395178,2025-10-14 13:00:04.395179
+2022-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2022,peak,False,False,2025-10-14 13:00:04.395183,2025-10-14 13:00:04.395183
+2022-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2022,markdown,False,False,2025-10-14 13:00:04.395187,2025-10-14 13:00:04.395187
+2022-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2022,peak,False,False,2025-10-14 13:00:04.395192,2025-10-14 13:00:04.395192
+2022-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2022,launch,False,False,2025-10-14 13:00:04.395196,2025-10-14 13:00:04.395196
+2022-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2022,launch,False,False,2025-10-14 13:00:04.395200,2025-10-14 13:00:04.395200
+2022-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2022,launch,True,False,2025-10-14 13:00:04.395205,2025-10-14 13:00:04.395205
+2022-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2022,markdown,False,False,2025-10-14 13:00:04.395211,2025-10-14 13:00:04.395212
+2022-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2022,launch,True,True,2025-10-14 13:00:04.395216,2025-10-14 13:00:04.395217
+2022-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2022,launch,True,True,2025-10-14 13:00:04.395222,2025-10-14 13:00:04.395222
+2022-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2022,peak,False,False,2025-10-14 13:00:04.395227,2025-10-14 13:00:04.395227
+2023-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2023,clearance,True,False,2025-10-14 13:00:04.395233,2025-10-14 13:00:04.395233
+2023-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2023,clearance,True,False,2025-10-14 13:00:04.395234,2025-10-14 13:00:04.395234
+2023-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2023,clearance,True,False,2025-10-14 13:00:04.395235,2025-10-14 13:00:04.395235
+2023-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2023,clearance,True,False,2025-10-14 13:00:04.395236,2025-10-14 13:00:04.395236
+2023-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2023,clearance,True,False,2025-10-14 13:00:04.395237,2025-10-14 13:00:04.395237
+2023-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2023,launch,True,False,2025-10-14 13:00:04.395241,2025-10-14 13:00:04.395241
+2023-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2023,launch,True,False,2025-10-14 13:00:04.395242,2025-10-14 13:00:04.395242
+2023-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2023,launch,True,False,2025-10-14 13:00:04.395243,2025-10-14 13:00:04.395243
+2023-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2023,launch,True,False,2025-10-14 13:00:04.395244,2025-10-14 13:00:04.395244
+2023-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2023,launch,True,False,2025-10-14 13:00:04.395245,2025-10-14 13:00:04.395245
+2023-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395250,2025-10-14 13:00:04.395250
+2023-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395251,2025-10-14 13:00:04.395251
+2023-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395252,2025-10-14 13:00:04.395252
+2023-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395253,2025-10-14 13:00:04.395254
+2023-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395254,2025-10-14 13:00:04.395255
+2023-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395260,2025-10-14 13:00:04.395260
+2023-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395261,2025-10-14 13:00:04.395261
+2023-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395262,2025-10-14 13:00:04.395263
+2023-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395263,2025-10-14 13:00:04.395264
+2023-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395265,2025-10-14 13:00:04.395265
+2023-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2023,peak,True,False,2025-10-14 13:00:04.395273,2025-10-14 13:00:04.395273
+2023-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2023,peak,True,False,2025-10-14 13:00:04.395276,2025-10-14 13:00:04.395276
+2023-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2023,peak,True,False,2025-10-14 13:00:04.395277,2025-10-14 13:00:04.395277
+2023-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2023,peak,True,False,2025-10-14 13:00:04.395278,2025-10-14 13:00:04.395278
+2023-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2023,peak,True,False,2025-10-14 13:00:04.395279,2025-10-14 13:00:04.395279
+2023-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2023,markdown,True,True,2025-10-14 13:00:04.395284,2025-10-14 13:00:04.395284
+2023-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2023,markdown,True,True,2025-10-14 13:00:04.395285,2025-10-14 13:00:04.395285
+2023-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2023,markdown,True,True,2025-10-14 13:00:04.395285,2025-10-14 13:00:04.395286
+2023-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2023,markdown,True,True,2025-10-14 13:00:04.395286,2025-10-14 13:00:04.395287
+2023-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2023,markdown,True,True,2025-10-14 13:00:04.395287,2025-10-14 13:00:04.395287
+2023-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395292,2025-10-14 13:00:04.395292
+2023-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395292,2025-10-14 13:00:04.395293
+2023-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395293,2025-10-14 13:00:04.395294
+2023-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395294,2025-10-14 13:00:04.395294
+2023-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395295,2025-10-14 13:00:04.395295
+2023-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395299,2025-10-14 13:00:04.395300
+2023-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395300,2025-10-14 13:00:04.395301
+2023-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395301,2025-10-14 13:00:04.395302
+2023-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395302,2025-10-14 13:00:04.395302
+2023-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395303,2025-10-14 13:00:04.395303
+2023-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395307,2025-10-14 13:00:04.395308
+2023-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395308,2025-10-14 13:00:04.395309
+2023-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395309,2025-10-14 13:00:04.395310
+2023-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395310,2025-10-14 13:00:04.395310
+2023-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395311,2025-10-14 13:00:04.395311
+2023-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395316,2025-10-14 13:00:04.395316
+2023-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395318,2025-10-14 13:00:04.395318
+2023-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395319,2025-10-14 13:00:04.395319
+2023-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395320,2025-10-14 13:00:04.395320
+2023-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395321,2025-10-14 13:00:04.395321
+2023-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395325,2025-10-14 13:00:04.395325
+2023-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395326,2025-10-14 13:00:04.395326
+2023-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395327,2025-10-14 13:00:04.395327
+2023-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395328,2025-10-14 13:00:04.395328
+2023-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2023,peak,True,True,2025-10-14 13:00:04.395329,2025-10-14 13:00:04.395329
+2023-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2023,clearance,True,True,2025-10-14 13:00:04.395333,2025-10-14 13:00:04.395333
+2023-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2023,clearance,True,True,2025-10-14 13:00:04.395334,2025-10-14 13:00:04.395335
+2023-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2023,clearance,True,True,2025-10-14 13:00:04.395335,2025-10-14 13:00:04.395335
+2023-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2023,clearance,True,True,2025-10-14 13:00:04.395336,2025-10-14 13:00:04.395336
+2023-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2023,clearance,True,True,2025-10-14 13:00:04.395337,2025-10-14 13:00:04.395337
+2023-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2023,peak,False,False,2025-10-14 13:00:04.395341,2025-10-14 13:00:04.395342
+2023-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2023,peak,False,False,2025-10-14 13:00:04.395346,2025-10-14 13:00:04.395346
+2023-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2023,markdown,False,False,2025-10-14 13:00:04.395350,2025-10-14 13:00:04.395350
+2023-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2023,peak,False,False,2025-10-14 13:00:04.395354,2025-10-14 13:00:04.395355
+2023-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2023,launch,False,False,2025-10-14 13:00:04.395359,2025-10-14 13:00:04.395359
+2023-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2023,launch,False,False,2025-10-14 13:00:04.395363,2025-10-14 13:00:04.395363
+2023-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2023,launch,True,False,2025-10-14 13:00:04.395367,2025-10-14 13:00:04.395368
+2023-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2023,markdown,False,False,2025-10-14 13:00:04.395372,2025-10-14 13:00:04.395372
+2023-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2023,launch,True,True,2025-10-14 13:00:04.395376,2025-10-14 13:00:04.395376
+2023-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2023,launch,True,True,2025-10-14 13:00:04.395380,2025-10-14 13:00:04.395381
+2023-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2023,peak,False,False,2025-10-14 13:00:04.395385,2025-10-14 13:00:04.395385
+2024-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2024,clearance,True,False,2025-10-14 13:00:04.395391,2025-10-14 13:00:04.395391
+2024-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2024,clearance,True,False,2025-10-14 13:00:04.395392,2025-10-14 13:00:04.395392
+2024-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2024,clearance,True,False,2025-10-14 13:00:04.395393,2025-10-14 13:00:04.395393
+2024-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2024,clearance,True,False,2025-10-14 13:00:04.395394,2025-10-14 13:00:04.395394
+2024-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2024,clearance,True,False,2025-10-14 13:00:04.395395,2025-10-14 13:00:04.395395
+2024-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2024,launch,True,False,2025-10-14 13:00:04.395399,2025-10-14 13:00:04.395400
+2024-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2024,launch,True,False,2025-10-14 13:00:04.395400,2025-10-14 13:00:04.395400
+2024-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2024,launch,True,False,2025-10-14 13:00:04.395401,2025-10-14 13:00:04.395401
+2024-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2024,launch,True,False,2025-10-14 13:00:04.395402,2025-10-14 13:00:04.395402
+2024-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2024,launch,True,False,2025-10-14 13:00:04.395403,2025-10-14 13:00:04.395403
+2024-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395407,2025-10-14 13:00:04.395408
+2024-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395408,2025-10-14 13:00:04.395409
+2024-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395409,2025-10-14 13:00:04.395409
+2024-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395410,2025-10-14 13:00:04.395410
+2024-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395411,2025-10-14 13:00:04.395411
+2024-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395415,2025-10-14 13:00:04.395416
+2024-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395416,2025-10-14 13:00:04.395417
+2024-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395417,2025-10-14 13:00:04.395417
+2024-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395418,2025-10-14 13:00:04.395418
+2024-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395421,2025-10-14 13:00:04.395421
+2024-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2024,peak,True,False,2025-10-14 13:00:04.395425,2025-10-14 13:00:04.395426
+2024-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2024,peak,True,False,2025-10-14 13:00:04.395426,2025-10-14 13:00:04.395427
+2024-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2024,peak,True,False,2025-10-14 13:00:04.395427,2025-10-14 13:00:04.395427
+2024-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2024,peak,True,False,2025-10-14 13:00:04.395428,2025-10-14 13:00:04.395428
+2024-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2024,peak,True,False,2025-10-14 13:00:04.395429,2025-10-14 13:00:04.395429
+2024-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2024,markdown,True,True,2025-10-14 13:00:04.395435,2025-10-14 13:00:04.395436
+2024-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2024,markdown,True,True,2025-10-14 13:00:04.395436,2025-10-14 13:00:04.395437
+2024-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2024,markdown,True,True,2025-10-14 13:00:04.395437,2025-10-14 13:00:04.395438
+2024-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2024,markdown,True,True,2025-10-14 13:00:04.395438,2025-10-14 13:00:04.395438
+2024-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2024,markdown,True,True,2025-10-14 13:00:04.395439,2025-10-14 13:00:04.395439
+2024-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395443,2025-10-14 13:00:04.395444
+2024-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395444,2025-10-14 13:00:04.395445
+2024-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395445,2025-10-14 13:00:04.395446
+2024-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395446,2025-10-14 13:00:04.395446
+2024-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395447,2025-10-14 13:00:04.395447
+2024-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395451,2025-10-14 13:00:04.395452
+2024-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395452,2025-10-14 13:00:04.395453
+2024-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395453,2025-10-14 13:00:04.395454
+2024-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395454,2025-10-14 13:00:04.395454
+2024-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395455,2025-10-14 13:00:04.395455
+2024-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395459,2025-10-14 13:00:04.395460
+2024-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395460,2025-10-14 13:00:04.395461
+2024-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395461,2025-10-14 13:00:04.395462
+2024-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395462,2025-10-14 13:00:04.395462
+2024-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395463,2025-10-14 13:00:04.395463
+2024-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395467,2025-10-14 13:00:04.395468
+2024-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395468,2025-10-14 13:00:04.395469
+2024-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395469,2025-10-14 13:00:04.395470
+2024-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395470,2025-10-14 13:00:04.395470
+2024-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395471,2025-10-14 13:00:04.395471
+2024-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395477,2025-10-14 13:00:04.395477
+2024-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395478,2025-10-14 13:00:04.395478
+2024-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395479,2025-10-14 13:00:04.395479
+2024-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395480,2025-10-14 13:00:04.395480
+2024-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2024,peak,True,True,2025-10-14 13:00:04.395481,2025-10-14 13:00:04.395481
+2024-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2024,clearance,True,True,2025-10-14 13:00:04.395485,2025-10-14 13:00:04.395486
+2024-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2024,clearance,True,True,2025-10-14 13:00:04.395486,2025-10-14 13:00:04.395487
+2024-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2024,clearance,True,True,2025-10-14 13:00:04.395487,2025-10-14 13:00:04.395487
+2024-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2024,clearance,True,True,2025-10-14 13:00:04.395488,2025-10-14 13:00:04.395488
+2024-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2024,clearance,True,True,2025-10-14 13:00:04.395489,2025-10-14 13:00:04.395489
+2024-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2024,peak,False,False,2025-10-14 13:00:04.395494,2025-10-14 13:00:04.395494
+2024-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2024,peak,False,False,2025-10-14 13:00:04.395498,2025-10-14 13:00:04.395498
+2024-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2024,markdown,False,False,2025-10-14 13:00:04.395503,2025-10-14 13:00:04.395503
+2024-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2024,peak,False,False,2025-10-14 13:00:04.395507,2025-10-14 13:00:04.395507
+2024-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2024,launch,False,False,2025-10-14 13:00:04.395512,2025-10-14 13:00:04.395512
+2024-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2024,launch,False,False,2025-10-14 13:00:04.395516,2025-10-14 13:00:04.395516
+2024-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2024,launch,True,False,2025-10-14 13:00:04.395520,2025-10-14 13:00:04.395520
+2024-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2024,markdown,False,False,2025-10-14 13:00:04.395524,2025-10-14 13:00:04.395525
+2024-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2024,launch,True,True,2025-10-14 13:00:04.395529,2025-10-14 13:00:04.395529
+2024-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2024,launch,True,True,2025-10-14 13:00:04.395534,2025-10-14 13:00:04.395534
+2024-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2024,peak,False,False,2025-10-14 13:00:04.395538,2025-10-14 13:00:04.395538
+2025-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2025,clearance,True,False,2025-10-14 13:00:04.395543,2025-10-14 13:00:04.395543
+2025-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2025,clearance,True,False,2025-10-14 13:00:04.395544,2025-10-14 13:00:04.395544
+2025-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2025,clearance,True,False,2025-10-14 13:00:04.395545,2025-10-14 13:00:04.395545
+2025-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2025,clearance,True,False,2025-10-14 13:00:04.395546,2025-10-14 13:00:04.395546
+2025-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2025,clearance,True,False,2025-10-14 13:00:04.395548,2025-10-14 13:00:04.395548
+2025-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2025,launch,True,False,2025-10-14 13:00:04.395552,2025-10-14 13:00:04.395553
+2025-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2025,launch,True,False,2025-10-14 13:00:04.395553,2025-10-14 13:00:04.395554
+2025-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2025,launch,True,False,2025-10-14 13:00:04.395554,2025-10-14 13:00:04.395554
+2025-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2025,launch,True,False,2025-10-14 13:00:04.395555,2025-10-14 13:00:04.395555
+2025-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2025,launch,True,False,2025-10-14 13:00:04.395556,2025-10-14 13:00:04.395556
+2025-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395560,2025-10-14 13:00:04.395561
+2025-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395561,2025-10-14 13:00:04.395561
+2025-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395562,2025-10-14 13:00:04.395562
+2025-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395563,2025-10-14 13:00:04.395563
+2025-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395564,2025-10-14 13:00:04.395564
+2025-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395568,2025-10-14 13:00:04.395569
+2025-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395569,2025-10-14 13:00:04.395570
+2025-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395570,2025-10-14 13:00:04.395570
+2025-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395571,2025-10-14 13:00:04.395571
+2025-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395572,2025-10-14 13:00:04.395572
+2025-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2025,peak,True,False,2025-10-14 13:00:04.395577,2025-10-14 13:00:04.395577
+2025-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2025,peak,True,False,2025-10-14 13:00:04.395578,2025-10-14 13:00:04.395578
+2025-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2025,peak,True,False,2025-10-14 13:00:04.395578,2025-10-14 13:00:04.395579
+2025-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2025,peak,True,False,2025-10-14 13:00:04.395579,2025-10-14 13:00:04.395580
+2025-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2025,peak,True,False,2025-10-14 13:00:04.395580,2025-10-14 13:00:04.395580
+2025-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2025,markdown,True,True,2025-10-14 13:00:04.395585,2025-10-14 13:00:04.395585
+2025-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2025,markdown,True,True,2025-10-14 13:00:04.395586,2025-10-14 13:00:04.395586
+2025-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2025,markdown,True,True,2025-10-14 13:00:04.395587,2025-10-14 13:00:04.395587
+2025-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2025,markdown,True,True,2025-10-14 13:00:04.395588,2025-10-14 13:00:04.395588
+2025-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2025,markdown,True,True,2025-10-14 13:00:04.395590,2025-10-14 13:00:04.395590
+2025-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395596,2025-10-14 13:00:04.395596
+2025-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395597,2025-10-14 13:00:04.395597
+2025-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395598,2025-10-14 13:00:04.395598
+2025-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395599,2025-10-14 13:00:04.395599
+2025-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395600,2025-10-14 13:00:04.395600
+2025-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395604,2025-10-14 13:00:04.395604
+2025-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395605,2025-10-14 13:00:04.395605
+2025-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395606,2025-10-14 13:00:04.395606
+2025-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395607,2025-10-14 13:00:04.395607
+2025-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395608,2025-10-14 13:00:04.395608
+2025-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395612,2025-10-14 13:00:04.395613
+2025-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395613,2025-10-14 13:00:04.395614
+2025-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395614,2025-10-14 13:00:04.395614
+2025-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395615,2025-10-14 13:00:04.395615
+2025-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395616,2025-10-14 13:00:04.395616
+2025-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395620,2025-10-14 13:00:04.395621
+2025-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395622,2025-10-14 13:00:04.395622
+2025-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395623,2025-10-14 13:00:04.395623
+2025-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395624,2025-10-14 13:00:04.395624
+2025-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395625,2025-10-14 13:00:04.395625
+2025-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395629,2025-10-14 13:00:04.395629
+2025-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395630,2025-10-14 13:00:04.395630
+2025-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395631,2025-10-14 13:00:04.395631
+2025-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395632,2025-10-14 13:00:04.395632
+2025-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2025,peak,True,True,2025-10-14 13:00:04.395634,2025-10-14 13:00:04.395634
+2025-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2025,clearance,True,True,2025-10-14 13:00:04.395638,2025-10-14 13:00:04.395639
+2025-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2025,clearance,True,True,2025-10-14 13:00:04.395639,2025-10-14 13:00:04.395640
+2025-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2025,clearance,True,True,2025-10-14 13:00:04.395640,2025-10-14 13:00:04.395640
+2025-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2025,clearance,True,True,2025-10-14 13:00:04.395641,2025-10-14 13:00:04.395641
+2025-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2025,clearance,True,True,2025-10-14 13:00:04.395642,2025-10-14 13:00:04.395642
+2025-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2025,peak,False,False,2025-10-14 13:00:04.395646,2025-10-14 13:00:04.395647
+2025-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2025,peak,False,False,2025-10-14 13:00:04.395651,2025-10-14 13:00:04.395651
+2025-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2025,markdown,False,False,2025-10-14 13:00:04.395655,2025-10-14 13:00:04.395656
+2025-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2025,peak,False,False,2025-10-14 13:00:04.395660,2025-10-14 13:00:04.395660
+2025-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2025,launch,False,False,2025-10-14 13:00:04.395664,2025-10-14 13:00:04.395664
+2025-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2025,launch,False,False,2025-10-14 13:00:04.395668,2025-10-14 13:00:04.395669
+2025-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2025,launch,True,False,2025-10-14 13:00:04.395673,2025-10-14 13:00:04.395673
+2025-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2025,markdown,False,False,2025-10-14 13:00:04.395677,2025-10-14 13:00:04.395677
+2025-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2025,launch,True,True,2025-10-14 13:00:04.395681,2025-10-14 13:00:04.395681
+2025-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2025,launch,True,True,2025-10-14 13:00:04.395685,2025-10-14 13:00:04.395685
+2025-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2025,peak,False,False,2025-10-14 13:00:04.395689,2025-10-14 13:00:04.395690
+2026-01-01,NL,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2026,clearance,True,False,2025-10-14 13:00:04.395694,2025-10-14 13:00:04.395694
+2026-01-01,BE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2026,clearance,True,False,2025-10-14 13:00:04.395695,2025-10-14 13:00:04.395695
+2026-01-01,DE,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2026,clearance,True,False,2025-10-14 13:00:04.395696,2025-10-14 13:00:04.395696
+2026-01-01,FR,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2026,clearance,True,False,2025-10-14 13:00:04.395697,2025-10-14 13:00:04.395697
+2026-01-01,LU,New Year's Day,shopping-holiday,medium,15.0,Fall/Winter 2026,clearance,True,False,2025-10-14 13:00:04.395698,2025-10-14 13:00:04.395698
+2026-02-14,NL,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2026,launch,True,False,2025-10-14 13:00:04.395702,2025-10-14 13:00:04.395702
+2026-02-14,BE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2026,launch,True,False,2025-10-14 13:00:04.395703,2025-10-14 13:00:04.395703
+2026-02-14,DE,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2026,launch,True,False,2025-10-14 13:00:04.395704,2025-10-14 13:00:04.395704
+2026-02-14,FR,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2026,launch,True,False,2025-10-14 13:00:04.395706,2025-10-14 13:00:04.395706
+2026-02-14,LU,Valentine's Day,shopping-holiday,medium,25.0,Spring/Summer 2026,launch,True,False,2025-10-14 13:00:04.395707,2025-10-14 13:00:04.395707
+2026-03-08,NL,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395712,2025-10-14 13:00:04.395712
+2026-03-08,BE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395713,2025-10-14 13:00:04.395713
+2026-03-08,DE,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395714,2025-10-14 13:00:04.395714
+2026-03-08,FR,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395714,2025-10-14 13:00:04.395715
+2026-03-08,LU,International Women's Day,cultural-holiday,low,10.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395715,2025-10-14 13:00:04.395716
+2026-03-15,NL,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395721,2025-10-14 13:00:04.395721
+2026-03-15,BE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395722,2025-10-14 13:00:04.395722
+2026-03-15,DE,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395723,2025-10-14 13:00:04.395723
+2026-03-15,FR,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395724,2025-10-14 13:00:04.395724
+2026-03-15,LU,Spring Collection Launch,fashion-event,high,40.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395725,2025-10-14 13:00:04.395725
+2026-05-12,NL,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2026,peak,True,False,2025-10-14 13:00:04.395729,2025-10-14 13:00:04.395729
+2026-05-12,BE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2026,peak,True,False,2025-10-14 13:00:04.395730,2025-10-14 13:00:04.395730
+2026-05-12,DE,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2026,peak,True,False,2025-10-14 13:00:04.395731,2025-10-14 13:00:04.395731
+2026-05-12,FR,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2026,peak,True,False,2025-10-14 13:00:04.395732,2025-10-14 13:00:04.395732
+2026-05-12,LU,Mother's Day,shopping-holiday,medium,20.0,Spring/Summer 2026,peak,True,False,2025-10-14 13:00:04.395733,2025-10-14 13:00:04.395733
+2026-07-01,NL,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2026,markdown,True,True,2025-10-14 13:00:04.395737,2025-10-14 13:00:04.395737
+2026-07-01,BE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2026,markdown,True,True,2025-10-14 13:00:04.395738,2025-10-14 13:00:04.395738
+2026-07-01,DE,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2026,markdown,True,True,2025-10-14 13:00:04.395739,2025-10-14 13:00:04.395739
+2026-07-01,FR,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2026,markdown,True,True,2025-10-14 13:00:04.395740,2025-10-14 13:00:04.395740
+2026-07-01,LU,Summer Sale Start,shopping-holiday,high,35.0,Spring/Summer 2026,markdown,True,True,2025-10-14 13:00:04.395741,2025-10-14 13:00:04.395741
+2026-08-15,NL,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395745,2025-10-14 13:00:04.395745
+2026-08-15,BE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395747,2025-10-14 13:00:04.395747
+2026-08-15,DE,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395748,2025-10-14 13:00:04.395748
+2026-08-15,FR,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395750,2025-10-14 13:00:04.395750
+2026-08-15,LU,Back to School,shopping-holiday,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395751,2025-10-14 13:00:04.395751
+2026-09-01,NL,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395755,2025-10-14 13:00:04.395755
+2026-09-01,BE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395756,2025-10-14 13:00:04.395756
+2026-09-01,DE,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395757,2025-10-14 13:00:04.395757
+2026-09-01,FR,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395758,2025-10-14 13:00:04.395758
+2026-09-01,LU,Fall Collection Launch,fashion-event,high,45.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395759,2025-10-14 13:00:04.395759
+2026-11-24,NL,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395763,2025-10-14 13:00:04.395764
+2026-11-24,BE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395764,2025-10-14 13:00:04.395764
+2026-11-24,DE,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395765,2025-10-14 13:00:04.395765
+2026-11-24,FR,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395766,2025-10-14 13:00:04.395766
+2026-11-24,LU,Black Friday,shopping-holiday,high,60.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395767,2025-10-14 13:00:04.395767
+2026-11-27,NL,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395771,2025-10-14 13:00:04.395771
+2026-11-27,BE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395772,2025-10-14 13:00:04.395772
+2026-11-27,DE,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395773,2025-10-14 13:00:04.395773
+2026-11-27,FR,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395774,2025-10-14 13:00:04.395774
+2026-11-27,LU,Cyber Monday,shopping-holiday,high,50.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395775,2025-10-14 13:00:04.395775
+2026-12-15,NL,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395779,2025-10-14 13:00:04.395779
+2026-12-15,BE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395780,2025-10-14 13:00:04.395780
+2026-12-15,DE,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395781,2025-10-14 13:00:04.395781
+2026-12-15,FR,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395782,2025-10-14 13:00:04.395782
+2026-12-15,LU,Christmas Shopping Peak,shopping-holiday,high,55.0,Fall/Winter 2026,peak,True,True,2025-10-14 13:00:04.395783,2025-10-14 13:00:04.395783
+2026-12-26,NL,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2026,clearance,True,True,2025-10-14 13:00:04.395787,2025-10-14 13:00:04.395787
+2026-12-26,BE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2026,clearance,True,True,2025-10-14 13:00:04.395788,2025-10-14 13:00:04.395788
+2026-12-26,DE,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2026,clearance,True,True,2025-10-14 13:00:04.395789,2025-10-14 13:00:04.395789
+2026-12-26,FR,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2026,clearance,True,True,2025-10-14 13:00:04.395791,2025-10-14 13:00:04.395792
+2026-12-26,LU,Boxing Day Sales,shopping-holiday,high,45.0,Fall/Winter 2026,clearance,True,True,2025-10-14 13:00:04.395792,2025-10-14 13:00:04.395793
+2026-04-27,NL,King's Day,cultural-holiday,medium,20.0,Spring/Summer 2026,peak,False,False,2025-10-14 13:00:04.395797,2025-10-14 13:00:04.395797
+2026-12-05,NL,Sinterklaas,cultural-holiday,medium,25.0,Fall/Winter 2026,peak,False,False,2025-10-14 13:00:04.395801,2025-10-14 13:00:04.395802
+2026-07-21,BE,Belgian National Day,cultural-holiday,low,10.0,Spring/Summer 2026,markdown,False,False,2025-10-14 13:00:04.395806,2025-10-14 13:00:04.395806
+2026-12-06,BE,Saint Nicholas,cultural-holiday,medium,20.0,Fall/Winter 2026,peak,False,False,2025-10-14 13:00:04.395810,2025-10-14 13:00:04.395810
+2026-04-01,DE,Easter Monday,cultural-holiday,medium,15.0,Spring/Summer 2026,launch,False,False,2025-10-14 13:00:04.395815,2025-10-14 13:00:04.395815
+2026-10-03,DE,German Unity Day,cultural-holiday,low,8.0,Fall/Winter 2026,launch,False,False,2025-10-14 13:00:04.395819,2025-10-14 13:00:04.395819
+2026-09-20,DE,Oktoberfest Fashion,fashion-event,medium,30.0,Fall/Winter 2026,launch,True,False,2025-10-14 13:00:04.395823,2025-10-14 13:00:04.395823
+2026-07-14,FR,Bastille Day,cultural-holiday,low,12.0,Spring/Summer 2026,markdown,False,False,2025-10-14 13:00:04.395827,2025-10-14 13:00:04.395827
+2026-03-01,FR,Fashion Week Paris SS,fashion-event,high,35.0,Spring/Summer 2026,launch,True,True,2025-10-14 13:00:04.395831,2025-10-14 13:00:04.395832
+2026-09-25,FR,Fashion Week Paris FW,fashion-event,high,40.0,Fall/Winter 2026,launch,True,True,2025-10-14 13:00:04.395836,2025-10-14 13:00:04.395836
+2026-06-23,LU,National Day Luxembourg,cultural-holiday,low,10.0,Spring/Summer 2026,peak,False,False,2025-10-14 13:00:04.395840,2025-10-14 13:00:04.395840
