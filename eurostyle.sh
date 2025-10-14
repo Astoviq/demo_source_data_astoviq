@@ -264,10 +264,12 @@ cmd_setup() {
     
     # Execute database initialization scripts
     local init_scripts=(
-        "init-scripts/01-create-database.sql"
-        "init-scripts/02_create_webshop_database.sql" 
-        "init-scripts/03_create_finance_database.sql"
-        "init-scripts/04_create_hr_database.sql"
+        "init-scripts/00_master_init.sql"
+        "init-scripts/databases/01_operational_tables.sql"
+        "init-scripts/databases/02_webshop_tables.sql" 
+        "init-scripts/databases/03_finance_tables.sql"
+        "init-scripts/databases/04_hr_tables.sql"
+        "init-scripts/databases/05_pos_tables.sql"
     )
     
     for script in "${init_scripts[@]}"; do
@@ -281,7 +283,25 @@ cmd_setup() {
         fi
     done
     
-    echo -e "${GREEN}🎉 Database structure created successfully!${NC}"
+    # Execute views and indexes for better performance
+    local enhancement_scripts=(
+        "init-scripts/views/01_cross_database_views.sql"
+        "init-scripts/indexes/01_performance_indexes.sql"
+    )
+    
+    echo -e "${YELLOW}⚡ Setting up performance enhancements...${NC}"
+    for script in "${enhancement_scripts[@]}"; do
+        if [ -f "$script" ]; then
+            echo -e "${YELLOW}📊 Executing $(basename "$script")...${NC}"
+            docker cp "$script" "$CONTAINER_NAME:/tmp/$(basename "$script")"
+            docker exec "$CONTAINER_NAME" clickhouse-client --multiquery --queries-file "/tmp/$(basename "$script")" >/dev/null 2>&1 || true
+            echo -e "${GREEN}✅ $(basename "$script") completed${NC}"
+        else
+            echo -e "${YELLOW}⚠️ Enhancement script not found: $script${NC}"
+        fi
+    done
+    
+    echo -e "${GREEN}🎉 Database structure and enhancements created successfully!${NC}"
     cmd_status
 }
 

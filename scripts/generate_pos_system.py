@@ -24,9 +24,9 @@ class POSSystemGenerator:
         self.logger = logging.getLogger(__name__)
         
         # Paths
-        self.hr_data_path = Path("../generated_data")
-        self.operational_data_path = Path("../data-generator/generated_data")
-        self.output_path = Path("../generated_data")
+        self.hr_data_path = Path("data/csv")
+        self.operational_data_path = Path("data/csv")
+        self.output_path = Path("data/csv")
         
         # Data containers
         self.employees = {}
@@ -73,8 +73,8 @@ class POSSystemGenerator:
             self.logger.info(f"Loaded {len(self.departments)} departments")
             
             # Load operational stores
-            stores_file = self.operational_data_path / "stores.csv"
-            with open(stores_file, 'r', encoding='utf-8') as f:
+            stores_file = self.operational_data_path / "stores.csv.gz"
+            with gzip.open(stores_file, 'rt', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     self.stores[row['store_id']] = row
@@ -96,8 +96,8 @@ class POSSystemGenerator:
             self.logger.info(f"Loaded {len(self.orders)} in-store orders")
             
             # Load operational customers
-            customers_file = self.operational_data_path / "customers.csv"
-            with open(customers_file, 'r', encoding='utf-8') as f:
+            customers_file = self.operational_data_path / "customers.csv.gz"
+            with gzip.open(customers_file, 'rt', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     self.customers[row['customer_id']] = row
