@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <!-- Server settings optimized for demo/development environment -->
+    <logger>
+        <level>information</level>
+        <console>true</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <size>100M</size>
+        <count>3</count>
+    </logger>
+
+    <!-- Memory and performance settings for demo environment -->
+    <max_server_memory_usage>4000000000</max_server_memory_usage>
+    <max_concurrent_queries>50</max_concurrent_queries>
+    
+    <!-- Connection settings -->
+    <keep_alive_timeout>3</keep_alive_timeout>
+    <max_connections>100</max_connections>
+
+    <!-- Enable detailed query logging for demo/debugging -->
+    <query_log>
+        <database>system</database>
+        <table>query_log</table>
+        <partition_by>toYYYYMM(event_date)</partition_by>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_log>
+
+    <!-- Enable system metrics for monitoring -->
+    <metric_log>
+        <database>system</database>
+        <table>metric_log</table>
+        <flush_interval_milliseconds>60000</flush_interval_milliseconds>
+    </metric_log>
+
+    <!-- Enable part log for debugging data issues -->
+    <part_log>
+        <database>system</database>
+        <table>part_log</table>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </part_log>
+
+    <!-- Listen on all IPv4 interfaces (demo environment) -->
+    <listen_host>0.0.0.0</listen_host>
+
+    <!-- Format schemas (useful for data import) -->
+    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+
+    <!-- Timezone for European retail business -->
+    <timezone>Europe/Amsterdam</timezone>
+
+    <!-- Compression settings -->
+    <compression>
+        <case>
+            <method>zstd</method>
+            <level>3</level>
+        </case>
+    </compression>
+</clickhouse>

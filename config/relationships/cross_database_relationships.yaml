@@ -1,0 +1,238 @@
+# EuroStyle Source - Cross-Database Relationships
+# ==============================================
+# Configuration-driven relationships following WARP.md rules
+
+# Defines foreign key relationships between databases for referential integrity
+# Used by universal data generator and validation scripts
+
+relationships:
+  # HR to Finance relationships
+  hr_to_finance:
+    description: "HR entities referencing finance entities and cost centers"
+    relationships:
+      - source: "eurostyle_hr.employees.entity_id"
+        target: "eurostyle_finance.legal_entities.entity_id"
+        description: "Employee belongs to a legal entity"
+        cascade: "restrict"
+        
+      - source: "eurostyle_hr.departments.cost_center_id" 
+        target: "eurostyle_finance.cost_centers.cost_center_id"
+        description: "Department linked to cost center for budgeting"
+        cascade: "restrict"
+        
+      - source: "eurostyle_hr.compensation_history.entity_id"
+        target: "eurostyle_finance.legal_entities.entity_id" 
+        description: "Compensation records tied to legal entity"
+        cascade: "restrict"
+
+  # HR to Operational relationships  
+  hr_to_operational:
+    description: "HR contracts and assignments referencing operational stores"
+    relationships:
+      - source: "eurostyle_hr.employment_contracts.store_id"
+        target: "eurostyle_operational.stores.store_id"
+        description: "Employee assigned to specific store"
+        cascade: "set_null"
+        nullable: true
+
+  # Finance to Operational relationships
+  finance_to_operational:
+    description: "Finance tracking operational transactions and inventory"
+    relationships:
+      - source: "eurostyle_finance.gl_journal_lines.store_id"
+        target: "eurostyle_operational.stores.store_id"
+        description: "Journal entries reference store locations" 
+        cascade: "restrict"
+        
+      - source: "eurostyle_finance.budget_data.cost_center_id"
+        target: "eurostyle_operational.stores.store_id"  
+        description: "Store budgets linked via cost center mapping"
+        cascade: "restrict"
+        indirect: true
+
+  # Webshop to Operational relationships
+  webshop_to_operational:
+    description: "Web analytics tracking operational customers and products"
+    relationships:
+      - source: "eurostyle_webshop.web_sessions.customer_id"
+        target: "eurostyle_operational.customers.customer_id"
+        description: "Web sessions linked to customer records"
+        cascade: "set_null"
+        nullable: true
+        
+      - source: "eurostyle_webshop.page_views.product_id"
+        target: "eurostyle_operational.products.product_id" 
+        description: "Product page views reference catalog"
+        cascade: "set_null"
+        nullable: true
+        
+      - source: "eurostyle_webshop.cart_activities.customer_id"
+        target: "eurostyle_operational.customers.customer_id"
+        description: "Shopping cart tied to customer"
+        cascade: "cascade"
+        
+      - source: "eurostyle_webshop.product_reviews.product_id"
+        target: "eurostyle_operational.products.product_id"
+        description: "Reviews reference catalog products"
+        cascade: "cascade"
+
+  # Webshop to Finance relationships
+  webshop_to_finance: 
+    description: "Web analytics supporting financial reporting"
+    relationships:
+      - source: "eurostyle_webshop.web_analytics_events.campaign_id"
+        target: "eurostyle_operational.campaigns.campaign_id"
+        description: "Web events track campaign effectiveness"
+        cascade: "set_null"
+        nullable: true
+        indirect: true
+
+# Data loading sequence based on dependencies
+loading_sequence:
+  description: "Order in which databases and tables must be loaded"
+  
+  phase_1_foundation:
+    description: "Independent reference data (no foreign keys)"
+    databases:
+      eurostyle_finance:
+        - legal_entities
+        - cost_centers
+        - currencies
+        - chart_of_accounts
+      eurostyle_operational:
+        - european_geography
+        - fashion_calendar
+        - stores
+        - products
+        
+  phase_2_master_data:
+    description: "Master data with basic dependencies"  
+    databases:
+      eurostyle_operational:
+        - customers
+        - campaigns
+      eurostyle_hr:
+        - departments
+        - job_positions
+        - employees
+        
+  phase_3_transactional:
+    description: "Transactional data with multiple dependencies"
+    databases:
+      eurostyle_operational:
+        - orders
+        - order_lines
+        - inventory
+      eurostyle_hr:
+        - employment_contracts
+        - compensation_history
+      eurostyle_finance:
+        - reporting_periods
+        - budget_versions
+        - budget_data
+        
+  phase_4_derived:
+    description: "Derived and calculated data"
+    databases:
+      eurostyle_finance:
+        - gl_journal_headers
+        - gl_journal_lines
+        - fixed_assets
+        - depreciation_schedule
+      eurostyle_hr:
+        - leave_balances
+        - leave_requests
+        - performance_cycles
+        
+  phase_5_analytics:
+    description: "Analytics and reporting data"
+    databases:
+      eurostyle_webshop:
+        - web_sessions
+        - page_views
+        - web_analytics_events
+        - cart_activities
+      eurostyle_hr:
+        - performance_reviews
+        - training_programs
+        - employee_training
+
+# Validation rules for cross-database integrity
+validation_rules:
+  referential_integrity:
+    enabled: true
+    description: "Validate foreign key references across databases"
+    
+  data_consistency:
+    enabled: true
+    description: "Check for data consistency across related tables"
+    rules:
+      - name: "employee_count_consistency"
+        description: "Employee count should match between HR and payroll"
+        query: |
+          SELECT 
+            hr_count,
+            finance_count,
+            abs(hr_count - finance_count) as difference
+          FROM (
+            SELECT count(*) as hr_count FROM eurostyle_hr.employees WHERE employee_status = 'ACTIVE'
+          ) hr
+          CROSS JOIN (
+            SELECT count(DISTINCT employee_id) as finance_count FROM eurostyle_finance.gl_journal_lines WHERE account_code LIKE '6%'
+          ) finance
+      
+      - name: "store_revenue_consistency" 
+        description: "Store revenue should exist in both operational orders and finance GL"
+        query: |
+          SELECT
+            o.store_id,
+            sum(o.total_amount_eur) as operational_revenue,
+            coalesce(f.finance_revenue, 0) as finance_revenue
+          FROM eurostyle_operational.orders o
+          LEFT JOIN (
+            SELECT 
+              store_id,
+              sum(debit_amount_eur - credit_amount_eur) as finance_revenue
+            FROM eurostyle_finance.gl_journal_lines 
+            WHERE account_code = '4000'
+            GROUP BY store_id
+          ) f ON o.store_id = f.store_id
+          GROUP BY o.store_id, f.finance_revenue
+
+# Entity mapping for data generation
+entity_mapping:
+  description: "Maps entities across databases for consistent data generation"
+  
+  legal_entities:
+    source: "eurostyle_finance.legal_entities"
+    mappings:
+      - target: "eurostyle_hr.employees.entity_id"
+        distribution:
+          HOLDING: 0.15      # 15% of employees in holding company
+          OPERATING: 0.85    # 85% in operating companies
+          
+      - target: "eurostyle_hr.departments.entity_id"  
+        distribution:
+          HOLDING: 0.25      # More departments per employee in holding
+          OPERATING: 0.75
+          
+  countries:
+    source: "eurostyle_operational.stores.country_code"
+    mappings:
+      - target: "eurostyle_hr.employees.country_code"
+        description: "Employee distribution follows store locations"
+        
+      - target: "eurostyle_webshop.web_sessions.country_code" 
+        description: "Web traffic correlates with physical presence"
+
+# Data quality thresholds
+quality_thresholds:
+  referential_integrity:
+    orphaned_records_max_percent: 1.0    # Max 1% orphaned records allowed
+    
+  data_consistency:
+    revenue_variance_max_percent: 5.0     # Max 5% variance between systems
+    employee_count_variance_max: 10       # Max 10 employee difference
+    
+  completeness:
+    required_fields_min_percent: 95.0     # Min 95% completeness for required fields

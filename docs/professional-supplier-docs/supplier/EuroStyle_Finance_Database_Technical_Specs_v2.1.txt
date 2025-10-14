@@ -1,0 +1,479 @@
+================================================================================
+EUROSTYLE FINANCE DATABASE - TECHNICAL SPECIFICATION v2.1
+================================================================================
+
+Supplier:        EuroFinance Technologies B.V.
+Address:         Zuidas, Amsterdam, Netherlands
+Contact:         finance-support@eurofinance-tech.com
+Phone:           +31 20 555 0789
+Document Date:   October 2024
+System Version:  EuroStyle Finance Management System v3.8
+Database Name:   eurostyle_finance
+Technology:      ClickHouse Analytics Database
+
+================================================================================
+1. DATABASE OVERVIEW
+================================================================================
+
+The EuroStyle Finance Database provides comprehensive financial management and
+IFRS-compliant reporting for multi-entity European operations. It supports
+consolidation across 5 legal entities with automated inter-company eliminations
+and real-time financial reporting.
+
+Key Capabilities:
+• Multi-entity consolidation (1 Holding + 4 subsidiaries)
+• IFRS-compliant chart of accounts and reporting
+• Real-time general ledger with perfect reconciliation
+• Multi-currency support with automated revaluation
+• Comprehensive budgeting and variance analysis
+• Fixed asset management with depreciation
+
+Legal Entity Structure:
+• ESLH: EuroStyle Fashion Holding B.V. (Netherlands, Holding)
+• ESDE: EuroStyle Fashion Deutschland GmbH (Germany, Subsidiary)
+• ESFR: EuroStyle Fashion France SARL (France, Subsidiary)
+• ESBE: EuroStyle Fashion Belgium BVBA (Belgium, Subsidiary)
+• ESLU: EuroStyle Fashion Luxembourg S.à r.l. (Luxembourg, Subsidiary)
+
+================================================================================
+2. DATABASE SCHEMA
+================================================================================
+
+CREATE DATABASE IF NOT EXISTS eurostyle_finance;
+USE eurostyle_finance;
+
+--------------------------------------------------------------------------------
+2.1 LEGAL_ENTITIES TABLE
+--------------------------------------------------------------------------------
+Purpose: Master data for all legal entities in the corporate structure
+
+CREATE TABLE IF NOT EXISTS legal_entities (
+    -- Entity Identification
+    entity_id String,                    -- ENTITY_NL_HOLDING, ENTITY_DE_BV
+    entity_code String,                  -- ESLH, ESDE, ESFR, ESBE, ESLU
+    entity_name String,                  -- EuroStyle Fashion Holding B.V.
+    entity_type String,                  -- HOLDING, BV (Subsidiary)
+    
+    -- Legal and Tax Information
+    country_code String,                 -- NL, DE, FR, BE, LU
+    registration_number String,          -- KVK-24123456, HRB-12345
+    tax_id String,                       -- NL123456789B01, DE123456789
+    functional_currency String,          -- EUR (all entities)
+    
+    -- Corporate Structure
+    parent_entity_id Nullable(String),   -- FK to parent entity
+    incorporation_date Date,
+    fiscal_year_end String,              -- 12-31 (calendar year)
+    legal_address String,
+    
+    -- System Fields
+    is_active Bool,
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_date)
+ORDER BY entity_id;
+
+Business Rules:
+• All entities use EUR as functional currency
+• Holding company (ESLH) is parent to all subsidiaries
+• Fiscal year ends December 31 for all entities
+• Tax IDs must be valid for respective countries
+
+--------------------------------------------------------------------------------
+2.2 CHART_OF_ACCOUNTS TABLE
+--------------------------------------------------------------------------------
+Purpose: IFRS-compliant chart of accounts for all entities
+
+CREATE TABLE IF NOT EXISTS chart_of_accounts (
+    -- Account Identification
+    account_id String,                   -- COA_1000_001
+    account_code String,                 -- 1000, 1100, 4000
+    account_name String,                 -- Cash and Cash Equivalents
+    
+    -- Account Classification
+    account_type String,                 -- ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE
+    account_subtype String,              -- CURRENT_ASSET, FIXED_ASSET, CURRENT_LIABILITY
+    parent_account_id Nullable(String), -- FK to parent account (hierarchy)
+    is_detail_account Bool,              -- True if leaf node (postable)
+    normal_balance String,               -- DEBIT, CREDIT
+    
+    -- Financial Statement Classification
+    account_category String,             -- BS (Balance Sheet), IS (Income Statement), CF (Cash Flow)
+    ifrs_classification String,          -- IFRS specific account classification
+    consolidation_account String,        -- For consolidation mapping
+    
+    -- System Fields
+    is_active Bool,
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_date)
+ORDER BY account_code;
+
+Business Rules:
+• Account codes follow standard numbering: 1000-1999 Assets, 2000-2999 Liabilities, etc.
+• All accounts mapped to IFRS classifications
+• Detail accounts (is_detail_account = true) are postable
+• Parent accounts are summary-only (is_detail_account = false)
+
+--------------------------------------------------------------------------------
+2.3 GL_JOURNAL_HEADERS TABLE
+--------------------------------------------------------------------------------
+Purpose: General ledger journal entry headers
+
+CREATE TABLE IF NOT EXISTS gl_journal_headers (
+    -- Journal Identification
+    journal_header_id String,           -- JH_2024_000001
+    journal_number String,              -- JV-2024-001
+    entity_id String,                   -- FK to legal_entities
+    period_id String,                   -- FK to reporting_periods
+    
+    -- Journal Timing
+    journal_date Date,                  -- Transaction date
+    posting_date Date,                  -- GL posting date
+    
+    -- Journal Classification
+    journal_type String,                -- STANDARD, ACCRUAL, RECLASSIFICATION, CLOSING
+    journal_source String,              -- MANUAL, SYSTEM, IMPORT, POS, OPERATIONAL
+    reference_number Nullable(String),  -- Invoice number, PO number, etc.
+    description String,                 -- Journal description
+    
+    -- Financial Validation
+    total_debit_amount Decimal64(2),    -- Must equal total_credit_amount
+    total_credit_amount Decimal64(2),   -- Must equal total_debit_amount
+    currency_code String,               -- EUR
+    exchange_rate Decimal64(6),         -- Always 1.0 for EUR
+    
+    -- Workflow Management
+    journal_status String,              -- DRAFT, POSTED, REVERSED
+    created_by String,                  -- Employee who created
+    approved_by Nullable(String),       -- Manager who approved
+    
+    -- System Fields
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_date)
+ORDER BY (journal_date, journal_header_id);
+
+Business Rules:
+• Debit and credit amounts must balance (total_debit_amount = total_credit_amount)
+• Journal entries require approval for amounts > €10,000
+• Journals can only be reversed, not deleted
+• Posted journals are immutable
+
+--------------------------------------------------------------------------------
+2.4 GL_JOURNAL_LINES TABLE
+--------------------------------------------------------------------------------
+Purpose: Individual line items for each journal entry
+
+CREATE TABLE IF NOT EXISTS gl_journal_lines (
+    -- Line Identification
+    journal_line_id String,             -- JL_2024_000001_001
+    journal_header_id String,           -- FK to gl_journal_headers
+    line_number UInt16,                 -- 1, 2, 3... (sequential within journal)
+    
+    -- Account Information
+    account_id String,                  -- FK to chart_of_accounts
+    cost_center_id Nullable(String),   -- FK to cost_centers (for expense allocation)
+    
+    -- Financial Amounts
+    debit_amount Decimal64(2),          -- Debit amount (0.00 if credit entry)
+    credit_amount Decimal64(2),         -- Credit amount (0.00 if debit entry)
+    currency_code String,               -- EUR
+    exchange_rate Decimal64(6),         -- Always 1.0 for EUR
+    
+    -- Line Details
+    line_description String,            -- Detailed description for this line
+    reference_1 Nullable(String),       -- Additional reference (e.g., customer ID)
+    reference_2 Nullable(String),       -- Additional reference (e.g., order ID)
+    
+    -- System Fields
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (journal_header_id, line_number);
+
+Business Rules:
+• Each line must have either debit_amount > 0 OR credit_amount > 0 (not both)
+• Line numbers sequential within each journal header
+• All lines within journal must balance to zero
+• References enable drill-down to source transactions
+
+--------------------------------------------------------------------------------
+2.5 BUDGET_VERSIONS TABLE
+--------------------------------------------------------------------------------
+Purpose: Budget version control and approval workflow
+
+CREATE TABLE IF NOT EXISTS budget_versions (
+    -- Version Identification
+    budget_version_id String,           -- BV_2024_V1, BV_2024_V2
+    version_name String,                -- "Original Budget 2024", "Revised Q2 2024"
+    budget_year UInt16,                 -- 2024, 2025
+    entity_id String,                   -- FK to legal_entities
+    
+    -- Version Management
+    version_number UInt8,               -- 1, 2, 3...
+    is_active_version Bool,             -- Only one active version per entity/year
+    approval_status String,             -- DRAFT, SUBMITTED, APPROVED, REJECTED
+    
+    -- Approval Workflow
+    created_by String,                  -- Budget creator
+    submitted_by Nullable(String),      -- Who submitted for approval
+    approved_by Nullable(String),       -- Who approved the budget
+    approval_date Nullable(Date),
+    
+    -- Budget Metadata
+    budget_description Nullable(String),
+    assumptions Text,                   -- Budget assumptions and notes
+    
+    -- System Fields
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_date)
+ORDER BY (entity_id, budget_year, version_number);
+
+Business Rules:
+• Only one active budget version per entity per year
+• Budget approval required before activation
+• Previous versions maintained for audit trail
+
+--------------------------------------------------------------------------------
+2.6 BUDGET_DATA TABLE
+--------------------------------------------------------------------------------
+Purpose: Detailed budget amounts by account and period
+
+CREATE TABLE IF NOT EXISTS budget_data (
+    -- Budget Identification
+    budget_data_id String,              -- BD_2024_V1_000001
+    budget_version_id String,           -- FK to budget_versions
+    account_id String,                  -- FK to chart_of_accounts
+    cost_center_id Nullable(String),   -- FK to cost_centers
+    
+    -- Period Information
+    budget_period String,               -- 2024-01, 2024-Q1, 2024
+    period_type String,                 -- MONTH, QUARTER, YEAR
+    
+    -- Budget Amounts
+    budget_amount Decimal64(2),         -- Budgeted amount for period
+    currency_code String,               -- EUR
+    
+    -- Variance Analysis Support
+    forecast_amount Nullable(Decimal64(2)),  -- Latest forecast
+    actual_amount Nullable(Decimal64(2)),    -- Actual results (populated by system)
+    variance_amount Nullable(Decimal64(2)),  -- Actual - Budget
+    variance_percentage Nullable(Decimal64(2)), -- (Actual - Budget) / Budget * 100
+    
+    -- System Fields
+    created_date DateTime,
+    updated_date DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_date)
+ORDER BY (budget_version_id, account_id, budget_period);
+
+Business Rules:
+• Budget amounts entered at detail account level only
+• Monthly budgets roll up to quarterly and annual
+• Actual amounts updated automatically from GL
+
+================================================================================
+3. IFRS COMPLIANCE SPECIFICATIONS
+================================================================================
+
+Chart of Accounts Structure (IFRS-compliant):
+
+ASSETS (1000-1999):
+• 1000-1099: Cash and Cash Equivalents
+• 1100-1199: Trade and Other Receivables
+• 1200-1299: Inventories
+• 1300-1399: Other Current Assets
+• 1400-1499: Property, Plant and Equipment
+• 1500-1599: Intangible Assets
+• 1600-1699: Investment Properties
+• 1700-1799: Financial Assets
+
+LIABILITIES (2000-2999):
+• 2000-2099: Trade and Other Payables
+• 2100-2199: Short-term Borrowings
+• 2200-2299: Current Tax Liabilities
+• 2300-2399: Other Current Liabilities
+• 2400-2499: Long-term Borrowings
+• 2500-2599: Deferred Tax Liabilities
+• 2600-2699: Provisions
+• 2700-2799: Other Non-current Liabilities
+
+EQUITY (3000-3999):
+• 3000-3099: Share Capital
+• 3100-3199: Retained Earnings
+• 3200-3299: Other Comprehensive Income
+• 3300-3399: Non-controlling Interests
+
+REVENUE (4000-4999):
+• 4000-4099: Revenue from Contracts with Customers
+• 4100-4199: Other Operating Income
+• 4200-4299: Finance Income
+
+EXPENSES (5000-9999):
+• 5000-5999: Cost of Sales
+• 6000-6999: Operating Expenses
+• 7000-7999: Finance Costs
+• 8000-8999: Tax Expenses
+• 9000-9999: Other Comprehensive Income/Expenses
+
+================================================================================
+4. MULTI-ENTITY CONSOLIDATION
+================================================================================
+
+Entity Hierarchy:
+```
+EuroStyle Fashion Holding B.V. (ESLH) - Netherlands
+├── EuroStyle Fashion Deutschland GmbH (ESDE) - Germany (100%)
+├── EuroStyle Fashion France SARL (ESFR) - France (100%)
+├── EuroStyle Fashion Belgium BVBA (ESBE) - Belgium (100%)
+└── EuroStyle Fashion Luxembourg S.à r.l. (ESLU) - Luxembourg (100%)
+```
+
+Consolidation Process:
+• All subsidiaries 100% owned by holding company
+• Consolidation performed monthly and quarterly
+• Inter-company transactions eliminated automatically
+• Functional currency EUR for all entities (no translation required)
+• Consolidation adjustments tracked separately
+
+Inter-company Accounts:
+• 1800-1899: Inter-company Receivables
+• 2800-2899: Inter-company Payables
+• 4900-4999: Inter-company Revenue
+• 5900-5999: Inter-company Expenses
+
+================================================================================
+5. PERFORMANCE & INDEXING
+================================================================================
+
+Primary Indexes (Automatic with ORDER BY):
+• legal_entities: entity_id
+• chart_of_accounts: account_code
+• gl_journal_headers: (journal_date, journal_header_id)
+• gl_journal_lines: (journal_header_id, line_number)
+• budget_versions: (entity_id, budget_year, version_number)
+• budget_data: (budget_version_id, account_id, budget_period)
+
+Recommended Secondary Indexes for Financial Reporting:
+
+-- General Ledger Analytics
+ALTER TABLE gl_journal_headers ADD INDEX idx_entity_period (entity_id, period_id) 
+TYPE set(100) GRANULARITY 1000;
+
+ALTER TABLE gl_journal_headers ADD INDEX idx_journal_type journal_type 
+TYPE set(20) GRANULARITY 1000;
+
+ALTER TABLE gl_journal_lines ADD INDEX idx_account account_id 
+TYPE bloom_filter GRANULARITY 4096;
+
+ALTER TABLE gl_journal_lines ADD INDEX idx_amounts (debit_amount, credit_amount) 
+TYPE minmax GRANULARITY 8192;
+
+-- Budget and Variance Analysis
+ALTER TABLE budget_data ADD INDEX idx_period_type (period_type, budget_period) 
+TYPE set(50) GRANULARITY 1000;
+
+ALTER TABLE budget_data ADD INDEX idx_cost_center cost_center_id 
+TYPE set(100) GRANULARITY 1000;
+
+================================================================================
+6. INTEGRATION SPECIFICATIONS
+================================================================================
+
+REST API Base URL:
+https://api.eurostyle-finance.com/v3.8/
+
+Authentication:
+OAuth 2.0 Bearer Token with financial role-based access control
+
+Core API Endpoints:
+
+General Ledger:
+• GET/POST /journals/{journal_header_id}
+• POST /journals/{journal_header_id}/post
+• POST /journals/{journal_header_id}/reverse
+• GET /accounts/{account_id}/balance
+
+Financial Reporting:
+• GET /entities/{entity_id}/trial-balance/{period_id}
+• GET /entities/{entity_id}/income-statement/{period_id}
+• GET /entities/{entity_id}/balance-sheet/{period_id}
+• GET /consolidation/financial-statements/{period_id}
+
+Budget Management:
+• GET/POST /budgets/{budget_version_id}
+• GET /budgets/{budget_version_id}/variance-report
+• POST /budgets/{budget_version_id}/approve
+
+Cross-System Integration:
+• Operational System: Revenue recognition from orders
+• POS System: Daily sales reconciliation
+• HR System: Payroll journal entries
+• Webshop System: E-commerce revenue tracking
+
+Automated Journal Entries:
+• Daily POS sales postings
+• Monthly depreciation calculations
+• Inter-company eliminations
+• Currency revaluation (if needed)
+
+================================================================================
+7. SECURITY & COMPLIANCE
+================================================================================
+
+Financial Data Security:
+• All financial data encrypted at rest and in transit
+• Role-based access control with segregation of duties
+• Audit trail for all GL postings and changes
+• Digital signatures for journal approvals
+• Automated backup and disaster recovery
+
+Regulatory Compliance:
+• IFRS financial reporting standards
+• European accounting directives
+• Country-specific GAAP requirements
+• SOX compliance for internal controls
+• Audit trail retention: 10 years
+
+Access Control Matrix:
+• Financial Analysts: Read-only access to reports
+• Accounting Staff: Create and post routine journals
+• Accounting Managers: Approve journals and budgets
+• CFO/Controllers: Full access including period close
+• External Auditors: Read-only access with audit trail
+
+================================================================================
+8. SUPPORT & MAINTENANCE
+================================================================================
+
+Technical Support:
+EuroFinance Technologies B.V.
+Financial Systems Division
+Zuidas, Amsterdam, Netherlands
+Email: finance-support@eurofinance-tech.com
+Phone: +31 20 555 0789
+Hours: 24/7 for critical financial systems
+
+Service Level Agreements:
+• Critical Financial Issues: 2 hours response, 8 hours resolution
+• Month-end Close Issues: 4 hours response, 12 hours resolution
+• Standard Issues: 24 hours response, 72 hours resolution
+• Enhancement Requests: 1 week analysis, 4 weeks delivery
+
+Financial Calendar Support:
+• Month-end close: 5 business days
+• Quarter-end close: 10 business days
+• Year-end close: 15 business days
+• Audit support: Full documentation and system access
+
+System Maintenance:
+• Monthly updates during non-business hours
+• Quarterly security patches
+• Annual system optimization
+• Daily automated backups with point-in-time recovery
+
+================================================================================
+END OF DOCUMENT - EuroFinance Technologies B.V. Confidential
+© 2024 EuroFinance Technologies B.V. All rights reserved.
+================================================================================

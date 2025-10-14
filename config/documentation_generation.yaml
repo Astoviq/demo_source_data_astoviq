@@ -1,0 +1,100 @@
+# =====================================================
+# EuroStyle Fashion - Documentation Generation Config
+# =====================================================
+# Configuration for generating supplier-style source system documentation
+
+documentation:
+  output_directory: "docs/source_systems"
+  temp_directory: "docs/temp"
+  
+  # Vendor Information
+  erp_vendor:
+    name: "EuroRetail Solutions BV"
+    location: "Amsterdam, Netherlands"
+    contact_email: "support@euroretail-solutions.com"
+    system_name: "EuroStyle Operational System v4.2"
+    
+  webshop_vendor:
+    name: "DigitalCommerce Technologies GmbH"
+    location: "Berlin, Germany" 
+    contact_email: "integration@digitalcommerce-tech.de"
+    system_name: "EuroStyle Digital Experience Platform v3.1"
+
+  # Document Structure
+  erp_sections:
+    - executive_summary
+    - system_architecture
+    - data_model
+    - entity_descriptions
+    - data_dictionary
+    - business_rules
+    - integration_specs
+    - sample_data
+    - appendices
+    
+  webshop_sections:
+    - executive_summary
+    - platform_overview
+    - customer_journey_model
+    - analytics_data_model
+    - entity_descriptions
+    - event_taxonomy
+    - gdpr_compliance
+    - api_specifications
+    - sample_data
+    - integration_guide
+
+  # PDF Generation Settings
+  pdf:
+    page_size: "A4"
+    margins:
+      top: 25
+      bottom: 25
+      left: 30
+      right: 30
+    fonts:
+      heading: "Helvetica-Bold"
+      body: "Helvetica"
+      code: "Courier"
+    colors:
+      primary: "#2E4057"    # Dark blue-gray
+      secondary: "#048A81"  # Teal
+      accent: "#FF6B35"     # Orange
+
+  # Data Dictionary Settings
+  data_types:
+    string_max_length: 255
+    decimal_precision: 2
+    datetime_format: "YYYY-MM-DD HH:MM:SS UTC"
+    date_format: "YYYY-MM-DD"
+    
+  # GDPR Compliance Markers
+  gdpr:
+    personal_data_fields:
+      - email
+      - first_name  
+      - last_name
+      - phone
+      - date_of_birth
+      - street_address
+      - ip_address
+      - user_agent
+    sensitive_fields:
+      - payment_method
+      - payment_status
+      - total_spent
+      - loyalty_points
+    
+  # Business Context
+  market_coverage:
+    countries: ["NL", "BE", "DE", "FR", "LU"]
+    currencies: ["EUR"]
+    languages: ["nl", "de", "fr", "en"]
+    
+  # Technical Specifications
+  database:
+    engine: "ClickHouse"
+    version: "23.8"
+    charset: "UTF-8"
+    collation: "utf8_unicode_ci"
+    timezone: "Europe/Amsterdam"

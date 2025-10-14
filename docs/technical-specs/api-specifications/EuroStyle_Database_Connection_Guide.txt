@@ -1,0 +1,231 @@
+
+# EuroStyle Fashion - Database Connection Guide & SQL Reference
+
+## CLICKHOUSE CONNECTION
+
+Connect to the EuroStyle ClickHouse databases using standard ClickHouse clients:
+```
+# HTTP Interface (port 8123)
+ClickHouse HTTP endpoint: http://localhost:8123
+Database: eurostyle_operational, eurostyle_finance, eurostyle_hr, eurostyle_webshop
+
+# Native Interface (port 9000)
+ClickHouse Native: localhost:9000
+```
+
+## OPERATIONAL DATABASE QUERIES
+
+### Database: eurostyle_operational
+
+#### Customer Data Access
+```sql
+-- Get customers by country with spending analysis
+SELECT 
+    customer_id,
+    email,
+    first_name,
+    last_name,
+    country_code,
+    loyalty_tier,
+    total_spent,
+    marketing_opt_in
+FROM customers 
+WHERE country_code IN ('NL', 'DE', 'FR', 'BE', 'LU') 
+    AND customer_status = 'active'
+ORDER BY total_spent DESC
+LIMIT 100;
+
+-- Customer counts and average spending by country
+SELECT 
+    country_code,
+    COUNT(*) as customer_count,
+    AVG(total_spent) as avg_spending,
+    SUM(total_spent) as total_revenue
+FROM customers 
+GROUP BY country_code
+ORDER BY total_revenue DESC;
+```
+
+#### Product Data Access
+```sql
+-- Get products by category with sustainability metrics
+SELECT 
+    product_id,
+    product_name,
+    category_l1,
+    category_l2,
+    category_l3,
+    price_eur,
+    sustainability_score,
+    current_stock_total,
+    is_active
+FROM products 
+WHERE category_l1 = 'Women' 
+    AND category_l2 = 'Tops'
+    AND is_active = true
+ORDER BY sustainability_score DESC;
+
+-- Product performance by category
+SELECT 
+    category_l1,
+    COUNT(*) as product_count,
+    AVG(price_eur) as avg_price,
+    AVG(sustainability_score) as avg_sustainability,
+    SUM(current_stock_total) as total_stock
+FROM products
+WHERE is_active = true
+GROUP BY category_l1
+ORDER BY product_count DESC;
+```
+
+#### Order Analysis
+```sql
+-- Order trends and revenue analysis
+SELECT 
+    toYYYYMM(order_date) as order_month,
+    order_channel,
+    COUNT(*) as order_count,
+    SUM(total_amount_eur) as total_revenue,
+    AVG(total_amount_eur) as avg_order_value
+FROM orders 
+WHERE order_status IN ('delivered', 'shipped')
+GROUP BY order_month, order_channel
+ORDER BY order_month DESC, total_revenue DESC;
+
+-- Customer order behavior
+SELECT 
+    country_code,
+    COUNT(DISTINCT customer_id) as unique_customers,
+    COUNT(*) as total_orders,
+    AVG(total_amount_eur) as avg_order_value,
+    SUM(total_amount_eur) as total_revenue
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+WHERE order_status = 'delivered'
+GROUP BY country_code
+ORDER BY total_revenue DESC;
+```
+
+## WEBSHOP ANALYTICS DATABASE
+
+### Database: eurostyle_webshop
+
+#### Session Data Analysis
+```sql
+-- Web session analytics by country and device
+SELECT 
+    country_code,
+    device_type,
+    COUNT(*) as session_count,
+    AVG(session_duration_seconds) as avg_duration,
+    AVG(page_views) as avg_page_views,
+    SUM(CASE WHEN conversion_session = true THEN 1 ELSE 0 END) as conversions,
+    (conversions * 100.0 / session_count) as conversion_rate
+FROM web_sessions 
+WHERE session_date >= '2024-01-01'
+GROUP BY country_code, device_type
+ORDER BY session_count DESC;
+
+-- Page view analysis with product performance
+SELECT 
+    p.category_l1,
+    p.category_l2,
+    COUNT(pv.page_view_id) as total_views,
+    AVG(pv.time_on_page_seconds) as avg_time_on_page,
+    AVG(pv.scroll_depth_percent) as avg_scroll_depth
+FROM page_views pv
+JOIN products p ON pv.product_id = p.product_id
+WHERE pv.page_view_date >= '2024-01-01'
+GROUP BY p.category_l1, p.category_l2
+ORDER BY total_views DESC;
+```
+
+## FINANCE DATABASE
+
+### Database: eurostyle_finance
+
+#### Legal Entity and Financial Data
+```sql
+-- Legal entity financial summary
+SELECT 
+    le.entity_code,
+    le.entity_name,
+    le.country_code,
+    le.functional_currency,
+    COUNT(DISTINCT jl.journal_header_id) as journal_entries,
+    SUM(jl.debit_amount) as total_debits,
+    SUM(jl.credit_amount) as total_credits
+FROM legal_entities le
+LEFT JOIN gl_journal_lines jl ON le.entity_id = jl.entity_id
+WHERE le.is_active = true
+GROUP BY le.entity_code, le.entity_name, le.country_code, le.functional_currency
+ORDER BY total_debits DESC;
+
+-- Chart of accounts with transaction volumes
+SELECT 
+    coa.account_code,
+    coa.account_name,
+    coa.account_type,
+    COUNT(jl.journal_line_id) as transaction_count,
+    SUM(jl.debit_amount) as total_debits,
+    SUM(jl.credit_amount) as total_credits
+FROM chart_of_accounts coa
+LEFT JOIN gl_journal_lines jl ON coa.account_id = jl.account_id
+GROUP BY coa.account_code, coa.account_name, coa.account_type
+ORDER BY transaction_count DESC;
+```
+
+## HR DATABASE
+
+### Database: eurostyle_hr
+
+#### Employee and Contract Analysis
+```sql
+-- Employee distribution by entity and status
+SELECT 
+    le.entity_name,
+    e.employee_status,
+    COUNT(*) as employee_count,
+    AVG(CASE WHEN e.salary_amount > 0 THEN e.salary_amount END) as avg_salary
+FROM employees e
+JOIN legal_entities le ON e.entity_id = le.entity_id
+GROUP BY le.entity_name, e.employee_status
+ORDER BY le.entity_name, employee_count DESC;
+
+-- Leave balance analysis by country
+SELECT 
+    e.nationality,
+    lb.leave_type,
+    AVG(lb.balance_days) as avg_balance,
+    AVG(lb.used_days) as avg_used,
+    COUNT(*) as employee_count
+FROM leave_balances lb
+JOIN employees e ON lb.employee_id = e.employee_id
+WHERE lb.balance_year = 2024
+GROUP BY e.nationality, lb.leave_type
+ORDER BY e.nationality, lb.leave_type;
+```
+
+## CONNECTION TOOLS
+
+Recommended ClickHouse clients for database access:
+
+**Command Line:**
+- clickhouse-client (native ClickHouse CLI)
+- DBeaver (GUI database tool)
+- DataGrip (JetBrains database IDE)
+
+**Programming Languages:**
+- Python: clickhouse-driver, clickhouse-connect
+- Node.js: @clickhouse/client
+- Java: clickhouse-jdbc
+- .NET: ClickHouse.Client
+
+**Connection Examples:**
+```bash
+# Command line connection
+clickhouse-client --host localhost --port 9000 --database eurostyle_operational
+
+# HTTP query example
+curl 'http://localhost:8123/?query=SELECT COUNT(*) FROM eurostyle_operational.customers'
+```

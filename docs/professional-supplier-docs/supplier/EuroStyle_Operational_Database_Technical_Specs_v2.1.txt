@@ -1,0 +1,421 @@
+================================================================================
+EUROSTYLE OPERATIONAL DATABASE - TECHNICAL SPECIFICATION v2.1
+================================================================================
+
+Supplier:        EuroRetail Solutions B.V.
+Address:         Herengracht 123, 1015 BD Amsterdam, Netherlands
+Contact:         database-support@euroretail-solutions.com
+Phone:           +31 20 555 0123
+Document Date:   October 2024
+System Version:  EuroStyle Operational Database v4.2
+Database Name:   eurostyle_operational
+Technology:      ClickHouse Analytics Database
+
+================================================================================
+1. DATABASE OVERVIEW
+================================================================================
+
+The EuroStyle Operational Database serves as the core ERP system for European 
+fashion retail operations. It manages the complete customer lifecycle, product 
+catalog, order management, and store operations across 5 European markets 
+(Netherlands, Germany, France, Belgium, Luxembourg).
+
+Key Capabilities:
+• 50,000+ active customer records with GDPR compliance
+• 2,500+ fashion product catalog with multi-language support
+• 5,000+ monthly order transactions
+• 47+ retail store locations
+• Multi-currency support (EUR primary)
+• Real-time inventory tracking
+
+================================================================================
+2. DATABASE SCHEMA
+================================================================================
+
+CREATE DATABASE IF NOT EXISTS eurostyle_operational;
+USE eurostyle_operational;
+
+--------------------------------------------------------------------------------
+2.1 CUSTOMERS TABLE
+--------------------------------------------------------------------------------
+Purpose: Customer master data with full GDPR compliance and European market support
+
+CREATE TABLE IF NOT EXISTS customers (
+    -- Primary Identifier
+    customer_id String,              -- CUST_EU_000001, CUST_EU_000002
+    email String,                    -- Primary identifier for online customers
+    
+    -- Personal Information (GDPR Protected)
+    first_name String,               -- Jan, Emma, Lars, Sophie, Pierre, Hans
+    last_name String,                -- van der Berg, Müller, Dubois, etc.
+    phone String,                    -- Country-specific formats
+    date_of_birth Date,              -- For age demographics and marketing
+    gender Enum8('M' = 1, 'F' = 2, 'O' = 3),
+    language_preference String,      -- nl, de, fr, en
+    
+    -- Address Information (GDPR Protected)
+    street_address String,
+    city String,
+    postal_code String,              -- Country-specific formats
+    country_code String,             -- NL, BE, DE, FR, LU
+    region String,                   -- Province/state/region
+    
+    -- Customer Lifecycle Management
+    registration_date DateTime,      -- When they first registered
+    registration_channel String,     -- online, in-store, social, referral
+    customer_status Enum8('active' = 1, 'inactive' = 2, 'suspended' = 3),
+    
+    -- Marketing Preferences (GDPR Compliant)
+    marketing_opt_in Bool,           -- Explicit consent required
+    newsletter_subscription Bool,     -- Separate consent tracking
+    sms_opt_in Bool,                -- SMS marketing consent
+    
+    -- Customer Value Analytics
+    total_orders UInt32,
+    total_spent Decimal64(2),        -- Lifetime value in EUR
+    average_order_value Decimal64(2),
+    last_order_date Date,
+    
+    -- Loyalty Program Integration
+    loyalty_member Bool,
+    loyalty_points UInt32,
+    loyalty_tier String,             -- Bronze, Silver, Gold, Platinum
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY customer_id;
+
+Business Rules:
+• Email must be unique and valid format
+• GDPR consent must be recorded for all marketing communications
+• Customer status automatically updated based on activity
+• Loyalty points expire after 24 months of inactivity
+• Data retention: 7 years after last activity (EU legal requirement)
+
+--------------------------------------------------------------------------------
+2.2 PRODUCTS TABLE
+--------------------------------------------------------------------------------
+Purpose: Fashion product catalog with European market localization
+
+CREATE TABLE IF NOT EXISTS products (
+    -- Product Identification
+    product_id String,               -- PROD_EU_000001, SKU format
+    product_name String,             -- "Sustainable Cotton T-Shirt"
+    product_name_local Map(String, String), -- Multi-language translations
+    
+    -- Fashion Product Hierarchy
+    category_l1 String,              -- Women, Men, Kids, Accessories
+    category_l2 String,              -- Tops, Bottoms, Dresses, Shoes
+    category_l3 String,              -- T-Shirts, Jeans, Casual Dresses
+    
+    -- Fashion Product Attributes
+    brand String,                    -- EuroStyle, EuroStyle Premium
+    color_primary String,            -- Black, White, Navy, etc.
+    color_secondary String,          -- Accent colors
+    size_range Array(String),        -- ['XS', 'S', 'M', 'L', 'XL']
+    material_composition String,     -- "80% Organic Cotton, 20% Recycled Polyester"
+    
+    -- Multi-Currency Pricing (EUR-based)
+    price_eur Decimal64(2),          -- Base price in EUR
+    price_local Map(String, Decimal64(2)), -- Local currency prices
+    cost_price_eur Decimal64(2),     -- Wholesale cost
+    margin_percentage Decimal64(2),   -- Profit margin
+    
+    -- Sustainability Metrics (EU Requirements)
+    sustainability_score UInt8,      -- 1-10 rating
+    eco_friendly_materials Bool,
+    carbon_footprint_kg Decimal32(2),
+    production_country String,       -- Mostly European production
+    
+    -- Inventory Management
+    current_stock_total UInt32,      -- Across all locations
+    reorder_level UInt32,
+    lead_time_days UInt16,
+    
+    -- Product Lifecycle Management
+    launch_date Date,
+    season String,                   -- Spring/Summer, Fall/Winter
+    is_active Bool,
+    discontinue_date Nullable(Date),
+    
+    -- E-commerce Integration
+    online_availability Bool,
+    product_url String,
+    image_urls Array(String),
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY product_id;
+
+Business Rules:
+• Product hierarchy enforces consistent categorization
+• Sustainability score mandatory for new products (2024+)
+• Price changes require approval workflow
+• Seasonal products automatically marked inactive after season
+• Multi-language names required for all active products
+
+--------------------------------------------------------------------------------
+2.3 STORES TABLE
+--------------------------------------------------------------------------------
+Purpose: Physical retail location management across European markets
+
+CREATE TABLE IF NOT EXISTS stores (
+    -- Store Identification
+    store_id String,                 -- STORE_NL_001, STORE_DE_001, etc.
+    store_name String,               -- "EuroStyle Amsterdam Central"
+    
+    -- Geographic Location
+    country_code String,             -- NL, BE, DE, FR, LU
+    city String,
+    address String,
+    postal_code String,
+    latitude Decimal64(6),           -- For mapping and logistics
+    longitude Decimal64(6),
+    
+    -- Store Characteristics
+    store_format String,             -- flagship, standard, outlet, popup
+    floor_area_sqm UInt32,
+    opening_date Date,
+    
+    -- Operational Management
+    manager_name String,
+    staff_count UInt16,
+    operating_hours String,          -- "Mon-Sat 10:00-20:00, Sun 12:00-18:00"
+    
+    -- Performance Management
+    performance_tier String,         -- A, B, C based on revenue
+    target_monthly_revenue Decimal64(2),
+    
+    -- Customer Services & Amenities
+    has_fitting_rooms Bool,
+    has_personal_styling Bool,
+    has_click_and_collect Bool,      -- Online order pickup
+    wheelchair_accessible Bool,      -- EU accessibility compliance
+    
+    -- System Fields
+    is_active Bool,
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY store_id;
+
+Business Rules:
+• Store performance tier updated monthly based on revenue
+• Operating hours must comply with local labor laws
+• Click & collect available in 95% of stores by 2025
+• All stores must meet EU accessibility standards
+
+--------------------------------------------------------------------------------
+2.4 ORDERS TABLE
+--------------------------------------------------------------------------------
+Purpose: Complete order management and fulfillment tracking
+
+CREATE TABLE IF NOT EXISTS orders (
+    -- Order Identification
+    order_id String,                 -- ORD_EU_2024_000001
+    customer_id String,              -- FK to customers
+    store_id String DEFAULT 'ONLINE', -- FK to stores or 'ONLINE'
+    
+    -- Order Timing
+    order_date Date,
+    order_datetime DateTime,
+    delivery_date Nullable(Date),
+    promised_delivery_date Nullable(Date),
+    
+    -- Financial Details (EUR-based)
+    subtotal_eur Decimal64(2),       -- Before tax and shipping
+    tax_amount_eur Decimal64(2),     -- VAT varies by country
+    shipping_cost_eur Decimal64(2),
+    discount_amount_eur Decimal64(2),
+    total_amount_eur Decimal64(2),   -- Final amount
+    
+    -- Multi-currency Support
+    currency_code String,            -- EUR (primary)
+    exchange_rate Decimal64(4),      -- Conversion rate used
+    total_amount_local Decimal64(2), -- Amount in local currency
+    
+    -- Order Fulfillment
+    order_status String,             -- pending, confirmed, shipped, delivered, cancelled, returned
+    fulfillment_center String,       -- Which DC processed the order
+    shipping_method String,          -- standard, express, same-day, in-store-pickup
+    tracking_number Nullable(String),
+    
+    -- Marketing Attribution
+    order_channel String,            -- online, in-store, mobile-app, phone
+    traffic_source String,           -- organic, paid-search, social, email, direct
+    campaign_code Nullable(String),  -- Marketing campaign tracking
+    
+    -- Payment Information
+    payment_method String,           -- credit-card, paypal, klarna, bancontact, ideal
+    payment_status String,           -- pending, completed, failed, refunded
+    
+    -- Customer Service
+    customer_service_notes Nullable(String),
+    return_reason Nullable(String),
+    return_date Nullable(Date),
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY order_id;
+
+Business Rules:
+• Orders automatically transition through status workflow
+• VAT calculation varies by customer country and product type
+• Return window: 30 days for EU customers (14 days minimum per EU law)
+• Customer service notes audit logged for GDPR compliance
+• All financial amounts reconciled with finance system
+
+================================================================================
+3. EUROPEAN MARKET CONFIGURATION
+================================================================================
+
+Country-Specific Settings:
+
+Netherlands (NL):
+• VAT Rate: 21%
+• Currency: EUR
+• Postal Code Format: ####XX (e.g., 1012AB)
+• Payment Methods: iDEAL, Bancontact, Credit Cards
+• Language: Dutch (nl)
+
+Germany (DE):
+• VAT Rate: 19%
+• Currency: EUR
+• Postal Code Format: ##### (e.g., 10115)
+• Payment Methods: EC-Karte, SEPA, Credit Cards
+• Language: German (de)
+
+France (FR):
+• VAT Rate: 20%
+• Currency: EUR
+• Postal Code Format: ##### (e.g., 75001)
+• Payment Methods: Carte Bancaire, Credit Cards
+• Language: French (fr)
+
+Belgium (BE):
+• VAT Rate: 21%
+• Currency: EUR
+• Postal Code Format: #### (e.g., 1000)
+• Payment Methods: Bancontact, Maestro
+• Language: Dutch (nl) / French (fr)
+
+Luxembourg (LU):
+• VAT Rate: 17%
+• Currency: EUR
+• Postal Code Format: L-#### (e.g., L-1234)
+• Payment Methods: Credit Cards, SEPA
+• Language: French (fr) / German (de)
+
+================================================================================
+4. PERFORMANCE & INDEXING
+================================================================================
+
+Primary Indexes (Automatic with ORDER BY):
+• customers: customer_id
+• products: product_id
+• orders: order_id
+• stores: store_id
+
+Recommended Secondary Indexes for Analytics:
+
+-- Customer Analytics
+ALTER TABLE customers ADD INDEX idx_email email TYPE minmax GRANULARITY 1000;
+ALTER TABLE customers ADD INDEX idx_country country_code TYPE set(100) GRANULARITY 1000;
+ALTER TABLE customers ADD INDEX idx_loyalty loyalty_tier TYPE set(10) GRANULARITY 1000;
+
+-- Product Analytics
+ALTER TABLE products ADD INDEX idx_category category_l1 TYPE set(50) GRANULARITY 1000;
+ALTER TABLE products ADD INDEX idx_brand brand TYPE set(20) GRANULARITY 1000;
+ALTER TABLE products ADD INDEX idx_active is_active TYPE set(2) GRANULARITY 1000;
+
+-- Order Analytics
+ALTER TABLE orders ADD INDEX idx_order_date order_date TYPE minmax GRANULARITY 8192;
+ALTER TABLE orders ADD INDEX idx_customer customer_id TYPE bloom_filter GRANULARITY 4096;
+ALTER TABLE orders ADD INDEX idx_status order_status TYPE set(20) GRANULARITY 1000;
+
+================================================================================
+5. GDPR COMPLIANCE SPECIFICATIONS
+================================================================================
+
+Personal Data Fields (Requiring Protection):
+• customers.first_name
+• customers.last_name
+• customers.email
+• customers.phone
+• customers.date_of_birth
+• customers.street_address
+• All customer address fields
+
+Data Retention Policy:
+• Active Customers: Data retained indefinitely with consent
+• Inactive Customers: 7 years after last activity (legal requirement)
+• Marketing Data: Deleted immediately upon opt-out
+• Right to Erasure: 30-day SLA for complete data removal
+
+Consent Management:
+• All marketing preferences tracked with explicit consent
+• Timestamp audit trails for all consent changes
+• Automated opt-out processing
+• Data anonymization for business intelligence
+
+================================================================================
+6. INTEGRATION SPECIFICATIONS
+================================================================================
+
+REST API Base URL:
+https://api.eurostyle-operational.com/v4.2/
+
+Authentication:
+OAuth 2.0 Bearer Token required for all API calls
+
+Key Endpoints:
+• GET/POST/PUT /customers/{customer_id}
+• GET/POST/PUT /products/{product_id}
+• GET/POST/PUT /orders/{order_id}
+• GET/POST/PUT /stores/{store_id}
+
+Data Export Capabilities:
+• Bulk exports in CSV, JSON, XML formats
+• Scheduled automated exports
+• Real-time API access
+• Business intelligence connectors
+
+Cross-System Integration:
+• Finance System: Revenue reconciliation
+• HR System: Store staffing integration
+• Webshop System: Customer behavior correlation
+• POS System: In-store transaction processing
+
+================================================================================
+7. SUPPORT & MAINTENANCE
+================================================================================
+
+Technical Support:
+EuroRetail Solutions B.V.
+Database Administration Team
+Email: database-support@euroretail-solutions.com
+Phone: +31 20 555 0123
+Hours: 24/7 for critical issues
+
+Service Level Agreement:
+• Critical Issues: 2 hours response
+• Standard Issues: 24 hours response
+• Enhancement Requests: 5 business days
+• Planned Maintenance: Monthly, off-hours
+
+Database Backup & Recovery:
+• Daily automated backups
+• Point-in-time recovery capability
+• 99.9% uptime SLA
+• Disaster recovery tested monthly
+
+================================================================================
+END OF DOCUMENT - EuroRetail Solutions B.V. Confidential
+© 2024 EuroRetail Solutions B.V. All rights reserved.
+================================================================================

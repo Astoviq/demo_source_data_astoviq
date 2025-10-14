@@ -1,0 +1,281 @@
+# HR Performance Patterns Configuration
+# EuroStyle Fashion - European HR Performance Management Data Generation
+# Compliance: European Employment Law, Performance Management Standards
+
+performance_cycles:
+  annual_cycles:
+    - cycle_id: "2022_ANNUAL"
+      cycle_name: "2022 Annual Performance Review"
+      start_date: "2022-01-15"
+      end_date: "2022-03-31"
+      review_type: "ANNUAL"
+      is_active: false
+      description: "Annual performance review cycle for 2022 performance year"
+      
+    - cycle_id: "2023_ANNUAL" 
+      cycle_name: "2023 Annual Performance Review"
+      start_date: "2023-01-15"
+      end_date: "2023-03-31"
+      review_type: "ANNUAL"
+      is_active: false
+      description: "Annual performance review cycle for 2023 performance year"
+      
+    - cycle_id: "2024_ANNUAL"
+      cycle_name: "2024 Annual Performance Review"  
+      start_date: "2024-01-15"
+      end_date: "2024-03-31"
+      review_type: "ANNUAL"
+      is_active: true
+      description: "Current annual performance review cycle for 2024 performance year"
+      
+    - cycle_id: "2024_MID_YEAR"
+      cycle_name: "2024 Mid-Year Check-in"
+      start_date: "2024-07-01"
+      end_date: "2024-08-15"
+      review_type: "MID_YEAR"
+      is_active: false
+      description: "Mid-year performance check-in and goal adjustment"
+      
+    - cycle_id: "2023_MID_YEAR"
+      cycle_name: "2023 Mid-Year Check-in"
+      start_date: "2023-07-01"
+      end_date: "2023-08-15"
+      review_type: "MID_YEAR"
+      is_active: false
+      description: "Mid-year performance check-in and goal adjustment"
+
+performance_reviews:
+  rating_distributions:
+    overall_rating:
+      exceptional: [4.6, 5.0]    # 8% of employees - Outstanding performance
+      exceeds: [4.0, 4.5]        # 22% of employees - Exceeds expectations
+      meets: [3.0, 3.9]          # 60% of employees - Meets expectations
+      below: [2.0, 2.9]          # 8% of employees - Below expectations
+      unsatisfactory: [1.0, 1.9] # 2% of employees - Unsatisfactory performance
+      
+    goal_achievement_rating:
+      exceptional: [4.7, 5.0]    # 12% - Exceeded all major goals
+      exceeds: [4.0, 4.6]        # 28% - Exceeded most goals
+      meets: [3.2, 3.9]          # 50% - Met most goals
+      below: [2.5, 3.1]          # 8% - Met some goals
+      unsatisfactory: [1.0, 2.4] # 2% - Met few/no goals
+      
+    competency_rating:
+      exceptional: [4.5, 5.0]    # 10% - Exceptional competency demonstration
+      exceeds: [4.0, 4.4]        # 25% - Strong competency demonstration  
+      meets: [3.0, 3.9]          # 55% - Adequate competency demonstration
+      below: [2.2, 2.9]          # 8% - Some competency gaps
+      unsatisfactory: [1.0, 2.1] # 2% - Significant competency gaps
+      
+    leadership_rating:  # Only for management positions
+      exceptional: [4.4, 5.0]    # 6% - Outstanding leadership
+      exceeds: [3.8, 4.3]        # 18% - Strong leadership
+      meets: [3.0, 3.7]          # 65% - Adequate leadership
+      below: [2.3, 2.9]          # 9% - Leadership development needed
+      unsatisfactory: [1.0, 2.2] # 2% - Significant leadership issues
+      
+  promotion_recommendations:
+    percentage_promoted: 0.11    # 11% recommended for promotion annually
+    percentage_lateral_moves: 0.07 # 7% recommended for lateral moves
+    salary_increase_percentage: 0.68  # 68% receive salary increases
+    pip_percentage: 0.04         # 4% placed on performance improvement plans
+    
+  salary_increase_patterns:
+    exceptional_performers: [8.0, 15.0]   # 8-15% salary increase
+    exceeds_expectations: [4.5, 8.0]      # 4.5-8% salary increase
+    meets_expectations: [2.0, 4.5]        # 2-4.5% salary increase
+    below_expectations: [0.0, 2.0]        # 0-2% salary increase
+    no_increase_percentage: 0.15           # 15% receive no increase
+    
+  review_completion_timeline:
+    self_assessment_days: [3, 14]          # Employee completes self-assessment within 3-14 days
+    manager_review_days: [5, 21]           # Manager completes review within 5-21 days  
+    hr_approval_days: [2, 10]              # HR approves review within 2-10 days
+    employee_acknowledgment_days: [1, 7]   # Employee acknowledges within 1-7 days
+    
+    completion_rate_by_deadline:
+      on_time: 0.72              # 72% complete on time
+      within_week_late: 0.20     # 20% complete within a week late
+      more_than_week_late: 0.08  # 8% complete more than a week late
+      
+  goals_and_objectives:
+    average_goals_per_employee: [3, 6]     # 3-6 goals per employee
+    goal_achievement_patterns:
+      all_goals_met: 0.35        # 35% meet all goals
+      most_goals_met: 0.45       # 45% meet most goals (75%+)
+      some_goals_met: 0.15       # 15% meet some goals (50-74%)
+      few_goals_met: 0.05        # 5% meet few goals (<50%)
+      
+    goal_categories:
+      business_results: 0.40     # 40% business/performance goals
+      skill_development: 0.25    # 25% skill/competency development goals
+      process_improvement: 0.20  # 20% process/efficiency improvement goals
+      leadership_development: 0.15 # 15% leadership/people development goals
+      
+  development_needs_common:
+    - "Effective communication and presentation skills"
+    - "Advanced technical expertise and industry knowledge"
+    - "Leadership and team management capabilities" 
+    - "Time management and prioritization skills"
+    - "Strategic thinking and business acumen"
+    - "Cross-functional collaboration and influence"
+    - "Customer-focused mindset and service excellence"
+    - "Innovation, creativity, and problem-solving"
+    - "Change management and adaptability"
+    - "Project management and execution skills"
+    - "Data analysis and decision-making capabilities"
+    - "Mentoring and talent development abilities"
+    
+  strengths_common:
+    - "Demonstrates strong technical skills and expertise"
+    - "Consistently delivers high-quality work and results"
+    - "Excellent team player with collaborative approach"
+    - "Shows initiative and proactive problem-solving"
+    - "Strong analytical and critical thinking abilities"
+    - "Effective communicator with stakeholders"
+    - "Reliable and accountable for commitments"
+    - "Adaptable to change and new challenges"
+    - "Customer-focused with service orientation"
+    - "Detail-oriented with quality focus"
+    - "Shows continuous learning and development mindset"
+    - "Demonstrates leadership potential and influence"
+
+# Role-specific performance patterns
+role_specific_patterns:
+  ENTRY_LEVEL:
+    focus_areas:
+      - skill_development: 0.40  # 40% focus on skill building
+      - basic_performance: 0.35  # 35% focus on basic job performance
+      - integration: 0.25        # 25% focus on team/culture integration
+    development_priority: "technical_skills"
+    promotion_likelihood: 0.05   # 5% promotion rate
+    
+  MID_LEVEL:
+    focus_areas:
+      - performance_results: 0.45 # 45% focus on results delivery
+      - skill_enhancement: 0.30   # 30% focus on advanced skills
+      - collaboration: 0.25       # 25% focus on cross-team collaboration
+    development_priority: "advanced_expertise"
+    promotion_likelihood: 0.12   # 12% promotion rate
+    
+  SENIOR_LEVEL:
+    focus_areas:
+      - strategic_contribution: 0.40 # 40% focus on strategic impact
+      - leadership: 0.35          # 35% focus on leadership capabilities
+      - mentoring: 0.25           # 25% focus on developing others
+    development_priority: "leadership_strategic"
+    promotion_likelihood: 0.15   # 15% promotion rate
+    
+  MANAGER_LEVEL:
+    focus_areas:
+      - team_performance: 0.40    # 40% focus on team results
+      - leadership_effectiveness: 0.35 # 35% focus on leadership skills
+      - business_results: 0.25    # 25% focus on business outcomes
+    development_priority: "executive_leadership"
+    promotion_likelihood: 0.08   # 8% promotion rate (fewer senior roles)
+
+# Department-specific performance criteria
+department_performance_criteria:
+  IT:
+    key_metrics:
+      - "System uptime and reliability"
+      - "Project delivery on time and budget"
+      - "Technical innovation and problem-solving"
+      - "User satisfaction with IT services"
+    development_focus: "technical_leadership"
+    
+  SALES:
+    key_metrics:
+      - "Revenue targets and quota achievement"
+      - "Customer acquisition and retention"
+      - "Pipeline development and management"
+      - "Customer satisfaction scores"
+    development_focus: "sales_excellence"
+    
+  HR:
+    key_metrics:
+      - "Employee engagement and satisfaction"
+      - "Talent acquisition and retention"
+      - "Compliance and risk management"
+      - "HR service delivery efficiency"
+    development_focus: "people_development"
+    
+  FINANCE:
+    key_metrics:
+      - "Financial reporting accuracy and timeliness"
+      - "Cost management and budget control"
+      - "Process efficiency and automation"
+      - "Compliance with financial regulations"
+    development_focus: "financial_expertise"
+    
+  OPERATIONS:
+    key_metrics:
+      - "Operational efficiency and cost control"
+      - "Quality metrics and customer satisfaction"
+      - "Safety performance and compliance"
+      - "Process improvement initiatives"
+    development_focus: "operational_excellence"
+    
+  MARKETING:
+    key_metrics:
+      - "Marketing campaign effectiveness and ROI"
+      - "Brand awareness and market share"
+      - "Lead generation and conversion"
+      - "Creative quality and innovation"
+    development_focus: "marketing_strategy"
+
+# European employment law considerations
+european_compliance:
+  performance_management_requirements:
+    documentation_required: true      # Performance discussions must be documented
+    employee_rights_notification: true # Employees must be informed of rights
+    appeal_process_available: true    # Appeal process for performance ratings
+    
+  works_council_consultation:
+    required_countries: ["DE"]        # Germany requires works council involvement
+    consultation_topics:
+      - "Performance management policy changes"
+      - "Performance-related terminations"
+      - "Promotion and development processes"
+      
+  country_specific_requirements:
+    DE:  # Germany
+      codetermination_rights: true   # Employee representation in decisions
+      written_warnings_required: true # Formal written warnings for poor performance
+      improvement_period_days: 90     # Minimum improvement period
+      
+    FR:  # France
+      professional_interview_required: true # Annual professional interviews
+      career_development_discussion: true   # Career development must be discussed
+      training_rights_notification: true    # Training rights must be communicated
+      
+    NL:  # Netherlands
+      performance_improvement_plan_required: true # PIP required before termination
+      employee_consultation_rights: true          # Employee consultation rights
+      
+    BE:  # Belgium
+      annual_review_mandatory: true  # Annual reviews are legally required
+      career_development_plan: true  # Career development planning mandatory
+
+# Review quality and calibration
+review_quality_standards:
+  calibration_sessions:
+    required: true                    # Calibration sessions required
+    frequency: "per_cycle"            # Once per review cycle
+    participants: "managers_hr"       # Managers and HR participate
+    
+  rating_distribution_targets:
+    exceptional_cap: 0.10             # Maximum 10% exceptional ratings
+    exceeds_target: 0.25              # Target 25% exceeds ratings
+    meets_range: [0.50, 0.65]         # 50-65% meets expectations
+    below_expectations_max: 0.12      # Maximum 12% below expectations
+    
+  review_quality_checks:
+    manager_training_required: true   # Managers must be trained
+    hr_review_approval: true          # HR must approve reviews
+    employee_feedback_collection: true # Collect feedback on review process
+    
+  continuous_improvement:
+    annual_process_review: true       # Annual review of performance process
+    employee_survey_feedback: true    # Survey employees on review experience
+    manager_effectiveness_tracking: true # Track manager review effectiveness

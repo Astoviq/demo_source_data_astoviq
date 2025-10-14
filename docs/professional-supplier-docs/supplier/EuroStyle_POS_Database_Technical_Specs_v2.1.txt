@@ -1,0 +1,455 @@
+================================================================================
+EUROSTYLE POS DATABASE - TECHNICAL SPECIFICATION v2.1
+================================================================================
+
+Supplier:        RetailTech Europe GmbH
+Address:         Speicherstadt, Hamburg, Germany
+Contact:         pos-support@retailtech-europe.com
+Phone:           +49 40 555 0456
+Document Date:   October 2024
+System Version:  EuroStyle POS Platform v3.5
+Database Name:   eurostyle_pos
+Technology:      ClickHouse Analytics Database
+
+================================================================================
+1. DATABASE OVERVIEW
+================================================================================
+
+The EuroStyle POS Database manages all point-of-sale transactions across 47+ 
+retail locations in 5 European markets. It provides real-time transaction 
+processing, employee performance tracking, and perfect financial reconciliation 
+with the operational and finance systems.
+
+Key Capabilities:
+• 1,500+ daily transactions across all stores
+• Real-time payment processing with European VAT compliance
+• Multi-payment method support (Card, Cash, Mobile, Contactless)
+• Employee performance tracking and shift management
+• Perfect revenue reconciliation with finance system
+• PCI DSS compliant payment data handling
+
+================================================================================
+2. DATABASE SCHEMA
+================================================================================
+
+-- Database created by master init script
+-- USE eurostyle_pos;
+
+--------------------------------------------------------------------------------
+2.1 TRANSACTIONS TABLE
+--------------------------------------------------------------------------------
+Purpose: Core transaction records for all point-of-sale activities
+
+CREATE TABLE IF NOT EXISTS eurostyle_pos.transactions (
+    -- Transaction Identification
+    transaction_id String,             -- TXN_STORE001_20241014_000001
+    store_id String,                   -- FK to eurostyle_operational.stores
+    register_id String,                -- REG_001, REG_002, etc.
+    employee_id String,                -- FK to eurostyle_hr.employees (cashier)
+    
+    -- Transaction Timing
+    transaction_date Date,
+    transaction_datetime DateTime,
+    business_date Date,                -- Accounting date (can differ from transaction date)
+    
+    -- Customer Information (Optional)
+    customer_id Nullable(String),      -- FK to eurostyle_operational.customers (if loyalty member)
+    customer_phone Nullable(String),   -- Phone lookup for returns
+    customer_email Nullable(String),   -- Email receipt delivery
+    
+    -- Financial Summary (EUR-based)
+    subtotal_eur Decimal64(2),          -- Before tax and discounts
+    tax_amount_eur Decimal64(2),        -- Total VAT/tax applied
+    discount_amount_eur Decimal64(2),   -- Total discounts applied
+    total_amount_eur Decimal64(2),      -- Final amount charged to customer
+    
+    -- Transaction Details
+    item_count UInt16,                  -- Number of items in transaction
+    transaction_type String,            -- SALE, RETURN, EXCHANGE, VOID
+    transaction_status String,          -- PENDING, COMPLETED, CANCELLED, VOIDED
+    
+    -- Payment Information
+    payment_method String,              -- CASH, CARD, CONTACTLESS, MOBILE, MIXED
+    payment_status String,              -- COMPLETED, PENDING, FAILED, REFUNDED
+    change_amount_eur Nullable(Decimal64(2)), -- Cash change given to customer
+    
+    -- Operational Data
+    receipt_number String,              -- Printed receipt number (customer-facing)
+    pos_sequence_number UInt32,         -- Sequential number for the day/register
+    training_mode Bool DEFAULT false,   -- Training transaction flag
+    
+    -- Returns and Exchanges
+    original_transaction_id Nullable(String), -- For returns/exchanges
+    return_reason Nullable(String),     -- Reason for return/exchange
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY (store_id, transaction_date, transaction_id);
+
+Business Rules:
+• Every transaction must have a valid employee (cashier)
+• VAT rates automatically calculated by store country
+• Receipt numbers sequential per store per day
+• Training transactions excluded from financial reporting
+• Perfect reconciliation with finance system GL entries
+
+--------------------------------------------------------------------------------
+2.2 TRANSACTION_ITEMS TABLE
+--------------------------------------------------------------------------------
+Purpose: Individual line items within each POS transaction
+
+CREATE TABLE IF NOT EXISTS eurostyle_pos.transaction_items (
+    -- Item Identification
+    item_id String,                     -- Generated unique identifier
+    transaction_id String,              -- FK to transactions
+    line_number UInt8,                  -- Order within transaction (1, 2, 3...)
+    
+    -- Product Information
+    product_id String,                  -- FK to eurostyle_operational.products
+    product_sku String,                 -- Barcode/SKU scanned at POS
+    product_name String,                -- Product name at time of sale
+    size String,                        -- Size selected by customer
+    color String,                       -- Color selected by customer
+    
+    -- Pricing and Quantities
+    quantity Int8,                      -- Can be negative for returns
+    unit_price_eur Decimal64(2),        -- Price per item (after item-level discounts)
+    line_total_eur Decimal64(2),        -- quantity * unit_price_eur
+    regular_price_eur Decimal64(2),     -- Original catalog price before discounts
+    
+    -- Discounts and Promotions
+    discount_amount_eur Decimal64(2),   -- Total discount applied to this line
+    discount_reason String,             -- PROMOTION, EMPLOYEE, CLEARANCE, DAMAGE
+    promotion_id Nullable(String),      -- FK to promotional campaigns
+    
+    -- European VAT Information
+    tax_rate Decimal64(4),              -- VAT rate applied (0.21 for NL, 0.19 for DE, etc.)
+    tax_amount_eur Decimal64(2),        -- VAT amount for this line item
+    
+    -- Inventory Impact
+    inventory_adjustment Bool,          -- Whether this affects inventory counts
+    
+    -- Returns and Exchanges
+    return_reason Nullable(String),     -- If this is a returned item
+    original_item_id Nullable(String),  -- Original item being returned/exchanged
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY (transaction_id, line_number);
+
+Business Rules:
+• Each line item links to actual product in operational database
+• Product information captured at sale time for historical accuracy
+• VAT calculation varies by product type and store country
+• Return eligibility determined by product category and date
+• Negative quantities used for returns and voids
+
+--------------------------------------------------------------------------------
+2.3 PAYMENTS TABLE
+--------------------------------------------------------------------------------
+Purpose: Detailed payment method breakdown (supports split payments)
+
+CREATE TABLE IF NOT EXISTS eurostyle_pos.payments (
+    -- Payment Identification
+    payment_id String,                  -- PAY_TXN123_001, PAY_TXN123_002
+    transaction_id String,              -- FK to transactions
+    payment_sequence UInt8,             -- 1, 2, 3... for split payments
+    
+    -- Payment Method Details
+    payment_method String,              -- CASH, VISA, MASTERCARD, AMEX, CONTACTLESS, MOBILE_PAY
+    payment_type String,                -- CARD, CASH, DIGITAL_WALLET, VOUCHER
+    amount_eur Decimal64(2),            -- Amount paid using this method
+    
+    -- Card Payment Details (PCI DSS Compliant)
+    card_type Nullable(String),         -- DEBIT, CREDIT
+    card_last_four Nullable(String),    -- Last 4 digits for receipt display
+    authorization_code Nullable(String), -- Bank authorization code
+    transaction_ref Nullable(String),   -- Payment processor reference
+    
+    -- Cash Payment Details
+    cash_tendered_eur Nullable(Decimal64(2)), -- Cash amount given by customer
+    change_due_eur Nullable(Decimal64(2)),     -- Change returned to customer
+    
+    -- Payment Processing Status
+    payment_status String,              -- APPROVED, DECLINED, PENDING, VOIDED, REFUNDED
+    processor_response Nullable(String), -- Response message from payment processor
+    
+    -- Timing Information
+    payment_timestamp DateTime,
+    authorization_timestamp Nullable(DateTime),
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY (transaction_id, payment_sequence);
+
+Business Rules:
+• Split payments fully supported (multiple payment methods per transaction)
+• All card data tokenized for PCI DSS compliance
+• Country-specific payment methods automatically detected
+• All payment data GDPR compliant with customer consent
+
+--------------------------------------------------------------------------------
+2.4 DISCOUNTS TABLE
+--------------------------------------------------------------------------------
+Purpose: Comprehensive discount and promotion tracking
+
+CREATE TABLE IF NOT EXISTS eurostyle_pos.discounts (
+    -- Discount Identification
+    discount_id String,                 -- DISC_TXN123_001
+    transaction_id String,              -- FK to transactions
+    item_id Nullable(String),           -- FK to transaction_items (null for transaction-level)
+    
+    -- Discount Details
+    discount_type String,               -- PERCENTAGE, FIXED_AMOUNT, BOGO, EMPLOYEE, LOYALTY
+    discount_name String,               -- "Staff Discount", "Buy 2 Get 1 Free", etc.
+    discount_code Nullable(String),     -- Promotion code if applicable
+    promotion_id Nullable(String),      -- FK to promotional campaigns
+    
+    -- Discount Calculation
+    discount_percentage Nullable(Decimal64(2)), -- For percentage-based discounts
+    discount_amount_eur Decimal64(2),   -- Final discount amount applied
+    original_amount_eur Decimal64(2),   -- Amount before discount
+    final_amount_eur Decimal64(2),      -- Amount after discount
+    
+    -- Authorization and Approval
+    authorized_by String,               -- Employee ID who authorized discount
+    authorization_code Nullable(String), -- Manager override code if required
+    discount_reason String,             -- PROMOTION, PRICE_MATCH, DAMAGE, CLEARANCE
+    
+    -- System Fields
+    created_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (transaction_id, discount_id);
+
+Business Rules:
+• Manager override required for discounts exceeding 20%
+• Loyalty discounts automatically applied based on customer tier
+• Employee discounts tracked for tax compliance and reporting
+• Campaign discounts validate against active promotion rules
+
+--------------------------------------------------------------------------------
+2.5 EMPLOYEE_ASSIGNMENTS TABLE
+--------------------------------------------------------------------------------
+Purpose: Employee work assignments and POS system access control
+
+CREATE TABLE IF NOT EXISTS eurostyle_pos.employee_assignments (
+    -- Assignment Identification
+    assignment_id String,               -- ASSIGN_EMP123_STORE001
+    employee_id String,                 -- FK to eurostyle_hr.employees
+    store_id String,                    -- FK to eurostyle_operational.stores
+    
+    -- Assignment Details
+    assignment_type String,             -- PERMANENT, TEMPORARY, RELIEF
+    role String,                        -- CASHIER, SUPERVISOR, MANAGER
+    register_access Array(String),      -- Which registers employee can access
+    
+    -- Authorization Levels
+    discount_limit_eur Decimal64(2),    -- Maximum discount employee can authorize
+    void_authorization Bool,            -- Can void transactions
+    refund_authorization Bool,          -- Can process refunds without manager
+    training_mode Bool,                 -- Employee in training mode
+    
+    -- Assignment Period
+    start_date Date,
+    end_date Nullable(Date),
+    is_active Bool DEFAULT true,
+    
+    -- System Fields
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
+ORDER BY (store_id, employee_id);
+
+Business Rules:
+• All POS access requires valid employee assignment
+• Authorization levels based on role and experience
+• Training mode transactions excluded from sales reporting
+• Access rights audited for security compliance
+
+================================================================================
+3. EUROPEAN VAT & PAYMENT COMPLIANCE
+================================================================================
+
+Country-Specific VAT Rates (Automatically Applied):
+
+Netherlands (NL):
+• Standard VAT: 21%
+• Reduced VAT: 9% (books, food)
+• Preferred Payments: iDEAL (60%), Bancontact (25%), Cards (15%)
+
+Germany (DE):
+• Standard VAT: 19%
+• Reduced VAT: 7% (books, food)
+• Preferred Payments: EC-Karte (45%), Cash (30%), Credit Cards (25%)
+
+France (FR):
+• Standard VAT: 20%
+• Reduced VAT: 10% (books, food)
+• Preferred Payments: Carte Bancaire (50%), Cards (35%), Cash (15%)
+
+Belgium (BE):
+• Standard VAT: 21%
+• Reduced VAT: 12% (books, food)
+• Preferred Payments: Bancontact (55%), Maestro (25%), Cards (20%)
+
+Luxembourg (LU):
+• Standard VAT: 17%
+• Reduced VAT: 8% (books, food)
+• Preferred Payments: Credit Cards (60%), SEPA (25%), Cash (15%)
+
+Payment Method Support by Country:
+• iDEAL: Netherlands only
+• Bancontact: Belgium, Netherlands
+• EC-Karte: Germany only
+• Carte Bancaire: France only
+• Visa/Mastercard: All countries
+• Contactless: All countries (up to €50 without PIN)
+
+================================================================================
+4. PERFORMANCE & INDEXING
+================================================================================
+
+Primary Indexes (Automatic with ORDER BY):
+• transactions: (store_id, transaction_date, transaction_id)
+• transaction_items: (transaction_id, line_number)
+• payments: (transaction_id, payment_sequence)
+• discounts: (transaction_id, discount_id)
+• employee_assignments: (store_id, employee_id)
+
+Recommended Secondary Indexes for Analytics:
+
+-- Sales Analysis Indexes
+ALTER TABLE transactions ADD INDEX idx_date_store (transaction_date, store_id) 
+TYPE minmax GRANULARITY 1000;
+
+ALTER TABLE transactions ADD INDEX idx_employee employee_id 
+TYPE set(1000) GRANULARITY 1000;
+
+ALTER TABLE transactions ADD INDEX idx_payment_method payment_method 
+TYPE set(20) GRANULARITY 1000;
+
+-- Product Performance Indexes
+ALTER TABLE transaction_items ADD INDEX idx_product product_id 
+TYPE bloom_filter GRANULARITY 4096;
+
+ALTER TABLE transaction_items ADD INDEX idx_category 
+(SELECT category_l1 FROM eurostyle_operational.products WHERE product_id = transaction_items.product_id)
+TYPE set(50) GRANULARITY 1000;
+
+-- Financial Reconciliation Indexes
+ALTER TABLE transactions ADD INDEX idx_amount total_amount_eur 
+TYPE minmax GRANULARITY 8192;
+
+ALTER TABLE payments ADD INDEX idx_payment_status payment_status 
+TYPE set(10) GRANULARITY 1000;
+
+================================================================================
+5. SECURITY & COMPLIANCE
+================================================================================
+
+PCI DSS Compliance:
+• All sensitive card data tokenized using industry-standard tokenization
+• No card numbers, CVV, or PIN data stored in database
+• Access logs maintained for all payment data queries
+• Regular security audits and penetration testing
+• Payment processors certified to PCI DSS Level 1
+
+GDPR Compliance:
+• Customer consent tracked for all payment data collection
+• Right to erasure: 30-day SLA for complete data removal
+• Personal payment data encrypted at rest and in transit
+• Access controls with role-based permissions
+• Audit trails for all data access and modifications
+
+Data Retention:
+• Transaction data: 7 years (tax compliance requirement)
+• Payment data: Tokenized indefinitely, actual data deleted after 18 months
+• Employee data: Linked to HR system retention policies
+• Audit logs: 10 years for compliance
+
+================================================================================
+6. INTEGRATION SPECIFICATIONS
+================================================================================
+
+REST API Base URL:
+https://api.eurostyle-pos.com/v3.5/
+
+Authentication:
+OAuth 2.0 Bearer Token with role-based access control
+
+Core API Endpoints:
+
+Transaction Management:
+• GET/POST /transactions/{transaction_id}
+• POST /transactions/{transaction_id}/void
+• POST /transactions/{transaction_id}/refund
+
+Real-time Reporting:
+• GET /stores/{store_id}/daily-summary/{date}
+• GET /stores/{store_id}/live-metrics
+• GET /employees/{employee_id}/performance
+
+Payment Processing:
+• POST /payments/process
+• GET /payments/{payment_id}/status
+• POST /payments/{payment_id}/refund
+
+Real-time Webhooks:
+• Transaction completion notifications
+• Payment failure alerts
+• End-of-shift summary reports
+• Inventory update notifications
+
+Cross-System Integration:
+• Operational Database: Customer and product synchronization
+• Finance System: Perfect revenue reconciliation with GL entries
+• HR System: Employee performance tracking and shift management
+• Webshop Analytics: Omnichannel customer behavior analysis
+
+Data Export Formats:
+• CSV: Daily transaction exports
+• JSON: Real-time API responses
+• XML: Legacy system integration
+• EDI: Financial system integration
+
+================================================================================
+7. SUPPORT & MAINTENANCE
+================================================================================
+
+Technical Support:
+RetailTech Europe GmbH
+POS Systems Division
+Speicherstadt, Hamburg, Germany
+Email: pos-support@retailtech-europe.com
+Phone: +49 40 555 0456
+Hours: 24/7 for critical POS issues
+
+Service Level Agreements:
+• Critical POS Down: 1 hour response, 4 hours resolution
+• Payment Processing Issues: 30 minutes response, 2 hours resolution
+• Standard Issues: 8 hours response, 24 hours resolution
+• Enhancement Requests: 2 weeks analysis, 6 weeks delivery
+
+Maintenance Schedule:
+• System updates: Monthly, during off-hours (02:00-04:00 local time)
+• Database optimization: Weekly, automated
+• Security patches: As required, within 48 hours
+• Hardware maintenance: Quarterly, scheduled in advance
+
+Monitoring & Alerting:
+• Real-time transaction monitoring
+• Payment failure rate alerts
+• Performance threshold monitoring
+• Security breach detection
+• Automated backup verification
+
+================================================================================
+END OF DOCUMENT - RetailTech Europe GmbH Confidential
+© 2024 RetailTech Europe GmbH. All rights reserved.
+================================================================================

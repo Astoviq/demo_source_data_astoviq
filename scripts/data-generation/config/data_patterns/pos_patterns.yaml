@@ -1,0 +1,301 @@
+# POS (Point of Sales) Data Patterns Configuration
+# Configuration for generating realistic European retail POS data
+
+pos_configuration:
+  # Store coverage and employee assignment patterns
+  store_coverage:
+    # Percentage of employees assigned to sales roles
+    sales_staff_percentage: 22
+    # Distribution of sales roles
+    role_distribution:
+      sales_associate: 70
+      shift_supervisor: 20
+      store_manager: 10
+    
+    # Stores that have POS systems (exclude online-only)
+    pos_enabled_stores:
+      - flagship
+      - standard
+      - outlet
+    
+    # Staff per store by format
+    staff_per_store:
+      flagship: [8, 15]     # min-max employees per flagship store
+      standard: [4, 8]      # min-max employees per standard store  
+      outlet: [2, 5]        # min-max employees per outlet store
+
+  # Transaction volume patterns
+  transaction_patterns:
+    # Base transaction frequency per day by store format
+    daily_transactions:
+      flagship: [150, 300]   # min-max transactions per day
+      standard: [80, 160]    # min-max transactions per day
+      outlet: [30, 80]       # min-max transactions per day
+    
+    # Hourly distribution (24-hour format, percentage of daily transactions)
+    hourly_distribution:
+      9: 2     # 9:00 AM - store opening
+      10: 4    # 10:00 AM
+      11: 6    # 11:00 AM
+      12: 8    # 12:00 PM - lunch rush
+      13: 10   # 1:00 PM - peak lunch
+      14: 9    # 2:00 PM
+      15: 7    # 3:00 PM
+      16: 8    # 4:00 PM
+      17: 11   # 5:00 PM - after work rush
+      18: 12   # 6:00 PM - peak evening
+      19: 10   # 7:00 PM
+      20: 8    # 8:00 PM
+      21: 5    # 9:00 PM - closing rush
+    
+    # Weekly patterns (Monday = 1, Sunday = 7)
+    daily_multipliers:
+      1: 0.8   # Monday
+      2: 0.9   # Tuesday  
+      3: 0.9   # Wednesday
+      4: 1.0   # Thursday
+      5: 1.3   # Friday
+      6: 1.4   # Saturday - peak
+      7: 1.2   # Sunday
+    
+    # Seasonal patterns (by month)
+    seasonal_multipliers:
+      1: 0.7   # January - post-holiday low
+      2: 0.8   # February
+      3: 1.1   # March - spring fashion
+      4: 1.2   # April
+      5: 1.1   # May
+      6: 1.0   # June
+      7: 0.9   # July - summer lull
+      8: 0.8   # August - vacation period
+      9: 1.3   # September - back to school/work
+      10: 1.4  # October - fall fashion
+      11: 1.6  # November - Black Friday, pre-holiday
+      12: 1.5  # December - holiday shopping
+
+  # Transaction composition patterns
+  transaction_composition:
+    # Items per transaction distribution
+    items_per_transaction:
+      1: 35    # 35% single item purchases
+      2: 25    # 25% two items
+      3: 20    # 20% three items
+      4: 12    # 12% four items
+      5: 5     # 5% five items
+      6: 2     # 2% six items
+      7: 1     # 1% seven+ items (capped at 7)
+    
+    # Average transaction values by store format (EUR)
+    average_transaction_value:
+      flagship: [65, 120]    # Higher-end clientele
+      standard: [45, 85]     # Standard customers
+      outlet: [25, 55]       # Value-conscious shoppers
+    
+    # Product category preferences (percentage of transactions)
+    category_distribution:
+      Men:
+        Tops: 25
+        Bottoms: 20
+        Outerwear: 15
+        Shoes: 10
+        Accessories: 8
+      Women:
+        Tops: 22
+        Bottoms: 18
+        Dresses: 15
+        Outerwear: 12
+        Shoes: 12
+        Accessories: 10
+      Kids:
+        All: 8
+    
+    # Discount application patterns
+    discount_patterns:
+      no_discount: 60        # 60% full price
+      seasonal_sale: 25      # 25% seasonal discounts (10-30% off)
+      employee_discount: 8   # 8% employee purchases (20% off)
+      clearance: 5          # 5% clearance items (40-60% off)
+      loyalty_discount: 2    # 2% loyalty program discounts
+
+  # Payment method patterns (European market)
+  payment_methods:
+    distribution:
+      card_payment: 58       # 58% card (debit/credit)
+      mobile_payment: 27     # 27% mobile (Apple Pay, Google Pay, etc.)
+      cash: 12              # 12% cash (decreasing trend)
+      gift_card: 2          # 2% gift cards
+      employee_discount: 1   # 1% employee purchases
+    
+    # Card provider distribution (for card payments)
+    card_providers:
+      visa: 45
+      mastercard: 40
+      amex: 8
+      maestro: 5
+      other: 2
+    
+    # Mobile payment provider distribution
+    mobile_providers:
+      apple_pay: 40
+      google_pay: 35
+      samsung_pay: 15
+      paypal: 8
+      other: 2
+
+  # Customer behavior patterns
+  customer_patterns:
+    # Customer type distribution
+    customer_types:
+      regular: 70           # Regular customers
+      tourist: 15           # Tourists/visitors
+      vip: 10              # VIP/loyalty customers
+      employee: 3          # Employee purchases
+      first_time: 2        # First-time customers
+    
+    # Loyalty program participation
+    loyalty_participation: 35  # 35% of customers have loyalty cards
+    
+    # Return patterns
+    return_rates:
+      overall: 6.5          # 6.5% overall return rate
+      by_category:
+        Dresses: 8.5        # Higher return rate for fit issues
+        Shoes: 9.2          # Sizing issues
+        Tops: 5.8           # Lower return rate
+        Bottoms: 7.1        # Moderate return rate
+        Outerwear: 4.2      # Lower return rate
+        Accessories: 3.1    # Lowest return rate
+    
+    # Return reasons
+    return_reasons:
+      wrong_size: 40
+      quality_issue: 20
+      wrong_color: 15
+      changed_mind: 12
+      damaged: 8
+      other: 5
+
+  # Employee performance patterns
+  employee_performance:
+    # Sales performance distribution (transactions per hour)
+    performance_distribution:
+      high_performer: 15     # 15% of staff - 8+ transactions/hour
+      above_average: 25      # 25% of staff - 6-8 transactions/hour
+      average: 40           # 40% of staff - 4-6 transactions/hour
+      below_average: 15     # 15% of staff - 2-4 transactions/hour
+      underperformer: 5     # 5% of staff - <2 transactions/hour
+    
+    # Commission structure (for sales staff)
+    commission_rates:
+      base_rate: 0.02       # 2% base commission
+      target_bonus: 0.01    # Additional 1% for meeting targets
+      high_performer_bonus: 0.005  # Additional 0.5% for top performers
+    
+    # Shift patterns
+    shift_schedules:
+      full_time:
+        hours_per_week: [35, 40]
+        shifts_per_week: [4, 5]
+        shift_duration: [7, 9]   # 7-9 hour shifts
+      part_time:
+        hours_per_week: [16, 25]
+        shifts_per_week: [2, 3]
+        shift_duration: [4, 8]   # 4-8 hour shifts
+    
+    # Weekend and evening premium rates
+    premium_rates:
+      weekend: 1.25         # 25% premium for weekend shifts
+      evening: 1.15         # 15% premium for evening shifts (after 17:00)
+      holiday: 2.0          # 100% premium for holiday shifts
+
+  # Store operation patterns
+  store_operations:
+    # Operating hours by day
+    operating_hours:
+      monday: ["10:00", "20:00"]
+      tuesday: ["10:00", "20:00"]
+      wednesday: ["10:00", "20:00"]
+      thursday: ["10:00", "21:00"]   # Late night Thursday
+      friday: ["10:00", "21:00"]     # Extended Friday
+      saturday: ["09:00", "21:00"]   # Weekend hours
+      sunday: ["11:00", "19:00"]     # Reduced Sunday hours
+    
+    # Holiday schedules (major European holidays)
+    holiday_operations:
+      reduced_hours:
+        - "2024-12-24"  # Christmas Eve
+        - "2024-12-31"  # New Year's Eve
+      closed:
+        - "2024-01-01"  # New Year's Day
+        - "2024-12-25"  # Christmas Day
+        - "2024-12-26"  # Boxing Day
+    
+    # POS terminal configuration
+    pos_terminals:
+      flagship: [4, 8]      # 4-8 terminals per flagship
+      standard: [2, 4]      # 2-4 terminals per standard
+      outlet: [1, 2]        # 1-2 terminals per outlet
+    
+    # Peak period staffing multipliers
+    staffing_multipliers:
+      regular: 1.0
+      busy: 1.3             # Friday-Sunday
+      peak_season: 1.5      # November-December
+      sale_period: 1.4      # Major sale events
+
+  # Data quality and validation rules
+  data_validation:
+    # Transaction amount ranges by store format (EUR)
+    amount_validation:
+      min_transaction: 5.00
+      max_transaction: 2000.00
+      average_ranges:
+        flagship: [50, 150]
+        standard: [30, 100]
+        outlet: [15, 75]
+    
+    # Business rule validations
+    business_rules:
+      max_items_per_transaction: 15
+      max_discount_percentage: 70
+      min_employee_hours_per_week: 8
+      max_employee_hours_per_week: 45
+      max_consecutive_work_days: 6
+    
+    # Data consistency checks
+    consistency_rules:
+      transaction_total_equals_sum: true
+      payment_sum_equals_total: true
+      inventory_deduction_required: true
+      employee_shift_coverage: true
+
+# Integration mappings with existing databases
+integration_mappings:
+  # Maps to existing Operations database
+  operations_integration:
+    store_mapping: "eurostyle_operational.stores.store_id"
+    product_mapping: "eurostyle_operational.products.product_id"
+    customer_mapping: "eurostyle_operational.customers.customer_id"
+    
+  # Maps to existing HR database
+  hr_integration:
+    employee_mapping: "eurostyle_hr.employees.employee_id"
+    performance_integration: true
+    payroll_integration: true
+    
+  # Maps to existing Finance database
+  finance_integration:
+    gl_account_mapping:
+      sales_revenue: "4000"
+      cash_account: "1100"
+      card_receivable: "1110"
+      tax_payable: "2200"
+      cost_of_goods_sold: "5000"
+      inventory: "1300"
+    
+  # Revenue reconciliation settings
+  reconciliation_settings:
+    match_operations_revenue: true
+    generate_gl_entries: true
+    daily_reconciliation: true
+    variance_tolerance_eur: 0.01

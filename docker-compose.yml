@@ -1,0 +1,54 @@
+services:
+  eurostyle-clickhouse:
+    container_name: ${CLICKHOUSE_CONTAINER_NAME:-eurostyle_clickhouse_retail}
+    image: clickhouse/clickhouse-server:23.12
+    restart: unless-stopped
+    
+    ports:
+      - "${CLICKHOUSE_HTTP_PORT:-8124}:8123"  # HTTP interface (isolated from production 8123)
+      - "${CLICKHOUSE_NATIVE_PORT:-9002}:9000"  # Native interface (isolated from production 9000/9001)
+    
+    volumes:
+      # Database initialization
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./data:/var/lib/clickhouse:rw
+      - ./logs:/var/log/clickhouse-server:rw
+      - ./config:/etc/clickhouse-server/config.d:ro
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      
+    environment:
+      CLICKHOUSE_DB: ${DEFAULT_DATABASE:-eurostyle_operational}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-eurostyle_user}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-eurostyle_demo_2024}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --host=localhost --port=9000 --query='SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    networks:
+      - eurostyle-retail-network
+    
+    # Resource limits for demo environment
+    deploy:
+      resources:
+        limits:
+          memory: ${CLICKHOUSE_MEMORY_LIMIT:-6G}
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+
+networks:
+  eurostyle-retail-network:
+    driver: bridge
+    name: ${DOCKER_NETWORK:-eurostyle_retail_network}
+
+volumes:
+  eurostyle-retail-data:
+    name: eurostyle_clickhouse_retail_data
+  eurostyle-retail-logs:
+    name: eurostyle_clickhouse_retail_logs

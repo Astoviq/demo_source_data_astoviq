@@ -1,0 +1,30 @@
+# EuroStyle Fashion Data Generator Requirements
+# Python 3.9+ required
+
+# Core data generation libraries
+faker==24.0.0                    # Realistic fake data generation
+pandas==2.1.4                    # Data manipulation and analysis
+numpy==1.24.4                    # Numerical operations
+clickhouse-driver==0.2.7         # ClickHouse Python client
+python-dotenv==1.0.1             # Environment variable management
+
+# Date and time handling
+python-dateutil==2.8.2          # Extended date utilities
+pytz==2023.4                     # Timezone handling for European markets
+
+# Configuration and logging
+pyyaml==6.0.1                    # YAML configuration files
+structlog==23.2.0                # Structured logging
+
+# Data validation and quality
+great-expectations==0.18.8       # Data quality validation
+pydantic==2.5.3                  # Data models and validation
+
+# European-specific data
+geopy==2.4.1                     # Geographic data for European cities
+babel==2.14.0                    # Internationalization for EU languages
+
+# Utilities
+tqdm==4.66.1                     # Progress bars for data generation
+colorama==0.4.6                  # Colored terminal output
+rich==13.7.0                     # Rich terminal formatting

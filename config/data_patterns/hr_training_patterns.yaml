@@ -1,0 +1,182 @@
+# HR Training Patterns Configuration
+# EuroStyle Fashion - European HR Training Data Generation
+# Compliance: GDPR, European Employment Law, Multi-country requirements
+
+training_programs:
+  categories:
+    - COMPLIANCE        # GDPR, Safety, Ethics, Legal requirements
+    - TECHNICAL         # Software, Systems, Processes, Tools
+    - LEADERSHIP        # Management, Communication, Team building
+    - PROFESSIONAL      # Industry skills, Certifications, Expertise
+    - ONBOARDING        # New employee orientation and integration
+    - LANGUAGE          # Multi-language support for European operations
+    
+  european_compliance:
+    mandatory_programs:
+      - GDPR_DATA_PROTECTION
+      - WORKPLACE_SAFETY_EU
+      - ANTI_DISCRIMINATION
+      - CODE_OF_CONDUCT
+      - FIRE_SAFETY_PROCEDURES
+      - FIRST_AID_BASIC
+      - MANUAL_HANDLING
+      - DISPLAY_SCREEN_EQUIPMENT
+    renewal_periods:
+      GDPR_DATA_PROTECTION: 12      # months - Annual renewal required
+      WORKPLACE_SAFETY_EU: 24       # months - Biennial renewal
+      FIRST_AID_BASIC: 36           # months - Every 3 years
+      FIRE_SAFETY_PROCEDURES: 12    # months - Annual renewal
+      
+  country_specific_requirements:
+    DE:  # Germany
+      mandatory: ["WORKS_COUNCIL_AWARENESS", "GERMAN_LABOR_LAW"]
+      language_support: ["German", "English"]
+    FR:  # France
+      mandatory: ["FRENCH_LABOR_CODE", "SOCIAL_SECURITY_FRANCE"] 
+      language_support: ["French", "English"]
+    NL:  # Netherlands
+      mandatory: ["DUTCH_EMPLOYMENT_LAW", "ARBO_WET_COMPLIANCE"]
+      language_support: ["Dutch", "English"]
+    BE:  # Belgium
+      mandatory: ["BELGIAN_LABOR_LAW", "MULTILINGUAL_WORKPLACE"]
+      language_support: ["Dutch", "French", "English"]
+      
+  program_distribution:
+    COMPLIANCE: 0.25      # 25% of programs (high due to EU regulations)
+    TECHNICAL: 0.30       # 30% of programs (tech company needs)
+    LEADERSHIP: 0.18      # 18% of programs (management development)
+    PROFESSIONAL: 0.15    # 15% of programs (fashion industry skills)
+    ONBOARDING: 0.08      # 8% of programs (structured orientation)
+    LANGUAGE: 0.04        # 4% of programs (multilingual workforce)
+    
+  completion_rates:
+    COMPLIANCE: 0.95      # Very high completion (mandatory)
+    TECHNICAL: 0.78       # Good completion (job relevant)
+    LEADERSHIP: 0.65      # Moderate completion (voluntary)
+    PROFESSIONAL: 0.72    # Good completion (career development)
+    ONBOARDING: 0.98      # Very high (new employee requirement)
+    LANGUAGE: 0.58        # Lower completion (optional skill)
+    
+  cost_ranges_eur:
+    COMPLIANCE: [50, 250]     # Lower cost, often online
+    TECHNICAL: [200, 1800]    # Variable cost, external providers
+    LEADERSHIP: [400, 2500]   # Higher cost, external consultants
+    PROFESSIONAL: [300, 3200] # High cost, industry certifications
+    ONBOARDING: [100, 400]    # Moderate cost, internal delivery
+    LANGUAGE: [150, 1200]     # Variable cost, different intensity levels
+
+  providers:
+    internal:
+      percentage: 0.40      # 40% delivered internally
+      cost_multiplier: 0.6  # 60% of external cost
+    external_local:
+      percentage: 0.45      # 45% local European providers
+      cost_multiplier: 1.0  # Base cost
+    external_global:
+      percentage: 0.15      # 15% global providers
+      cost_multiplier: 1.3  # 130% of base cost (premium)
+
+employee_training:
+  enrollment_patterns:
+    per_employee_per_year: [3, 9]  # 3-9 training programs per employee per year
+    by_role_level:
+      ENTRY: [2, 4]         # Entry level: fewer programs
+      MID: [3, 6]           # Mid level: moderate programs
+      SENIOR: [4, 8]        # Senior: more programs
+      MANAGER: [5, 9]       # Managers: most programs (leadership required)
+      
+    seasonal_peaks:
+      Q1: 1.4    # New year training initiatives and budget allocation
+      Q2: 1.1    # Spring training season
+      Q3: 0.7    # Summer slowdown (vacation period)
+      Q4: 1.2    # Year-end compliance and preparation
+      
+    new_hire_mandatory:
+      within_days: 30       # Must complete mandatory training within 30 days
+      programs: 
+        - "COMPANY_ORIENTATION"
+        - "GDPR_DATA_PROTECTION"
+        - "WORKPLACE_SAFETY_EU"
+        - "CODE_OF_CONDUCT"
+        
+  completion_timeframes:
+    COMPLIANCE: [5, 14]     # 5-14 days to complete (urgent)
+    TECHNICAL: [21, 120]    # 21-120 days to complete (project-based)
+    LEADERSHIP: [45, 180]   # 45-180 days to complete (developmental)
+    PROFESSIONAL: [60, 365] # 60-365 days to complete (certification-based)
+    ONBOARDING: [1, 7]      # 1-7 days to complete (first week priority)
+    LANGUAGE: [90, 365]     # 90-365 days to complete (long-term skill)
+    
+  scoring_distribution:
+    exceptional: [95, 100]   # 15% of participants (top performers)
+    excellent: [85, 94]      # 25% of participants (strong performance)
+    good: [75, 84]           # 35% of participants (solid performance)
+    satisfactory: [65, 74]   # 20% of participants (meets minimum)
+    needs_improvement: [0, 64] # 5% of participants (requires retake)
+    
+  certification_tracking:
+    certification_rate: 0.35    # 35% of training programs offer certification
+    renewal_required: 0.60      # 60% of certifications require renewal
+    renewal_notification_days: 60 # Notify 60 days before expiry
+    
+  instructor_preferences:
+    internal_trainers: 0.40     # 40% internal company trainers
+    external_contractors: 0.35  # 35% external contracted trainers
+    online_self_paced: 0.25     # 25% online self-paced learning
+    
+  training_locations:
+    headquarters: 0.45          # 45% at company headquarters
+    regional_offices: 0.30      # 30% at regional office locations
+    external_venues: 0.15       # 15% at external training venues
+    online_virtual: 0.10        # 10% fully online/virtual delivery
+
+# Department-specific training requirements
+department_training_requirements:
+  IT:
+    mandatory: ["GDPR_DATA_PROTECTION", "CYBERSECURITY_AWARENESS", "DATA_BACKUP_PROCEDURES"]
+    recommended: ["CLOUD_TECHNOLOGIES", "AGILE_METHODOLOGY", "TECHNICAL_LEADERSHIP"]
+    annual_hours: [40, 60]      # 40-60 hours of training per year
+    
+  SALES:
+    mandatory: ["GDPR_DATA_PROTECTION", "CUSTOMER_SERVICE_EXCELLENCE", "PRODUCT_KNOWLEDGE"]
+    recommended: ["NEGOTIATION_SKILLS", "CRM_SYSTEMS", "FASHION_TRENDS"]
+    annual_hours: [30, 50]      # 30-50 hours of training per year
+    
+  HR:
+    mandatory: ["GDPR_DATA_PROTECTION", "EMPLOYMENT_LAW_EU", "RECRUITMENT_COMPLIANCE"]
+    recommended: ["PERFORMANCE_MANAGEMENT", "EMPLOYEE_RELATIONS", "DIVERSITY_INCLUSION"]
+    annual_hours: [50, 70]      # 50-70 hours of training per year
+    
+  FINANCE:
+    mandatory: ["GDPR_DATA_PROTECTION", "FINANCIAL_REPORTING_IFRS", "AUDIT_COMPLIANCE"]
+    recommended: ["ADVANCED_EXCEL", "FINANCIAL_ANALYSIS", "RISK_MANAGEMENT"]
+    annual_hours: [35, 55]      # 35-55 hours of training per year
+    
+  OPERATIONS:
+    mandatory: ["WORKPLACE_SAFETY_EU", "MANUAL_HANDLING", "QUALITY_CONTROL"]
+    recommended: ["LEAN_MANUFACTURING", "INVENTORY_MANAGEMENT", "SUPPLY_CHAIN"]
+    annual_hours: [25, 45]      # 25-45 hours of training per year
+    
+  MARKETING:
+    mandatory: ["GDPR_DATA_PROTECTION", "BRAND_GUIDELINES", "DIGITAL_MARKETING_COMPLIANCE"]
+    recommended: ["SOCIAL_MEDIA_MARKETING", "CONTENT_CREATION", "ANALYTICS_TOOLS"]
+    annual_hours: [35, 55]      # 35-55 hours of training per year
+
+# Performance tracking and reporting
+training_metrics:
+  completion_tracking:
+    on_time_percentage: 0.78    # 78% complete training on time
+    late_completion_days: [1, 30] # Late completions within 1-30 days
+    no_show_rate: 0.08          # 8% no-show rate for scheduled training
+    
+  satisfaction_scoring:
+    very_satisfied: 0.32        # 32% very satisfied with training
+    satisfied: 0.48             # 48% satisfied with training
+    neutral: 0.15               # 15% neutral about training
+    dissatisfied: 0.04          # 4% dissatisfied with training
+    very_dissatisfied: 0.01     # 1% very dissatisfied with training
+    
+  effectiveness_measures:
+    skill_improvement_reported: 0.75  # 75% report skill improvement
+    job_application_success: 0.68     # 68% successfully apply skills on job
+    career_advancement_correlation: 0.23 # 23% correlation with promotions

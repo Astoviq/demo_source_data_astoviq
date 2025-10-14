@@ -1,0 +1,228 @@
+# HR Training & Survey Relationships Configuration
+# EuroStyle Fashion - Foreign Key Relationships for HR Data Integration
+# Ensures referential integrity across all HR tables
+
+hr_training_relationships:
+  # Employee training records must reference valid employees and training programs
+  employee_training:
+    employee_id: 
+      target_table: "eurostyle_hr.employees"
+      target_column: "employee_id"
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Each training record must belong to a valid employee"
+      
+    program_id:
+      target_table: "eurostyle_hr.training_programs" 
+      target_column: "program_id"
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Each training record must reference a valid training program"
+      
+    approved_by:
+      target_table: "eurostyle_hr.employees"
+      target_column: "employee_id" 
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Training must be approved by a valid manager/HR employee"
+      
+  # Training programs are standalone but may reference cost centers for budgeting
+  training_programs:
+    # No required foreign keys - training programs are master data
+    # Optional relationships to finance for cost tracking could be added
+    
+hr_survey_relationships:
+  # Survey responses must reference valid surveys and may reference employees
+  survey_responses:
+    survey_id:
+      target_table: "eurostyle_hr.employee_surveys"
+      target_column: "survey_id"
+      relationship_type: "many_to_one" 
+      nullable: false
+      description: "Each response must belong to a valid survey"
+      
+    employee_id:
+      target_table: "eurostyle_hr.employees"
+      target_column: "employee_id"
+      relationship_type: "many_to_one"
+      nullable: true  # Nullable for anonymous responses
+      description: "Response may be linked to employee (null for anonymous)"
+      
+  # Employee surveys are standalone survey definitions
+  employee_surveys:
+    # No required foreign keys - surveys are master data definitions
+    
+hr_performance_relationships:
+  # Performance reviews must reference employees, reviewers, and performance cycles
+  performance_reviews:
+    employee_id:
+      target_table: "eurostyle_hr.employees"
+      target_column: "employee_id"
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Each review must be for a valid employee"
+      
+    reviewer_employee_id:
+      target_table: "eurostyle_hr.employees" 
+      target_column: "employee_id"
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Each review must have a valid reviewer (manager)"
+      
+    cycle_id:
+      target_table: "eurostyle_hr.performance_cycles"
+      target_column: "cycle_id"
+      relationship_type: "many_to_one"
+      nullable: false
+      description: "Each review must belong to a valid performance cycle"
+      
+  # Performance cycles are standalone cycle definitions  
+  performance_cycles:
+    # No required foreign keys - cycles are master data definitions
+
+# Cross-database relationships (for future integration)
+cross_database_relationships:
+  # Training costs could be linked to finance GL entries
+  training_cost_integration:
+    source_table: "eurostyle_hr.employee_training"
+    source_column: "cost_eur"
+    target_database: "eurostyle_finance"
+    target_table: "gl_journal_lines"
+    relationship_type: "one_to_many"
+    description: "Training costs could generate GL entries for expense tracking"
+    implementation_status: "future_enhancement"
+    
+  # Employee data links to operational store assignments
+  employee_store_integration:
+    source_table: "eurostyle_hr.employees"
+    source_column: "employee_id"  
+    target_database: "eurostyle_operational"
+    target_table: "stores"
+    relationship_type: "many_to_one"
+    description: "Employees may be assigned to specific stores"
+    implementation_status: "existing_via_employment_contracts"
+    
+  # Performance reviews could link to compensation changes
+  performance_compensation_integration:
+    source_table: "eurostyle_hr.performance_reviews"
+    source_column: "recommended_increase_percentage"
+    target_table: "eurostyle_hr.compensation_history"
+    relationship_type: "one_to_one"
+    description: "Performance reviews drive compensation adjustments"
+    implementation_status: "existing_relationship"
+
+# Referential integrity validation rules
+integrity_validation:
+  employee_training_validation:
+    # Employee must be active during training period
+    active_employee_check:
+      validation: "employee.status = 'ACTIVE' OR employee.termination_date IS NULL OR employee.termination_date >= training.enrollment_date"
+      description: "Employee must be active when enrolled in training"
+      
+    # Training program must be active
+    active_program_check:
+      validation: "training_program.is_active = true"
+      description: "Only active training programs can have enrollments"
+      
+    # Approver must be manager or HR
+    approver_authority_check:
+      validation: "approver.job_position LIKE '%MANAGER%' OR approver.department_name = 'HR'"
+      description: "Training must be approved by manager or HR personnel"
+      
+  survey_responses_validation:
+    # Survey must be active during response period
+    active_survey_check:
+      validation: "response.response_date BETWEEN survey.start_date AND survey.end_date"
+      description: "Responses must be submitted within survey active period"
+      
+    # Employee must be eligible for survey
+    survey_eligibility_check:
+      validation: "employee.hire_date <= survey.start_date - INTERVAL 30 DAY"
+      description: "Employee must be hired at least 30 days before survey"
+      
+  performance_reviews_validation:
+    # Reviewer must be different from reviewee
+    different_reviewer_check:
+      validation: "review.employee_id != review.reviewer_employee_id"  
+      description: "Employee cannot review themselves"
+      
+    # Reviewer must be manager of reviewee
+    manager_relationship_check:
+      validation: "EXISTS (SELECT 1 FROM employment_contracts WHERE employee_id = review.employee_id AND manager_employee_id = review.reviewer_employee_id)"
+      description: "Reviewer must be the employee's manager"
+      
+    # Review must be within cycle period
+    cycle_period_check:
+      validation: "review.manager_review_date BETWEEN cycle.start_date AND cycle.end_date"
+      description: "Review must be completed within the cycle period"
+
+# Data consistency checks
+consistency_checks:
+  training_data_consistency:
+    enrollment_completion_logic:
+      check: "enrollment_date <= start_date <= completion_date OR completion_date IS NULL"
+      description: "Training dates must be in logical order"
+      
+    score_completion_dependency:
+      check: "completion_date IS NOT NULL WHEN score IS NOT NULL"
+      description: "Score can only be assigned after completion"
+      
+    certification_completion_dependency:
+      check: "completion_date IS NOT NULL WHEN certification_earned = true"
+      description: "Certification can only be earned after completion"
+      
+  survey_data_consistency:
+    response_survey_period:
+      check: "response_date BETWEEN survey.start_date AND survey.end_date"
+      description: "Response must be within survey active period"
+      
+    anonymization_employee_link:
+      check: "employee_id IS NULL WHEN anonymization_level = 'FULL_ANONYMOUS'"
+      description: "Fully anonymous responses cannot be linked to employees"
+      
+    rating_scale_validation:
+      check: "overall_satisfaction BETWEEN 1 AND 5"
+      description: "All rating scales must be within valid range (1-5)"
+      
+  performance_review_consistency:
+    rating_score_alignment:
+      check: "overall_rating >= 4.0 WHEN promotion_recommended = true"
+      description: "Promotions should align with high performance ratings"
+      
+    pip_low_performance:
+      check: "overall_rating < 3.0 WHEN pip_recommended = true"
+      description: "Performance improvement plans for low performers"
+      
+    review_process_sequence:
+      check: "self_assessment_date <= manager_review_date <= hr_approval_date <= employee_acknowledgment_date"
+      description: "Review process steps must be in correct sequence"
+
+# Indexing recommendations for performance
+recommended_indexes:
+  employee_training:
+    - employee_id  # For employee training history queries
+    - program_id   # For training program participation queries  
+    - enrollment_date  # For time-based training queries
+    - status       # For completion status queries
+    
+  survey_responses:
+    - survey_id    # For survey response aggregation
+    - employee_id  # For employee survey history (where not anonymous)
+    - response_date  # For time-based analysis
+    - department_group  # For department-level aggregation
+    
+  performance_reviews:
+    - employee_id  # For employee review history
+    - cycle_id     # For cycle-based reporting
+    - reviewer_employee_id  # For manager review queries
+    - overall_rating  # For performance distribution analysis
+    
+  training_programs:
+    - program_category  # For category-based queries
+    - is_active    # For active program queries
+    - mandatory    # For compliance tracking
+    
+  employee_surveys:
+    - survey_type  # For survey type analysis
+    - start_date   # For time-based queries
+    - is_anonymous # For anonymization queries

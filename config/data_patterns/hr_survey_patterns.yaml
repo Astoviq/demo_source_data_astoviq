@@ -1,0 +1,287 @@
+# HR Survey Patterns Configuration
+# EuroStyle Fashion - European HR Survey Data Generation
+# Compliance: GDPR, European Privacy Law, Multi-country survey practices
+
+employee_surveys:
+  survey_types:
+    - ANNUAL_ENGAGEMENT     # Annual employee engagement survey
+    - QUARTERLY_PULSE       # Quarterly pulse surveys for ongoing feedback
+    - EXIT_INTERVIEW        # Exit interview surveys for departing employees
+    - NEW_HIRE_FEEDBACK     # 90-day new hire experience feedback
+    - TRAINING_FEEDBACK     # Post-training effectiveness feedback
+    - MANAGER_360           # 360-degree feedback for managers and leaders
+    - WELLBEING_CHECK       # Employee wellbeing and mental health check
+    - DIVERSITY_INCLUSION   # Diversity, equity, and inclusion assessment
+    
+  survey_schedule:
+    ANNUAL_ENGAGEMENT: 
+      frequency: "yearly"
+      months: [10]          # October - post-summer, pre-holiday
+      duration_days: 21     # 3 weeks for completion
+      target_audience: "ALL_EMPLOYEES"
+    QUARTERLY_PULSE:
+      frequency: "quarterly" 
+      months: [1, 4, 7]     # Jan, Apr, Jul (skip Oct due to annual survey)
+      duration_days: 10     # 10 days for completion
+      target_audience: "ALL_EMPLOYEES"
+    EXIT_INTERVIEW:
+      frequency: "as_needed"
+      duration_days: 30     # 30 days to complete after notice given
+      target_audience: "DEPARTING_EMPLOYEES"
+    NEW_HIRE_FEEDBACK:
+      frequency: "continuous"
+      trigger_days: 90      # Survey sent 90 days after start date
+      duration_days: 14     # 2 weeks to complete
+      target_audience: "NEW_HIRES"
+    TRAINING_FEEDBACK:
+      frequency: "post_training"
+      trigger_days: 7       # Survey sent 7 days after training completion
+      duration_days: 14     # 2 weeks to complete
+      target_audience: "TRAINING_PARTICIPANTS"
+    MANAGER_360:
+      frequency: "biannual"
+      months: [3, 9]        # March and September
+      duration_days: 21     # 3 weeks for completion
+      target_audience: "MANAGERS"
+    WELLBEING_CHECK:
+      frequency: "quarterly"
+      months: [2, 5, 8, 11] # Different months from pulse surveys
+      duration_days: 14     # 2 weeks for completion
+      target_audience: "ALL_EMPLOYEES"
+    DIVERSITY_INCLUSION:
+      frequency: "biannual"
+      months: [5, 11]       # May and November
+      duration_days: 21     # 3 weeks for completion
+      target_audience: "ALL_EMPLOYEES"
+      
+  response_rates:
+    ANNUAL_ENGAGEMENT: 0.82    # 82% response rate (high interest)
+    QUARTERLY_PULSE: 0.68      # 68% response rate (survey fatigue)
+    EXIT_INTERVIEW: 0.94       # 94% response rate (exit process)
+    NEW_HIRE_FEEDBACK: 0.91    # 91% response rate (new employee enthusiasm)
+    TRAINING_FEEDBACK: 0.76    # 76% response rate (immediate relevance)
+    MANAGER_360: 0.73          # 73% response rate (sensitive topic)
+    WELLBEING_CHECK: 0.71      # 71% response rate (personal topic)
+    DIVERSITY_INCLUSION: 0.69  # 69% response rate (sensitive/personal)
+    
+  satisfaction_distributions:
+    overall_satisfaction:
+      very_satisfied: 0.28     # Rating 5 - 28% very satisfied
+      satisfied: 0.43          # Rating 4 - 43% satisfied
+      neutral: 0.21            # Rating 3 - 21% neutral
+      dissatisfied: 0.06       # Rating 2 - 6% dissatisfied
+      very_dissatisfied: 0.02  # Rating 1 - 2% very dissatisfied
+      
+    work_life_balance:
+      excellent: 0.22          # Rating 5 - 22% excellent
+      good: 0.38               # Rating 4 - 38% good
+      fair: 0.28               # Rating 3 - 28% fair
+      poor: 0.09               # Rating 2 - 9% poor
+      very_poor: 0.03          # Rating 1 - 3% very poor
+      
+    compensation_satisfaction:
+      very_satisfied: 0.18     # Rating 5 - 18% very satisfied
+      satisfied: 0.35          # Rating 4 - 35% satisfied
+      neutral: 0.31            # Rating 3 - 31% neutral
+      dissatisfied: 0.12       # Rating 2 - 12% dissatisfied
+      very_dissatisfied: 0.04  # Rating 1 - 4% very dissatisfied
+      
+    career_development:
+      excellent: 0.25          # Rating 5 - 25% excellent opportunities
+      good: 0.37               # Rating 4 - 37% good opportunities
+      fair: 0.26               # Rating 3 - 26% fair opportunities
+      poor: 0.09               # Rating 2 - 9% poor opportunities
+      very_poor: 0.03          # Rating 1 - 3% very poor opportunities
+
+survey_responses:
+  gdpr_compliance:
+    anonymization_levels:
+      FULL_ANONYMOUS: 0.65     # 65% fully anonymous responses
+      DEPARTMENT_ONLY: 0.22    # 22% department-level aggregation only
+      DEMOGRAPHIC_ONLY: 0.13   # 13% basic demographics only (age/tenure)
+      
+    consent_tracking:
+      explicit_consent_required: true
+      consent_withdrawal_allowed: true
+      data_retention_months: 24      # Retain survey data for 24 months
+      
+    privacy_protection:
+      minimum_response_threshold: 5   # Need 5+ responses to show department data
+      text_response_moderation: true  # Review open-text responses
+      sensitive_topic_extra_protection: true # Extra anonymization for sensitive topics
+      
+  response_patterns:
+    tenure_correlation:
+      new_hires_0_1_year: [3.9, 4.3]    # Higher satisfaction (honeymoon period)
+      established_1_3_years: [3.6, 4.0] # Moderate satisfaction (reality setting in)
+      experienced_3_7_years: [3.4, 3.8] # Steady satisfaction (established routine)
+      long_term_7plus_years: [3.3, 3.7] # Slight decrease (familiarity, limited growth)
+      
+    department_variations:
+      IT: [3.8, 4.2]           # Higher satisfaction (tech benefits, flexibility)
+      SALES: [3.5, 3.9]        # Variable satisfaction (target pressure, commission)
+      HR: [3.7, 4.1]           # Good satisfaction (people-focused, insider knowledge)
+      FINANCE: [3.6, 4.0]      # Stable satisfaction (structured, clear metrics)
+      OPERATIONS: [3.2, 3.6]   # Lower satisfaction (operational stress, physical demands)
+      MARKETING: [3.7, 4.1]    # Good satisfaction (creative, project variety)
+      
+    country_variations:
+      DE: [3.7, 4.0]           # Germany - Good work-life balance culture
+      FR: [3.5, 3.8]           # France - More critical feedback culture  
+      NL: [3.8, 4.1]           # Netherlands - High satisfaction, work-life balance
+      BE: [3.6, 3.9]           # Belgium - Moderate satisfaction, complex regulations
+      
+    role_level_patterns:
+      ENTRY: [3.8, 4.2]        # Higher satisfaction (learning opportunities)
+      MID: [3.5, 3.9]          # Moderate satisfaction (career plateau concerns)
+      SENIOR: [3.6, 4.0]       # Good satisfaction (autonomy, influence)
+      MANAGER: [3.4, 3.8]      # Lower satisfaction (management stress, responsibility)
+      
+  response_quality:
+    completion_rates:
+      all_questions: 0.78      # 78% complete all questions
+      partial_completion: 0.15 # 15% partial completion
+      dropoff_early: 0.07      # 7% early dropout
+      
+    text_response_patterns:
+      provide_comments: 0.42   # 42% provide open-text comments
+      detailed_feedback: 0.18  # 18% provide detailed feedback
+      constructive_suggestions: 0.31 # 31% provide constructive suggestions
+      
+    response_timing:
+      immediate_1_day: 0.25    # 25% respond within 1 day
+      early_1_week: 0.48       # 48% respond within 1 week
+      late_2_weeks: 0.21       # 21% respond in week 2
+      final_week: 0.06         # 6% respond in final week
+      
+# Survey-specific patterns
+survey_specific_patterns:
+  ANNUAL_ENGAGEMENT:
+    question_focus:
+      - overall_satisfaction
+      - work_life_balance_rating
+      - compensation_satisfaction
+      - career_development_rating
+      - management_effectiveness
+      - company_culture_rating
+    response_depth: "comprehensive"
+    
+  QUARTERLY_PULSE:
+    question_focus:
+      - overall_satisfaction
+      - work_life_balance_rating
+      - management_effectiveness
+    response_depth: "brief"
+    
+  EXIT_INTERVIEW:
+    question_focus:
+      - overall_satisfaction
+      - reasons_for_leaving
+      - manager_relationship
+      - career_development_rating
+      - compensation_satisfaction
+      - company_culture_rating
+    response_depth: "detailed"
+    response_rate_boost: 0.15  # 15% higher response rate
+    
+  NEW_HIRE_FEEDBACK:
+    question_focus:
+      - onboarding_experience
+      - training_quality
+      - manager_support
+      - cultural_fit
+      - expectation_alignment
+    response_depth: "detailed"
+    satisfaction_boost: 0.2    # 20% higher satisfaction (new hire optimism)
+    
+  TRAINING_FEEDBACK:
+    question_focus:
+      - training_relevance
+      - instructor_quality
+      - material_clarity
+      - skill_improvement
+      - recommendation_likelihood
+    response_depth: "focused"
+    
+  MANAGER_360:
+    question_focus:
+      - leadership_effectiveness
+      - communication_skills
+      - team_development
+      - decision_making
+      - recognition_giving
+    response_depth: "comprehensive"
+    sensitivity_high: true     # Extra anonymization required
+    
+  WELLBEING_CHECK:
+    question_focus:
+      - stress_levels
+      - work_life_balance
+      - mental_health_support
+      - physical_workspace
+      - social_connections
+    response_depth: "personal"
+    anonymization_required: "FULL_ANONYMOUS"
+    
+  DIVERSITY_INCLUSION:
+    question_focus:
+      - inclusive_environment
+      - equal_opportunities
+      - discrimination_experience
+      - diversity_representation
+      - bias_awareness
+    response_depth: "sensitive"
+    anonymization_required: "FULL_ANONYMOUS"
+
+# Seasonal and cyclical patterns
+temporal_patterns:
+  seasonal_effects:
+    Q1: 
+      satisfaction_adjustment: -0.1  # Post-holiday blues, new year stress
+      response_rate_adjustment: 0.05 # Higher engagement (new year resolutions)
+    Q2:
+      satisfaction_adjustment: 0.05  # Spring optimism, project momentum
+      response_rate_adjustment: 0.0  # Normal engagement
+    Q3:
+      satisfaction_adjustment: 0.02  # Summer relaxation, vacation time
+      response_rate_adjustment: -0.1 # Lower engagement (vacation season)
+    Q4:
+      satisfaction_adjustment: -0.05 # Year-end stress, deadline pressure
+      response_rate_adjustment: 0.02 # Higher engagement (performance review season)
+      
+  annual_trends:
+    satisfaction_trend: -0.01        # Slight annual decline in satisfaction
+    engagement_fatigue: 0.02         # 2% decline in response rates over time
+    improvement_recognition: 0.05    # 5% boost if previous survey issues addressed
+
+# Response content patterns  
+content_patterns:
+  positive_feedback_themes:
+    - "Great team collaboration and support"
+    - "Good work-life balance and flexibility"
+    - "Strong learning and development opportunities"
+    - "Supportive management and clear communication"
+    - "Positive company culture and values alignment"
+    - "Competitive benefits and compensation"
+    - "Interesting and challenging work projects"
+    - "Recognition for achievements and contributions"
+    
+  improvement_suggestions:
+    - "More career advancement opportunities"
+    - "Better communication from senior leadership" 
+    - "Improved training and development programs"
+    - "Enhanced work-life balance policies"
+    - "More competitive compensation and benefits"
+    - "Stronger feedback and performance management"
+    - "Better office facilities and equipment"
+    - "Increased team building and social activities"
+    
+  concerns_raised:
+    - "Limited career growth opportunities"
+    - "Unclear communication from management"
+    - "Workload and deadline pressures"
+    - "Insufficient training and development"
+    - "Compensation below market expectations"
+    - "Lack of recognition for contributions"
+    - "Office environment and facilities issues"
+    - "Work-life balance challenges"

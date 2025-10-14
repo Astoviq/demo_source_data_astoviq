@@ -1,0 +1,149 @@
+# European VAT Rates Configuration
+# Current VAT rates for EuroStyle markets as of 2024
+
+european_vat_rates:
+  # Standard VAT rates by country for clothing/fashion retail
+  country_vat_rates:
+    NL:  # Netherlands
+      standard_rate: 21.0
+      reduced_rate: 9.0      # Not applicable to clothing
+      country_name: "Netherlands"
+      currency: "EUR"
+      vat_number_format: "NL999999999B99"
+      
+    DE:  # Germany  
+      standard_rate: 19.0
+      reduced_rate: 7.0      # Not applicable to clothing
+      country_name: "Germany"
+      currency: "EUR" 
+      vat_number_format: "DE999999999"
+      
+    FR:  # France
+      standard_rate: 20.0
+      reduced_rate: 5.5      # Not applicable to clothing
+      country_name: "France"
+      currency: "EUR"
+      vat_number_format: "FR99999999999"
+      
+    BE:  # Belgium
+      standard_rate: 21.0
+      reduced_rate: 6.0      # Not applicable to clothing
+      country_name: "Belgium" 
+      currency: "EUR"
+      vat_number_format: "BE0999999999"
+
+  # Product category VAT applications
+  product_category_vat:
+    # All fashion categories use standard rate
+    clothing:
+      rate_type: "standard"
+      description: "Clothing, footwear, and fashion accessories"
+      
+    accessories:
+      rate_type: "standard" 
+      description: "Fashion accessories, bags, jewelry"
+      
+    footwear:
+      rate_type: "standard"
+      description: "Shoes, boots, sandals"
+
+  # Historical rates (for backfilling historical data if needed)
+  historical_rates:
+    2024:
+      NL: 21.0
+      DE: 19.0 
+      FR: 20.0
+      BE: 21.0
+    2023:
+      NL: 21.0
+      DE: 19.0
+      FR: 20.0  
+      BE: 21.0
+    2022:
+      NL: 21.0
+      DE: 19.0
+      FR: 20.0
+      BE: 21.0
+
+  # GL Account mapping by country for VAT
+  gl_account_mapping:
+    vat_payable_accounts:
+      NL: "2201"  # VAT Payable - Netherlands
+      DE: "2202"  # VAT Payable - Germany  
+      FR: "2203"  # VAT Payable - France
+      BE: "2204"  # VAT Payable - Belgium
+      
+    vat_receivable_accounts:
+      NL: "1501"  # VAT Receivable - Netherlands
+      DE: "1502"  # VAT Receivable - Germany
+      FR: "1503"  # VAT Receivable - France  
+      BE: "1504"  # VAT Receivable - Belgium
+
+  # European VAT compliance requirements
+  compliance_requirements:
+    vat_reporting_frequency:
+      NL: "monthly"      # Netherlands - monthly VAT returns
+      DE: "monthly"      # Germany - monthly VAT returns  
+      FR: "monthly"      # France - monthly VAT returns
+      BE: "quarterly"    # Belgium - quarterly VAT returns
+      
+    vat_payment_terms:
+      NL: "monthly+1month"     # Due by end of following month
+      DE: "monthly+10days"     # Due by 10th of following month
+      FR: "monthly+15days"     # Due by 15th of following month  
+      BE: "quarterly+1month"   # Due by end of month after quarter
+
+    invoice_requirements:
+      all_countries:
+        - "VAT registration number"
+        - "VAT rate applied" 
+        - "VAT amount"
+        - "Net amount"
+        - "Gross amount"
+        - "Invoice date"
+        - "Unique invoice number"
+
+  # Special VAT scenarios
+  special_cases:
+    # Distance selling thresholds (for cross-border sales)
+    distance_selling_threshold: 10000  # €10,000 EUR per year
+    
+    # Digital services (not applicable to fashion retail)
+    digital_services_rate: "destination_country"
+    
+    # B2B vs B2C treatment
+    b2b_treatment:
+      within_eu: "reverse_charge"      # VAT charged by buyer
+      outside_eu: "zero_rate"         # Export sales
+      
+    b2c_treatment:
+      domestic: "standard_rate"       # Standard VAT rate
+      within_eu: "standard_rate"      # Standard VAT rate  
+      outside_eu: "zero_rate"        # Export sales
+
+# Integration settings for POS system
+pos_integration:
+  # Default customer types and VAT treatment
+  customer_vat_treatment:
+    regular: "b2c_domestic"          # Regular customers - domestic B2C
+    business: "b2b_domestic"         # Business customers - domestic B2B  
+    tourist: "b2c_domestic"          # Tourists - treat as domestic B2C
+    employee: "b2c_domestic"         # Employee purchases - domestic B2C
+    
+  # VAT rounding rules  
+  vat_rounding:
+    method: "round_half_up"          # Standard rounding method
+    precision: 2                     # Round to 2 decimal places (cents)
+    
+  # Transaction splitting for mixed baskets
+  mixed_vat_handling: "line_item"    # Apply VAT per line item (standard)
+
+# Validation rules
+validation_rules:
+  vat_rate_range:
+    minimum: 0.0                     # 0% for exports
+    maximum: 25.0                    # Maximum expected EU VAT rate
+    
+  country_codes:
+    format: "ISO_3166_1_alpha_2"     # Two-letter country codes
+    required_countries: ["NL", "DE", "FR", "BE"]

@@ -1,0 +1,368 @@
+# =====================================================
+# EuroStyle Fashion - FAST Data Generation Configuration  
+# =====================================================
+# Optimized for rapid testing and development cycles
+# Generates 1-2 years of data with reduced volumes
+
+# Database Connection Settings
+database:
+  host: localhost
+  port: 9002  # Native port for data insertion
+  database: eurostyle_operational
+  username: eurostyle_user
+  password: eurostyle_demo_2024
+  timeout: 30
+  secure: false
+
+# Data Generation Parameters - OPTIMIZED FOR FAST CONSISTENT GENERATION
+data_volumes:
+  # Reference data (small, static)
+  geography_records: 50             # Minimal essential cities
+  fashion_calendar_events: 90       # 3 months worth for speed
+  
+  # Master data - CONSISTENTLY REDUCED
+  customers: 2000                   # Reduced from 150,000 (99% reduction)
+  products: 300                     # Reduced from 2,500 (88% reduction)
+  stores: 8                         # Reduced from 47 (core locations only)
+  campaigns: 12                     # Reduced from 200 (1 per month)
+  
+  # Transactional data - CONTROLLED SMALLER VOLUMES  
+  orders: 1000                      # Reduced from 50,000 (98% reduction)
+  order_lines: 2500                 # Reduced from 120,000 (98% reduction)
+  inventory_records: 1200           # Reduced from 50,000 (98% reduction)
+  
+  # Webshop Analytics data - CONTROLLED VOLUMES
+  web_sessions: 3000                # Reduced from 173,400 (98% reduction)
+  page_views: 8000                  # Reduced from 1,030,000 (99% reduction)
+  cart_activities: 500              # Reduced from 50,000 (99% reduction)
+  search_queries: 800               # Scaled to match sessions
+  product_reviews: 200              # Reduced from 15,000 (99% reduction)
+  wishlist_items: 300               # Scaled to match customers
+  product_recommendations: 1500     # Reduced from 200,000 (99% reduction)
+  email_marketing: 100              # Minimal email campaigns
+  ab_test_results: 400              # Reduced from 30,000 (99% reduction)
+  web_analytics_events: 3000        # Scaled to match sessions
+  
+  # Finance System data - MINIMAL FUNCTIONAL SET
+  legal_entities: 4                 # 1 holding + 3 main subsidiaries
+  chart_accounts: 40                # Essential accounts only
+  gl_journal_entries: 800           # Reduced from 20,000 (96% reduction)
+  gl_journal_lines: 2000            # ~2.5 lines per journal entry
+  exchange_rates: 200               # Reduced from 3,000 (93% reduction)
+  budget_entries: 150               # Essential planning data
+  fixed_assets: 50                  # Core asset records
+  cost_centers: 12                  # Essential cost centers
+  
+  # HR System data - MINIMAL EUROPEAN WORKFORCE
+  departments: 8                    # Reduced from 60+ (essential departments)
+  job_positions: 20                 # Reduced from 180+ (key roles only)
+  employees: 60                     # Reduced from 500+ (88% reduction)
+  employment_contracts: 60          # 1:1 with employees
+  compensation_records: 120         # Historical salary changes
+  leave_requests: 300               # Reduced from 2,500+ (88% reduction)
+  leave_balances: 60                # Current employee balances
+  performance_reviews: 150          # Annual review cycles
+  training_records: 100             # Reduced from 1,000+ (90% reduction)
+  employee_surveys: 20              # Survey events
+  survey_responses: 300             # Employee survey participation
+
+# Time Range for Historical Data - MINIMAL FOR SPEED
+time_range:
+  # Fashion calendar range (minimal scope)
+  fashion_calendar_start: "2024-06-01"  # Start from recent past (6 months)
+  fashion_calendar_end: "2025-12-31"    # 18 months total
+  
+  # Sales/transactional data range - FOCUSED ON RECENT DATA
+  sales_start_date: "2024-06-01"        # 4 months of historical data only
+  sales_end_date: "2025-10-10"          # Up to current date
+  current_date: "2025-10-10"            # Reference point for data generation
+
+# Geographic Distribution - FOCUS ON TOP 3 MARKETS
+geographic_distribution:
+  Germany:
+    percentage: 45                       # Increased share
+    country_code: "DE"
+    currency: "EUR"
+    vat_rate: 19.0
+    major_cities: ["Berlin", "Munich", "Hamburg"]  # Reduced cities
+    
+  Netherlands:
+    percentage: 35                       # Increased share
+    country_code: "NL"
+    currency: "EUR"
+    vat_rate: 21.0
+    major_cities: ["Amsterdam", "Rotterdam", "Utrecht"]
+    
+  France:
+    percentage: 20                       # Reduced but significant
+    country_code: "FR"
+    currency: "EUR"
+    vat_rate: 20.0
+    major_cities: ["Paris", "Lyon"]      # Only major cities
+
+# Business Metrics (same ratios, smaller scale)
+business_metrics:
+  average_order_value: 85.0       # EUR
+  conversion_rate_online: 2.3     # Percentage
+  conversion_rate_instore: 12.0   # Percentage
+  return_rate: 8.5               # Percentage
+  gross_margin: 58.0             # Percentage
+  customer_acquisition_cost: 23.0 # EUR
+  
+  # Geographic variations (top 3 markets only)
+  aov_by_country:
+    DE: 92.0    # Germans are price-conscious but buy quality
+    NL: 82.0    # High online adoption
+    FR: 88.0    # Fashion-forward purchases
+
+# Seasonal Patterns (fashion industry) - SAME PATTERNS
+seasonality:
+  peak_months: [3, 4, 9, 10, 11, 12]  # Spring launch, Fall/Winter, Holiday
+  slow_months: [1, 2, 7, 8]           # Post-holiday, summer slowdown
+  
+  sales_multipliers:
+    january: 0.6      # Post-holiday clearance
+    february: 0.7     # Slow period
+    march: 1.4        # Spring collection launch
+    april: 1.3        # Spring peak
+    may: 1.0          # Normal
+    june: 1.0         # Normal
+    july: 0.8         # Summer slowdown
+    august: 0.9       # Back-to-school prep
+    september: 1.5    # Fall/Winter launch
+    october: 1.4      # Fall peak
+    november: 1.6     # Black Friday + Holiday prep
+    december: 1.3     # Holiday season
+
+# Fashion Product Categories - SIMPLIFIED
+product_categories:
+  Women:
+    percentage: 50                       # Increased focus
+    subcategories:
+      Tops: ["T-Shirts", "Sweaters"]    # Reduced variety
+      Bottoms: ["Jeans", "Trousers"]
+      Dresses: ["Casual Dresses"]
+      Outerwear: ["Jackets"]
+      
+  Men:
+    percentage: 35
+    subcategories:
+      Tops: ["T-Shirts", "Shirts"]      # Reduced variety
+      Bottoms: ["Jeans", "Chinos"]
+      Outerwear: ["Jackets"]
+      
+  Kids:
+    percentage: 10                       # Reduced
+    subcategories:
+      Tops: ["T-Shirts"]               # Minimal variety
+      Bottoms: ["Jeans"]
+      
+  Accessories:
+    percentage: 5
+    subcategories:
+      Shoes: ["Sneakers"]              # Single category
+      Bags: ["Backpacks"]
+
+# Fashion Colors and Materials - REDUCED OPTIONS
+product_attributes:
+  primary_colors: 
+    - "Black" 
+    - "White" 
+    - "Navy" 
+    - "Grey" 
+    - "Blue"                           # Reduced from 10 to 5 colors
+    
+  materials:
+    sustainable:
+      - "Organic Cotton"
+      - "Recycled Polyester"           # Reduced options
+    traditional:
+      - "Cotton"
+      - "Polyester"                    # Reduced options
+      
+  sizes:
+    clothing: ["S", "M", "L", "XL"]    # Reduced size range
+    shoes_eu: ["38", "39", "40", "41", "42"]  # Common sizes only
+
+# Customer Behavior Patterns - SAME PATTERNS
+customer_behavior:
+  loyalty_program_adoption: 0.35   
+  marketing_opt_in_rate: 0.42      
+  newsletter_subscription_rate: 0.28
+  
+  lifecycle_distribution:
+    new_customers: 0.25             
+    developing: 0.35                
+    established: 0.25               
+    loyal: 0.15                     
+    
+  # Channel preferences (top 3 markets only)
+  channel_preferences:
+    DE: { online: 0.62, instore: 0.38 }
+    NL: { online: 0.75, instore: 0.25 }  
+    FR: { online: 0.58, instore: 0.42 }  
+
+# Store Configuration - MINIMAL STORES
+store_formats:
+  flagship:
+    count: 2                         # Reduced from 5
+    avg_sqm: 800
+    cities: ["Amsterdam", "Berlin"]
+    
+  standard:
+    count: 8                         # Reduced from 35
+    avg_sqm: 450
+    
+  outlet:
+    count: 1                         # Reduced from 5
+    avg_sqm: 600
+    
+  popup:
+    count: 1                         # Reduced from 2
+    avg_sqm: 200
+
+# Data Quality Settings - SAME QUALITY
+data_quality:
+  null_rates:
+    optional_fields: 0.15           
+    phone_numbers: 0.08             
+    secondary_colors: 0.30          
+    
+  duplicate_rates:
+    customer_emails: 0.002          
+    
+  data_errors:
+    invalid_postal_codes: 0.001     
+
+# Performance Settings - OPTIMIZED FOR SPEED
+generation:
+  batch_size: 5000                  # Smaller batches for faster feedback
+  progress_update_frequency: 1000   # More frequent progress updates
+  max_memory_mb: 512                # Lower memory usage
+  
+  # Parallel processing
+  use_multiprocessing: true
+  max_workers: 6                    # More workers for faster generation
+  
+# Finance System Configuration - MULTI-ENTITY STRUCTURE
+finance_structure:
+  # Legal entities (1 holding + 4 BVs for each country)
+  legal_entities:
+    holding:
+      name: "EuroStyle Fashion Holding B.V."
+      country: "NL"
+      currency: "EUR"
+      entity_type: "holding"
+    subsidiaries:
+      - name: "EuroStyle Germany GmbH"
+        country: "DE" 
+        currency: "EUR"
+        entity_type: "subsidiary"
+      - name: "EuroStyle France SAS"
+        country: "FR"
+        currency: "EUR" 
+        entity_type: "subsidiary"
+      - name: "EuroStyle Netherlands B.V."
+        country: "NL"
+        currency: "EUR"
+        entity_type: "subsidiary"
+  
+  # Chart of accounts structure (IFRS compliant)
+  account_categories:
+    assets: ["1000-1999"]
+    liabilities: ["2000-2999"] 
+    equity: ["3000-3999"]
+    revenue: ["4000-4999"]
+    expenses: ["5000-5999"]
+    
+  # Budget planning periods
+  budget_periods: ["2024", "2025", "2026"]
+  
+  # Exchange rate pairs (all vs EUR base)
+  currency_pairs: ["USD/EUR", "GBP/EUR", "CHF/EUR"]
+
+# HR System Configuration - EUROPEAN COMPLIANCE
+hr_structure:
+  # Department hierarchy
+  departments:
+    - name: "Executive"
+      parent: null
+      country: "NL"
+    - name: "Finance & Administration" 
+      parent: "Executive"
+      country: "NL"
+    - name: "Operations Germany"
+      parent: "Executive"
+      country: "DE"
+    - name: "Operations France"
+      parent: "Executive" 
+      country: "FR"
+    - name: "Operations Netherlands"
+      parent: "Executive"
+      country: "NL"
+      
+  # Job level hierarchy
+  job_levels:
+    - level: 1
+      title: "Executive"
+      salary_min: 80000
+      salary_max: 150000
+    - level: 2
+      title: "Manager"
+      salary_min: 50000
+      salary_max: 80000
+    - level: 3
+      title: "Senior Specialist"
+      salary_min: 40000
+      salary_max: 60000
+    - level: 4
+      title: "Specialist"
+      salary_min: 30000
+      salary_max: 45000
+    - level: 5
+      title: "Junior/Trainee"
+      salary_min: 25000
+      salary_max: 35000
+      
+  # European leave policies by country
+  leave_policies:
+    DE:
+      annual_days: 25
+      sick_days: "unlimited"
+      parental_weeks: 52
+    FR:
+      annual_days: 25
+      sick_days: "unlimited" 
+      parental_weeks: 42
+    NL:
+      annual_days: 25
+      sick_days: "unlimited"
+      parental_weeks: 26
+      
+  # Training categories
+  training_types:
+    - "Compliance & Legal"
+    - "Technical Skills"
+    - "Leadership Development"
+    - "Safety & Health"
+    - "Language Training"
+
+# Output Settings - OPTIMIZED WITH COMPRESSION
+output:
+  export_csv: true                 # Export to CSV for inspection and loading
+  csv_path: "../data/csv/"
+  compress_csv: true               # GZIP all CSV files for space efficiency
+  csv_compression: "gzip"          # Use gzip compression (ClickHouse compatible)
+  csv_extension: ".csv.gz"         # Extension for compressed files
+  validate_data: true              # Run data quality checks
+  generate_summary_report: true    # Create data generation summary
+  
+  # File optimization settings
+  cleanup_uncompressed: true       # Remove uncompressed CSV files after compression
+  compression_level: 6             # Balanced compression (1=fast, 9=best compression)
+  
+  # ClickHouse integration settings
+  clickhouse_compatible: true      # Ensure CSV format is ClickHouse compatible
+  use_tab_separator: false         # Use comma separator (standard CSV)
+  include_bom: false              # No BOM for ClickHouse compatibility
+

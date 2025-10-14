@@ -1,0 +1,67 @@
+# EuroStyle Retail Demo - Development Environment Configuration
+# ============================================================
+# Configuration-driven environment settings following WARP.md rules
+
+clickhouse:
+  container_name: "eurostyle_clickhouse_retail"
+  host: "localhost"
+  http_port: 8124
+  native_port: 9002
+  user: "default"
+  password: ""
+  
+  databases:
+    - name: "eurostyle_operational"
+      description: "Customer orders, products, stores, inventory"
+    - name: "eurostyle_finance"  
+      description: "General ledger, budgets, entities, depreciation"
+    - name: "eurostyle_hr"
+      description: "Employees, contracts, performance, leave management"
+    - name: "eurostyle_webshop"
+      description: "Web analytics, sessions, events, campaigns"
+    - name: "eurostyle_pos"
+      description: "Point of sales transactions, employee assignments, payments"
+
+data_paths:
+  csv_output: "data/csv"
+  raw_data: "data/raw"
+  schemas: "data/schemas"
+  validation: "data/validation"
+  metadata: "data/metadata"
+  logs: "logs"
+
+compression:
+  enabled: true
+  format: "gzip"
+  extension: ".gz"
+
+file_naming:
+  pattern: "{database}.{table}.{extension}"
+  # Examples:
+  # - eurostyle_hr.employees.csv.gz
+  # - eurostyle_finance.legal_entities.csv.gz
+
+generation_modes:
+  demo:
+    description: "Small demo dataset for testing"
+    scale_factor: 0.1
+  
+  fast:
+    description: "Quick generation for development"  
+    scale_factor: 0.5
+    
+  full:
+    description: "Complete dataset for production demo"
+    scale_factor: 1.0
+
+validation:
+  enabled: true
+  cross_database_checks: true
+  referential_integrity: true
+  data_quality_checks: true
+
+logging:
+  level: "INFO"
+  format: "[{database}] {timestamp} {level}: {message}"
+  file_rotation: true
+  max_file_size: "10MB"

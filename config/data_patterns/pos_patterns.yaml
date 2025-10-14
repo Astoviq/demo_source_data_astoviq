@@ -1,0 +1,272 @@
+# EuroStyle Source - POS Data Generation Patterns
+# ===============================================
+# Point of Sales system configuration following WARP.md principles
+# Ensures realistic European retail POS transaction patterns
+
+# Store Coverage and Assignment Rules
+store_operations:
+  description: "POS employee assignments and store coverage patterns"
+  
+  # Percentage of stores with POS systems
+  pos_coverage:
+    physical_stores: 1.0      # 100% of physical stores have POS
+    online_only: 0.0          # Online stores don't need POS staff
+    
+  # Employee assignment patterns per store
+  employees_per_store:
+    small_store:              # Stores with < 3 staff total
+      min_pos_staff: 1
+      max_pos_staff: 2
+      coverage_percentage: 0.8  # 80% of small stores get POS staff
+      
+    medium_store:             # Stores with 3-8 staff total  
+      min_pos_staff: 2
+      max_pos_staff: 4
+      coverage_percentage: 0.9  # 90% of medium stores get POS staff
+      
+    large_store:              # Stores with > 8 staff total
+      min_pos_staff: 3
+      max_pos_staff: 6
+      coverage_percentage: 1.0  # 100% of large stores get POS staff
+      
+  # Role distribution for POS employees
+  pos_role_distribution:
+    CASHIER: 0.65            # 65% cashiers
+    SALES_ASSOCIATE: 0.25     # 25% sales associates
+    SHIFT_SUPERVISOR: 0.10    # 10% shift supervisors
+    
+  # Pay rate adjustments for POS roles (multiplier of base salary)
+  pos_pay_adjustments:
+    CASHIER: 1.0             # Base salary
+    SALES_ASSOCIATE: 1.1     # 10% premium
+    SHIFT_SUPERVISOR: 1.25   # 25% premium
+
+# Transaction Volume Patterns
+transaction_patterns:
+  description: "Daily and hourly POS transaction patterns"
+  
+  # Base daily volumes by mode
+  daily_volumes:
+    demo: 750               # Demo mode transactions per day
+    fast: 1500              # Fast mode transactions per day  
+    full: 3000              # Full mode transactions per day
+    
+  # Hourly distribution (24 hours = 1.0 total)
+  hourly_distribution:
+    "06": 0.005  # 6 AM - Store opening prep
+    "07": 0.010  # 7 AM - Early customers
+    "08": 0.025  # 8 AM - Morning commuters
+    "09": 0.045  # 9 AM - Pre-work shopping
+    "10": 0.060  # 10 AM - Morning peak
+    "11": 0.080  # 11 AM - Late morning
+    "12": 0.110  # 12 PM - Lunch peak
+    "13": 0.095  # 1 PM - Post-lunch
+    "14": 0.080  # 2 PM - Afternoon lull
+    "15": 0.070  # 3 PM - School out
+    "16": 0.085  # 4 PM - After school/work
+    "17": 0.120  # 5 PM - Evening rush
+    "18": 0.115  # 6 PM - Dinner time shopping
+    "19": 0.095  # 7 PM - Evening shoppers
+    "20": 0.070  # 8 PM - Late evening
+    "21": 0.020  # 9 PM - Store closing
+    "22": 0.005  # 10 PM - Cleanup time
+    # Other hours: 0.0 (store closed)
+    
+  # Weekly distribution patterns
+  weekly_distribution:
+    monday: 0.12
+    tuesday: 0.11
+    wednesday: 0.13
+    thursday: 0.14
+    friday: 0.18        # Peak shopping day
+    saturday: 0.22      # Highest volume
+    sunday: 0.10        # Lowest volume (limited hours)
+    
+  # Seasonal multipliers (applied to base volumes)
+  seasonal_multipliers:
+    spring: 1.0         # March - May
+    summer: 1.1         # June - August (tourist season)
+    autumn: 1.15        # September - November (back to school/work)
+    winter: 1.25        # December - February (holiday season)
+
+# Payment Method Distribution (European preferences)
+payment_methods:
+  description: "European payment method preferences by country"
+  
+  # Netherlands payment preferences
+  NL:
+    DEBIT_CARD: 0.70    # PIN/EC card very popular
+    CREDIT_CARD: 0.15   # Growing but still limited
+    CASH: 0.10          # Declining rapidly
+    MOBILE_PAY: 0.05    # Apple Pay, Google Pay
+    
+  # Germany payment preferences  
+  DE:
+    DEBIT_CARD: 0.45    # EC-Karte standard
+    CASH: 0.35          # Still cash-heavy culture
+    CREDIT_CARD: 0.15   # Less common than other EU
+    MOBILE_PAY: 0.05    # Growing slowly
+    
+  # France payment preferences
+  FR:
+    DEBIT_CARD: 0.50    # Carte Bancaire
+    CREDIT_CARD: 0.25   # More credit card adoption
+    CASH: 0.20          # Moderate cash usage
+    MOBILE_PAY: 0.05    # Contactless growing
+    
+  # Belgium payment preferences
+  BE:
+    DEBIT_CARD: 0.65    # Bancontact/Maestro
+    CREDIT_CARD: 0.20   # Moderate credit usage
+    CASH: 0.12          # Lower than Germany
+    MOBILE_PAY: 0.03    # Early adoption phase
+
+# Customer Behavior Patterns
+customer_behavior:
+  description: "POS customer transaction behavior"
+  
+  # Items per transaction distribution
+  items_per_transaction:
+    1: 0.35             # 35% single item purchases
+    2: 0.25             # 25% two items
+    3: 0.20             # 20% three items
+    4: 0.12             # 12% four items
+    5: 0.05             # 5% five items
+    6_plus: 0.03        # 3% six or more items
+    
+  # Transaction value ranges (EUR)
+  transaction_value_distribution:
+    under_25: 0.40      # 40% under €25
+    "25_50": 0.30       # 30% €25-50
+    "50_100": 0.20      # 20% €50-100
+    "100_200": 0.08     # 8% €100-200
+    over_200: 0.02      # 2% over €200
+    
+  # Return/refund rate
+  return_rate: 0.08     # 8% of items eventually returned
+  
+  # Customer loyalty program usage
+  loyalty_program_usage: 0.35  # 35% provide loyalty number
+
+# POS Staffing Patterns  
+staffing_patterns:
+  description: "Employee shift and performance patterns"
+  
+  # Shift patterns
+  shift_distribution:
+    morning_shift:      # 6 AM - 2 PM
+      start_time: "06:00"
+      end_time: "14:00"
+      coverage: 0.30    # 30% of daily staff
+      
+    afternoon_shift:    # 2 PM - 10 PM
+      start_time: "14:00"  
+      end_time: "22:00"
+      coverage: 0.50    # 50% of daily staff (peak period)
+      
+    full_day:           # 8 AM - 8 PM
+      start_time: "08:00"
+      end_time: "20:00"
+      coverage: 0.20    # 20% work full days
+      
+  # Performance metrics per employee
+  employee_performance:
+    transactions_per_hour:
+      min: 8            # Minimum transactions per hour
+      average: 15       # Average transactions per hour  
+      max: 25           # Peak performance
+      
+    average_transaction_time:
+      seconds: 180      # 3 minutes average per transaction
+      
+    accuracy_rate: 0.98 # 98% transaction accuracy
+
+# Store Operations Configuration
+store_operations_config:
+  description: "Daily store operations and summary reporting"
+  
+  # Operating hours by country (local customs)
+  operating_hours:
+    NL:
+      monday_friday: ["09:00", "21:00"]    # 9 AM - 9 PM
+      saturday: ["09:00", "22:00"]         # 9 AM - 10 PM
+      sunday: ["12:00", "18:00"]           # 12 PM - 6 PM (limited)
+      
+    DE:
+      monday_friday: ["08:00", "20:00"]    # 8 AM - 8 PM
+      saturday: ["08:00", "20:00"]         # 8 AM - 8 PM
+      sunday: ["00:00", "00:00"]           # Closed (German law)
+      
+    FR:
+      monday_friday: ["09:00", "20:00"]    # 9 AM - 8 PM
+      saturday: ["09:00", "20:00"]         # 9 AM - 8 PM
+      sunday: ["10:00", "19:00"]           # 10 AM - 7 PM
+      
+    BE:
+      monday_friday: ["09:00", "19:00"]    # 9 AM - 7 PM
+      saturday: ["09:00", "19:00"]         # 9 AM - 7 PM
+      sunday: ["10:00", "18:00"]           # 10 AM - 6 PM
+      
+  # Daily reporting requirements
+  daily_summary_metrics:
+    - total_transactions
+    - total_revenue_eur
+    - total_tax_collected_eur
+    - average_transaction_value
+    - payment_method_breakdown
+    - staff_hours_worked
+    - customer_count
+
+# European VAT Configuration
+vat_configuration:
+  description: "Country-specific VAT rates and GL account mapping"
+  
+  # Current VAT rates by country (as of 2024)
+  rates_by_country:
+    NL:
+      standard_rate: 0.21      # 21% standard VAT
+      reduced_rate: 0.09       # 9% for specific goods
+      gl_account: "2300_NL"    # VAT payable account
+      
+    DE:
+      standard_rate: 0.19      # 19% standard VAT
+      reduced_rate: 0.07       # 7% for specific goods  
+      gl_account: "2300_DE"    # VAT payable account
+      
+    FR:
+      standard_rate: 0.20      # 20% standard VAT
+      reduced_rate: 0.055      # 5.5% for specific goods
+      gl_account: "2300_FR"    # VAT payable account
+      
+    BE:
+      standard_rate: 0.21      # 21% standard VAT
+      reduced_rate: 0.06       # 6% for specific goods
+      gl_account: "2300_BE"    # VAT payable account
+      
+  # Most fashion items use standard rate
+  fashion_vat_treatment:
+    clothing: "standard_rate"
+    shoes: "standard_rate"  
+    accessories: "standard_rate"
+
+# Data Generation Validation Rules
+validation_rules:
+  description: "Rules for validating generated POS data quality"
+  
+  # Revenue reconciliation requirements
+  revenue_reconciliation:
+    tolerance_eur: 0.01          # Max 1 cent difference
+    pos_to_orders_match: true    # POS revenue must equal orders revenue
+    
+  # Data quality checks
+  data_quality:
+    max_missing_fields_percent: 0.1    # Max 0.1% missing required fields
+    transaction_id_uniqueness: true    # All transaction IDs unique
+    valid_employee_assignments: true   # All employees exist in HR
+    valid_store_assignments: true      # All stores exist in operations
+    
+  # Business logic validation
+  business_logic:
+    vat_calculation_accuracy: 0.99     # 99% VAT calculations must be accurate
+    payment_method_distribution_check: true  # Payment methods match country patterns
+    transaction_timing_realistic: true       # Transaction times during operating hours

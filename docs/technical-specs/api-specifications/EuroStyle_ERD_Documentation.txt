@@ -1,0 +1,123 @@
+
+# EuroStyle Fashion - Entity Relationship Diagrams
+
+## System Architecture ERD
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   OPERATIONAL   │    │    WEBSHOP      │    │    FINANCE      │    │       HR        │
+│     SYSTEM      │    │   ANALYTICS     │    │   MANAGEMENT    │    │   MANAGEMENT    │
+│                 │    │                 │    │                 │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ customers   │◄┼────┼►│web_sessions │ │    │ │legal_entities│◄┼────┼►│employees    │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+│                 │    │        │        │    │        │        │    │        │        │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ products    │◄┼────┼►│ page_views  │ │    │ │chart_of_acct│ │    │ │departments  │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+│                 │    │        │        │    │        │        │    │        │        │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ orders      │ │    │ │cart_activity│ │    │ │gl_journals  │ │    │ │leave_request│ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+│        │        │    │                 │    │                 │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ order_lines │ │    │ │product_rev. │ │    │ │budget_data  │ │    │ │training     │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Operational System ERD
+
+```
+     ┌─────────────┐
+     │  customers  │
+     │             │
+     │ customer_id │ (PK)
+     │ email       │
+     │ first_name  │
+     │ ...         │
+     └─────┬───────┘
+           │ 1
+           │
+           │ *
+    ┌─────────────┐      ┌─────────────┐
+    │   orders    │      │  campaigns  │
+    │             │      │             │
+    │ order_id    │ (PK) │ campaign_id │ (PK)
+    │ customer_id │ (FK) │ campaign_nm │
+    │ store_id    │ (FK) │ start_date  │
+    │ ...         │      │ ...         │
+    └─────┬───────┘      └─────────────┘
+          │ 1
+          │
+          │ *
+   ┌─────────────┐      ┌─────────────┐
+   │ order_lines │      │  products   │
+   │             │      │             │
+   │ order_line  │ (PK) │ product_id  │ (PK)
+   │ order_id    │ (FK) │ product_nm  │
+   │ product_id  │ (FK) │ category    │
+   │ ...         │      │ ...         │
+   └─────────────┘      └─────┬───────┘
+          │ *                  │ 1
+          └────────────────────┘
+```
+
+## Finance System ERD
+
+```
+┌─────────────┐      ┌─────────────┐
+│legal_entities│      │chart_of_acc │
+│             │      │             │
+│ entity_id   │ (PK) │ account_id  │ (PK)
+│ entity_code │      │ account_cd  │
+│ entity_name │      │ account_nm  │
+│ ...         │      │ ...         │
+└─────┬───────┘      └─────┬───────┘
+      │ 1                  │ 1
+      │                    │
+      │ *                  │ *
+┌─────────────┐      ┌─────────────┐
+│gl_jrnl_hdr  │      │gl_jrnl_line │
+│             │      │             │
+│ journal_hdr │ (PK) │ journal_ln  │ (PK)
+│ entity_id   │ (FK) │ journal_hdr │ (FK)
+│ journal_dt  │      │ account_id  │ (FK)
+│ ...         │      │ debit_amt   │
+└─────────────┘      │ credit_amt  │
+                     │ ...         │
+                     └─────────────┘
+```
+
+## HR System ERD
+
+```
+┌─────────────┐      ┌─────────────┐
+│departments  │      │job_positions│
+│             │      │             │
+│ department  │ (PK) │ position_id │ (PK)
+│ dept_code   │      │ position_cd │
+│ dept_name   │      │ dept_id     │ (FK)
+│ ...         │      │ ...         │
+└─────┬───────┘      └─────┬───────┘
+      │ 1                  │ 1
+      │                    │
+      │ *                  │ *
+┌─────────────┐      ┌─────────────┐
+│ employees   │      │employment   │
+│             │      │ _contracts  │
+│ employee_id │ (PK) │ contract_id │ (PK)
+│ entity_id   │ (FK) │ employee_id │ (FK)
+│ first_name  │      │ position_id │ (FK)
+│ last_name   │      │ start_date  │
+│ ...         │      │ ...         │
+└─────────────┘      └─────────────┘
+```
+
+## Cross-System Integration Points
+
+1. **Customer Integration**: `operational.customers.customer_id` ↔ `webshop.web_sessions.customer_id`
+2. **Product Integration**: `operational.products.product_id` ↔ `webshop.page_views.product_id`
+3. **Campaign Integration**: `operational.campaigns.campaign_id` ↔ `webshop.email_marketing.campaign_id`
+4. **Entity Integration**: `finance.legal_entities.entity_id` ↔ `hr.employees.entity_id`
+5. **Financial Integration**: Order data flows to GL through automated journal entries

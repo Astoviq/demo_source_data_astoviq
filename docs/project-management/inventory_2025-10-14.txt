@@ -1,0 +1,77 @@
+# EuroStyle Data Directory Inventory - 2025-10-14
+
+## Status: CLEANED UP - Flat Structure Implemented
+
+### Directory Structure (find data -type d -print):
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/named_collections
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/metadata_dropped
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/flags
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/access
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/preprocessed_configs
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/user_defined
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/format_schemas
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/user_scripts
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/user_files
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/default
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/eurostyle_operational
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/system
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/eurostyle_finance
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/eurostyle_pos
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/eurostyle_hr
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/data/eurostyle_webshop
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/tmp
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/metadata
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/dictionaries_lib
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/store
+[... ClickHouse internal data store directories ...]
+
+### CSV Files in data/csv (find data/csv -maxdepth 1 -type f -print):
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_finance.gl_journal_headers.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_finance.gl_journal_lines.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_finance.legal_entities.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.employee_surveys.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.employee_training_records.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.employees.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.performance_cycles.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.performance_reviews.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.survey_responses.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_hr.training_programs.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_operational.customers.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_operational.orders.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_operational.products.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_operational.stores.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.discounts.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.employee_assignments.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.employee_shifts.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.payments.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.promotions.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.store_daily_summaries.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.transaction_items.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_pos.transactions.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/eurostyle_webshop.web_sessions.csv.gz
+/Users/kimvermeij/astoviq_projects/eurostyle-retail-demo/data/csv/generation_summary.md
+
+## VERIFICATION RESULTS:
+
+✅ CONFIRMED: All CSV files are in data/csv/ using flat structure
+✅ CONFIRMED: Perfect naming pattern eurostyle_{database}.{table}.csv.gz
+✅ CONFIRMED: No subdirectories in data/csv/ (legacy structure archived)
+✅ CONFIRMED: 23 CSV files + 1 metadata file = 24 total files
+✅ CONFIRMED: Covers all 5 databases: operational, finance, hr, webshop, pos
+
+## LEGACY STRUCTURE STATUS:
+❌ REMOVED: data/csv/operational/ (empty directory - archived)
+❌ REMOVED: data/csv/webshop/ (empty directory - archived)  
+❌ REMOVED: data/csv/finance/ (empty directory - archived)
+❌ REMOVED: data/csv/hr/ (empty directory - archived)
+
+📁 ARCHIVED: All legacy directories moved to archive/2025-10-14/data_csv_legacy_structure/
+
+## SYSTEM STATUS:
+🐳 Container: Running and healthy
+🗃️ Databases: 5 databases operational with data loaded
+🔗 Access: HTTP :8124, Native :9002
+✅ Data consistency maintained after restructure

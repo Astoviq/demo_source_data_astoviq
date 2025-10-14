@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <users>
+        <!-- Default user (disabled in production) -->
+        <default>
+            <password></password>
+            <networks>
+                <ip>127.0.0.1</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </default>
+        
+        <!-- EuroStyle demo user -->
+        <eurostyle_user>
+            <password>eurostyle_demo_2024</password>
+            <networks>
+                <ip>0.0.0.0/0</ip>
+            </networks>
+            <profile>eurostyle_profile</profile>
+            <quota>default</quota>
+        </eurostyle_user>
+    </users>
+    
+    <!-- Profiles define settings for users -->
+    <profiles>
+        <default>
+            <max_memory_usage>1000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <max_execution_time>300</max_execution_time>
+        </default>
+        
+        <eurostyle_profile>
+            <max_memory_usage>1000000000</max_memory_usage>
+            <max_execution_time>300</max_execution_time>
+            <max_query_size>268435456</max_query_size>
+            <use_uncompressed_cache>1</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <max_concurrent_queries_for_user>10</max_concurrent_queries_for_user>
+        </eurostyle_profile>
+    </profiles>
+    
+    <!-- Quotas -->
+    <quotas>
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+                <result_rows>0</result_rows>
+                <read_rows>0</read_rows>
+                <execution_time>0</execution_time>
+            </interval>
+        </default>
+    </quotas>
+</clickhouse>

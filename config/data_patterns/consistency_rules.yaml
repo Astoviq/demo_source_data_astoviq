@@ -1,0 +1,341 @@
+# EuroStyle Source - Data Consistency Rules
+# ========================================
+# Critical consistency rules following WARP.md principles
+# Ensures revenue and other key metrics match across databases
+
+# CRITICAL: Revenue Consistency Between Operational and Finance
+revenue_synchronization:
+  description: "Ensures operational orders exactly match finance GL entries"
+  
+  # Primary rule: Every order must have corresponding GL entries
+  order_to_gl_mapping:
+    source_table: "eurostyle_operational.orders"
+    target_table: "eurostyle_finance.gl_journal_lines"
+    
+    # Revenue recognition rules
+    mapping_rules:
+      - order_field: "total_amount_eur"
+        gl_account: "4000"  # Revenue account
+        debit_credit: "credit"
+        description: "Order revenue to GL revenue account"
+        
+      - order_field: "tax_amount_eur" 
+        gl_account: "2300"  # VAT payable
+        debit_credit: "credit"
+        description: "Order VAT to GL tax liability"
+        
+      - order_field: "subtotal_eur + tax_amount_eur"
+        gl_account: "1100"  # Accounts receivable (online) or Cash (in-store)
+        debit_credit: "debit" 
+        description: "Order total to GL receivable/cash"
+        conditional_account:
+          online: "1100"    # Accounts receivable
+          in_store: "1000"  # Cash account
+          
+    # Timing rules
+    timing_rules:
+      gl_date_field: "transaction_date"
+      order_date_field: "order_date"
+      # GL entries can be up to 2 days after order date (processing delay)
+      max_delay_days: 2
+      
+    # Validation tolerances
+    tolerance:
+      amount_variance_max_eur: 0.01  # Max 1 cent difference
+      missing_gl_entries_max_percent: 0.5  # Max 0.5% missing GL entries
+
+# Employee Cost Consistency Between HR and Finance
+employee_cost_synchronization:
+  description: "Ensures HR compensation matches finance payroll expenses"
+  
+  hr_to_finance_mapping:
+    source_table: "eurostyle_hr.compensation_history"
+    target_table: "eurostyle_finance.gl_journal_lines"
+    
+    mapping_rules:
+      - hr_field: "new_base_salary_eur / 12"  # Monthly salary
+        gl_account: "6100"  # Salary expense
+        debit_credit: "debit"
+        frequency: "monthly"
+        
+      - hr_field: "bonus_amount_eur"
+        gl_account: "6150"  # Bonus expense  
+        debit_credit: "debit"
+        frequency: "as_earned"
+        
+      - hr_field: "health_insurance_contribution_eur"
+        gl_account: "6200"  # Benefits expense
+        debit_credit: "debit"
+        frequency: "monthly"
+        
+    validation:
+      variance_max_percent: 2.0  # Max 2% variance (timing differences)
+
+# Store Performance Consistency
+store_metrics_synchronization:
+  description: "Store revenue consistent across operational, finance, and webshop"
+  
+  store_revenue_mapping:
+    # Operational: Sum of order totals by store
+    operational_query: |
+      SELECT 
+        store_id,
+        sum(total_amount_eur) as revenue_eur,
+        count(*) as order_count
+      FROM eurostyle_operational.orders 
+      WHERE order_date >= '{start_date}' AND order_date <= '{end_date}'
+      GROUP BY store_id
+      
+    # Finance: Sum of revenue GL entries by store  
+    finance_query: |
+      SELECT 
+        store_id,
+        sum(credit_amount_eur - debit_amount_eur) as revenue_eur,
+        count(DISTINCT transaction_reference) as transaction_count
+      FROM eurostyle_finance.gl_journal_lines
+      WHERE account_code = '4000'
+        AND transaction_date >= '{start_date}' 
+        AND transaction_date <= '{end_date}'
+      GROUP BY store_id
+      
+    # Webshop: Revenue attribution (for online orders)
+    webshop_query: |
+      SELECT 
+        'ONLINE' as store_id,
+        sum(conversion_value_eur) as revenue_eur,
+        count(*) as conversion_count
+      FROM eurostyle_webshop.web_analytics_events
+      WHERE event_type = 'purchase'
+        AND event_date >= '{start_date}'
+        AND event_date <= '{end_date}'
+        
+    validation:
+      max_variance_percent: 3.0  # Max 3% variance between systems
+      
+# Inventory Valuation Consistency  
+inventory_consistency:
+  description: "Inventory values consistent between operational and finance"
+  
+  operational_inventory: |
+    SELECT 
+      product_id,
+      sum(quantity_on_hand * unit_cost_eur) as inventory_value_eur
+    FROM eurostyle_operational.inventory
+    GROUP BY product_id
+    
+  finance_inventory: |
+    SELECT 
+      product_id,
+      sum(debit_amount_eur - credit_amount_eur) as inventory_value_eur  
+    FROM eurostyle_finance.gl_journal_lines
+    WHERE account_code BETWEEN '1300' AND '1399'  -- Inventory accounts
+    GROUP BY product_id
+    
+  validation:
+    variance_max_percent: 1.0  # Inventory should match within 1%
+
+# POS Revenue Consistency
+pos_revenue_synchronization:
+  description: "Ensures POS transactions exactly match operational orders revenue"
+  
+  pos_to_orders_mapping:
+    source_table: "eurostyle_operational.orders"
+    target_table: "eurostyle_pos.transactions"
+    
+    # Revenue matching rules
+    mapping_rules:
+      - source_field: "subtotal_eur"
+        target_field: "subtotal_amount"
+        description: "Orders subtotal = POS subtotal (before tax)"
+        
+      - source_field: "tax_amount_eur"
+        target_field: "tax_amount"
+        description: "Orders tax = POS tax amount"
+        
+      - source_field: "total_amount_eur"
+        target_field: "total_amount"
+        description: "Orders total = POS total amount"
+        
+    # POS GL integration rules
+    pos_gl_mapping:
+      - pos_field: "subtotal_amount"
+        gl_account: "4000"  # Revenue account
+        debit_credit: "credit"
+        description: "POS revenue to GL revenue account"
+        
+      - pos_field: "tax_amount"
+        gl_account_pattern: "2300_{country}"  # VAT payable by country
+        debit_credit: "credit"
+        description: "POS VAT to country-specific GL tax liability"
+        
+      - pos_field: "total_amount"
+        gl_account: "1000"  # Cash account (POS is always cash/card)
+        debit_credit: "debit"
+        description: "POS total to GL cash account"
+        
+    # Validation tolerances for POS
+    tolerance:
+      amount_variance_max_eur: 0.00  # Perfect match required for POS
+      missing_pos_entries_max_percent: 0.0  # All orders must have POS equivalent
+      
+    # Country-specific VAT validation
+    vat_validation_by_country:
+      NL: 
+        expected_rate: 0.21
+        gl_account: "2300_NL"
+      DE:
+        expected_rate: 0.19  
+        gl_account: "2300_DE"
+      FR:
+        expected_rate: 0.20
+        gl_account: "2300_FR"
+      BE:
+        expected_rate: 0.21
+        gl_account: "2300_BE"
+
+# Master Data Consistency
+master_data_consistency:
+  description: "Master data elements consistent across all databases"
+  
+  legal_entities:
+    source: "eurostyle_finance.legal_entities"
+    targets:
+      - "eurostyle_hr.employees.entity_id"
+      - "eurostyle_operational.stores.entity_id" 
+      - "eurostyle_webshop.web_sessions.entity_id"
+    validation: "All entity_id references must exist in source table"
+    
+  stores:
+    source: "eurostyle_operational.stores" 
+    targets:
+      - "eurostyle_hr.employment_contracts.store_id"
+      - "eurostyle_finance.gl_journal_lines.store_id"
+    validation: "All store_id references must exist in source table"
+    
+  products:
+    source: "eurostyle_operational.products"
+    targets:
+      - "eurostyle_operational.order_lines.product_id"
+      - "eurostyle_operational.inventory.product_id"
+      - "eurostyle_webshop.page_views.product_id"
+      - "eurostyle_webshop.product_reviews.product_id"
+      - "eurostyle_pos.transaction_items.product_id"
+    validation: "All product_id references must exist in source table"
+    
+  employees:
+    source: "eurostyle_hr.employees"
+    targets:
+      - "eurostyle_pos.employee_assignments.employee_id"
+      - "eurostyle_pos.transactions.cashier_employee_id"
+    validation: "All employee_id references must exist in source table"
+
+# Data Generation Consistency Rules
+generation_consistency:
+  description: "Rules for generating consistent data across databases"
+  
+  # Ensure orders generate corresponding GL entries
+  order_generation_rules:
+    for_each_order:
+      - create_gl_journal_header:
+          journal_id: "JH_{order_id}" 
+          description: "Order {order_id} revenue recognition"
+          transaction_date: "{order_date}"
+          
+      - create_gl_journal_lines:
+          - line_1:
+              account_code: "4000"  # Revenue
+              credit_amount_eur: "{total_amount_eur - tax_amount_eur}"
+              description: "Revenue from order {order_id}"
+              
+          - line_2: 
+              account_code: "2300"  # VAT payable
+              credit_amount_eur: "{tax_amount_eur}"
+              description: "VAT from order {order_id}"
+              
+          - line_3:
+              account_code: "{cash_or_receivable_account}"  
+              debit_amount_eur: "{total_amount_eur}"
+              description: "Cash/Receivable from order {order_id}"
+              
+  # Ensure employees generate payroll entries
+  employee_generation_rules:
+    for_each_employee:
+      monthly_payroll_entry:
+        - create_gl_entry:
+            account_code: "6100"  # Salary expense
+            debit_amount_eur: "{monthly_salary}"
+            credit_account: "2100"  # Salaries payable
+            description: "Monthly salary {employee_id}"
+
+# Validation Queries for Data Consistency
+validation_queries:
+  revenue_reconciliation:
+    description: "Check revenue consistency between operational and finance"
+    query: |
+      WITH operational_revenue AS (
+        SELECT 
+          date_trunc('month', order_date) as month,
+          sum(total_amount_eur) as ops_revenue
+        FROM eurostyle_operational.orders 
+        GROUP BY month
+      ),
+      finance_revenue AS (
+        SELECT 
+          date_trunc('month', transaction_date) as month,
+          sum(credit_amount_eur) as fin_revenue
+        FROM eurostyle_finance.gl_journal_lines
+        WHERE account_code = '4000'
+        GROUP BY month  
+      )
+      SELECT 
+        o.month,
+        o.ops_revenue,
+        f.fin_revenue,
+        abs(o.ops_revenue - f.fin_revenue) as variance,
+        (abs(o.ops_revenue - f.fin_revenue) / o.ops_revenue * 100) as variance_percent
+      FROM operational_revenue o
+      JOIN finance_revenue f ON o.month = f.month
+      WHERE variance_percent > 5.0  -- Flag variances > 5%
+      
+  employee_count_reconciliation:
+    description: "Check employee counts between HR and finance payroll"
+    query: |
+      WITH hr_active AS (
+        SELECT count(*) as hr_count 
+        FROM eurostyle_hr.employees 
+        WHERE employee_status = 'ACTIVE'
+      ),
+      payroll_active AS (
+        SELECT count(DISTINCT employee_id) as payroll_count
+        FROM eurostyle_finance.gl_journal_lines
+        WHERE account_code = '6100' 
+          AND transaction_date >= date_sub(now(), INTERVAL 1 MONTH)
+      )
+      SELECT 
+        hr_count,
+        payroll_count, 
+        abs(hr_count - payroll_count) as difference
+      FROM hr_active 
+      CROSS JOIN payroll_active
+      WHERE difference > 10  -- Flag differences > 10 employees
+
+# Automated Consistency Checks
+automated_checks:
+  frequency: "daily"
+  
+  checks:
+    - name: "revenue_consistency_check"
+      query: "validation_queries.revenue_reconciliation"
+      threshold: "variance_percent <= 5.0"
+      alert_on_failure: true
+      
+    - name: "employee_count_check" 
+      query: "validation_queries.employee_count_reconciliation"
+      threshold: "difference <= 10"
+      alert_on_failure: true
+      
+    - name: "referential_integrity_check"
+      type: "cross_database_foreign_keys"
+      tables: ["all"]
+      threshold: "orphaned_records_percent <= 1.0"
+      alert_on_failure: true

@@ -1,0 +1,183 @@
+
+# EuroStyle Fashion - Data Dictionary & Entity Descriptions
+
+## OPERATIONAL SYSTEM ENTITIES
+
+### customers
+**Purpose**: Central customer master data with GDPR compliance
+**Key Attributes**:
+- customer_id (String, PK): Unique identifier format CUST_EU_XXXXXX
+- email (String): Primary contact method, used for online authentication  
+- first_name, last_name (String): Personal identification, GDPR protected
+- country_code (String): NL, DE, FR, BE, LU for European operations
+- loyalty_tier (String): Bronze, Silver, Gold, Platinum for segmentation
+- total_spent (Decimal64): Customer lifetime value in EUR
+
+**Business Rules**:
+- Email must be unique across all customers
+- Marketing consent required for promotional communications (GDPR)
+- Customer data retention policy: 7 years after last interaction
+
+### products
+**Purpose**: Fashion product catalog with multi-country pricing
+**Key Attributes**:
+- product_id (String, PK): Unique identifier format PROD_EU_XXXXXX
+- category_l1, l2, l3 (String): Hierarchical categorization (Women > Tops > T-Shirts)
+- price_eur (Decimal64): Base price in EUR, converted to local currencies
+- sustainability_score (UInt8): 1-10 rating for environmental impact
+- material_composition (String): "80% Organic Cotton, 20% Recycled Polyester"
+
+**Business Rules**:
+- Products must have at least one size variant to be sellable
+- Sustainability score mandatory for all new products since 2024
+- Price changes require approval for active products
+
+### orders
+**Purpose**: Customer purchase transactions across all channels
+**Key Attributes**:
+- order_id (String, PK): Format ORD_EU_YYYY_XXXXXX with year embedded
+- customer_id (String, FK): Links to customers table
+- store_id (String, FK): 'ONLINE' for e-commerce, store ID for retail
+- order_status (String): pending, confirmed, shipped, delivered, cancelled, returned
+- total_amount_eur (Decimal64): Final order value including tax and shipping
+
+**Business Rules**:
+- Orders cannot be deleted, only cancelled with reason
+- Payment must be confirmed before order confirmation
+- European VAT rates applied based on delivery country
+
+## WEBSHOP ANALYTICS ENTITIES
+
+### web_sessions
+**Purpose**: Digital customer journey tracking across country websites
+**Key Attributes**:
+- session_id (String, PK): Unique session identifier
+- customer_id (String, FK, Nullable): NULL for anonymous sessions
+- country_code (String): Which country site (nl.eurostyle.com, etc.)
+- device_type (String): desktop, mobile, tablet for responsive analysis
+- conversion_session (Bool): True if session resulted in purchase
+
+**Business Rules**:
+- Sessions timeout after 30 minutes of inactivity
+- Anonymous sessions can be linked to customer post-login
+- GDPR compliance: IP addresses stored for 90 days maximum
+
+### page_views
+**Purpose**: Detailed page interaction tracking for UX optimization
+**Key Attributes**:
+- page_view_id (String, PK): Unique page view identifier
+- product_id (String, FK, Nullable): Set for product detail pages
+- time_on_page_seconds (UInt16): User engagement measurement
+- scroll_depth_percent (UInt8): How far user scrolled (0-100)
+
+**Business Rules**:
+- Page views under 3 seconds considered bounces
+- Product page views trigger recommendation engine
+- Heat map data aggregated weekly for performance
+
+## FINANCE SYSTEM ENTITIES
+
+### legal_entities
+**Purpose**: European BV structure with holding company
+**Key Attributes**:
+- entity_id (String, PK): ENTITY_[COUNTRY]_[TYPE] format
+- entity_code (String): Short code ESLH, ESDE, ESFR, ESBE, ESLU
+- functional_currency (String): Base currency for each entity (EUR)
+- parent_entity_id (String, FK): Links to ESLH holding company
+
+**Business Rules**:
+- All BV entities owned 100% by ESLH holding company
+- Each entity must have valid registration in home country
+- Fiscal year end must align with group reporting (December 31)
+
+### chart_of_accounts
+**Purpose**: IFRS-compliant account structure for consolidated reporting
+**Key Attributes**:
+- account_code (String): 4-digit code following IFRS structure
+- account_type (String): ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE
+- normal_balance (String): DEBIT or CREDIT for validation
+- ifrs_classification (String): IFRS financial statement mapping
+
+**Business Rules**:
+- Account codes 1000-1999: Assets, 2000-2999: Liabilities, etc.
+- All journal entries must balance (total debits = total credits)
+- Accounts cannot be deleted if used in posted transactions
+
+### gl_journal_headers & gl_journal_lines
+**Purpose**: General ledger transaction recording with audit trail
+**Key Attributes (Headers)**:
+- journal_header_id (String, PK): Unique journal batch identifier
+- entity_id (String, FK): Which BV entity the transaction belongs to
+- journal_status (String): DRAFT, POSTED, REVERSED for control
+
+**Key Attributes (Lines)**:
+- journal_line_id (String, PK): Unique line identifier
+- account_id (String, FK): Chart of accounts reference
+- debit_amount, credit_amount (Decimal64): Transaction amounts
+
+**Business Rules**:
+- Journal entries cannot be modified once POSTED
+- Each journal must have at least 2 lines (double-entry bookkeeping)
+- Monthly closing prevents posting to prior periods
+
+## HR SYSTEM ENTITIES
+
+### employees
+**Purpose**: European workforce management with GDPR compliance
+**Key Attributes**:
+- employee_id (String, PK): EMP_XXXXXX format
+- entity_id (String, FK): Links to finance.legal_entities
+- first_name, last_name (String): GDPR protected, masked in non-prod
+- social_security_number (String): Encrypted/masked format ***-**-####
+- employee_status (Enum8): ACTIVE, INACTIVE, TERMINATED, ON_LEAVE
+
+**Business Rules**:
+- Personal data must be masked in non-production environments
+- GDPR consent required for data processing beyond employment needs
+- Data retention: 7 years after employment termination
+
+### employment_contracts
+**Purpose**: European employment law compliant contract management
+**Key Attributes**:
+- contract_id (String, PK): CONT_[COUNTRY]_XXXXXX format
+- annual_leave_days (UInt16): Country-specific legal minimums
+- works_council_applicable (Bool): Germany/Netherlands requirement
+- notice_period_weeks (UInt8): European termination notice periods
+
+**Business Rules**:
+- Leave entitlements vary by country: NL=25, DE=24, FR=25, BE=20, LU=25
+- Probation periods limited by local law
+- Fixed-term contracts require end_date
+
+### leave_requests & leave_balances
+**Purpose**: European leave management with statutory compliance
+**Key Attributes (Requests)**:
+- leave_type (String): ANNUAL, SICK, MATERNITY, PATERNITY, PARENTAL
+- statutory_entitlement (Bool): Required by law vs. company policy
+- medical_certificate_required (Bool): For sick leave > 3 days
+
+**Key Attributes (Balances)**:
+- statutory_minimum (Decimal32): Legal minimum entitlement
+- sick_leave_unlimited (Bool): Germany/Netherlands unlimited sick leave
+- max_carryover (Decimal32): Maximum days that can carry over
+
+**Business Rules**:
+- Sick leave unlimited in Germany and Netherlands
+- Annual leave must be taken within 18 months (EU directive)
+- Parental leave varies by country and gender
+
+## CROSS-SYSTEM DATA FLOWS
+
+1. **Order to Finance**: Order data automatically creates AR journal entries
+2. **Customer to Analytics**: Customer registration triggers web session linking
+3. **Product to Analytics**: Product views feed recommendation algorithms
+4. **Employee to Finance**: Payroll data flows to expense accounts
+5. **Campaign to Analytics**: Marketing campaigns tracked across web events
+
+## DATA QUALITY RULES
+
+- **Referential Integrity**: All foreign keys must have valid parent records
+- **Data Consistency**: Customer country must match delivery country for EU orders
+- **Temporal Consistency**: Order date cannot be before customer registration
+- **Business Logic**: Product price must be > cost price (positive margin)
+- **Compliance**: GDPR data masking enforced in non-production environments

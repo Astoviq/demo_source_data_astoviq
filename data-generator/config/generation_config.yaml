@@ -1,0 +1,246 @@
+# =====================================================
+# EuroStyle Fashion - Data Generation Configuration  
+# =====================================================
+
+# Database Connection Settings
+database:
+  host: localhost
+  port: 9002  # Native port for data insertion
+  database: eurostyle_operational
+  username: eurostyle_user
+  password: eurostyle_demo_2024
+  timeout: 30
+  secure: false
+
+# Data Generation Parameters
+data_volumes:
+  # Reference data (small, static)
+  geography_records: 500           # European cities and regions
+  fashion_calendar_events: 365     # Events per year (7 years = ~2,555 total)
+  
+  # Master data
+  customers: 150000               # Growing European customer base
+  products: 2500                  # Fashion catalog (rotates seasonally)
+  stores: 47                      # Physical stores across 5 countries
+  campaigns: 200                  # 2 years of marketing campaigns
+  
+  # Transactional data (large volumes)
+  orders: 50000                   # Start with smaller test volume
+  order_lines: 120000             # ~2.4 items per order average
+  inventory_records: 50000        # Products × locations × variants
+
+# Time Range for Historical Data
+time_range:
+  # Fashion calendar range (covers broader planning horizon)
+  fashion_calendar_start: "2020-01-01"  # Extended calendar for historical context
+  fashion_calendar_end: "2026-12-31"    # Future planning horizon
+  
+  # Sales/transactional data range (actual business data)
+  sales_start_date: "2020-01-01"        # 5+ years of historical sales data  
+  sales_end_date: "2025-10-10"          # Up to current date
+  current_date: "2025-10-10"            # Reference point for data generation
+
+# Geographic Distribution (matches business reality)
+geographic_distribution:
+  Germany:
+    percentage: 35
+    country_code: "DE"
+    currency: "EUR"
+    vat_rate: 19.0
+    major_cities: ["Berlin", "Hamburg", "Munich", "Cologne", "Düsseldorf"]
+    
+  France:
+    percentage: 25
+    country_code: "FR"
+    currency: "EUR"
+    vat_rate: 20.0
+    major_cities: ["Paris", "Lyon", "Marseille", "Nice", "Toulouse"]
+    
+  Netherlands:
+    percentage: 20
+    country_code: "NL"
+    currency: "EUR"
+    vat_rate: 21.0
+    major_cities: ["Amsterdam", "Rotterdam", "Utrecht", "Eindhoven", "Groningen"]
+    
+  Belgium:
+    percentage: 15
+    country_code: "BE"
+    currency: "EUR"
+    vat_rate: 21.0
+    major_cities: ["Brussels", "Antwerp", "Ghent", "Charleroi", "Liège"]
+    
+  Luxembourg:
+    percentage: 5
+    country_code: "LU"
+    currency: "EUR"
+    vat_rate: 17.0
+    major_cities: ["Luxembourg City", "Esch-sur-Alzette"]
+
+# Business Metrics (realistic fashion retail KPIs)
+business_metrics:
+  average_order_value: 85.0       # EUR
+  conversion_rate_online: 2.3     # Percentage
+  conversion_rate_instore: 12.0   # Percentage
+  return_rate: 8.5               # Percentage
+  gross_margin: 58.0             # Percentage
+  customer_acquisition_cost: 23.0 # EUR
+  
+  # Geographic variations
+  aov_by_country:
+    DE: 92.0    # Germans are price-conscious but buy quality
+    FR: 88.0    # Fashion-forward purchases
+    NL: 82.0    # High online adoption
+    BE: 80.0    # Balanced online/offline
+    LU: 105.0   # Premium segment focus
+
+# Seasonal Patterns (fashion industry)
+seasonality:
+  peak_months: [3, 4, 9, 10, 11, 12]  # Spring launch, Fall/Winter, Holiday
+  slow_months: [1, 2, 7, 8]           # Post-holiday, summer slowdown
+  
+  sales_multipliers:
+    january: 0.6      # Post-holiday clearance
+    february: 0.7     # Slow period
+    march: 1.4        # Spring collection launch
+    april: 1.3        # Spring peak
+    may: 1.0          # Normal
+    june: 1.0         # Normal
+    july: 0.8         # Summer slowdown
+    august: 0.9       # Back-to-school prep
+    september: 1.5    # Fall/Winter launch
+    october: 1.4      # Fall peak
+    november: 1.6     # Black Friday + Holiday prep
+    december: 1.3     # Holiday season
+
+# Fashion Product Categories
+product_categories:
+  Women:
+    percentage: 45
+    subcategories:
+      Tops: ["T-Shirts", "Blouses", "Sweaters", "Hoodies"]
+      Bottoms: ["Jeans", "Trousers", "Skirts", "Shorts"]
+      Dresses: ["Casual Dresses", "Formal Dresses", "Summer Dresses"]
+      Outerwear: ["Jackets", "Coats", "Blazers"]
+      
+  Men:
+    percentage: 35
+    subcategories:
+      Tops: ["T-Shirts", "Shirts", "Sweaters", "Hoodies"]
+      Bottoms: ["Jeans", "Chinos", "Shorts", "Formal Trousers"]
+      Outerwear: ["Jackets", "Coats", "Blazers"]
+      
+  Kids:
+    percentage: 15
+    subcategories:
+      Tops: ["T-Shirts", "Sweaters", "Hoodies"]
+      Bottoms: ["Jeans", "Shorts", "Leggings"]
+      
+  Accessories:
+    percentage: 5
+    subcategories:
+      Shoes: ["Sneakers", "Boots", "Sandals"]
+      Bags: ["Handbags", "Backpacks", "Totes"]
+      Jewelry: ["Necklaces", "Bracelets", "Earrings"]
+
+# Fashion Colors and Materials
+product_attributes:
+  primary_colors: 
+    - "Black" 
+    - "White" 
+    - "Navy" 
+    - "Grey" 
+    - "Beige"
+    - "Brown"
+    - "Red"
+    - "Blue"
+    - "Green"
+    - "Pink"
+    
+  materials:
+    sustainable:
+      - "Organic Cotton"
+      - "Recycled Polyester"
+      - "Hemp"
+      - "Tencel"
+      - "Linen"
+    traditional:
+      - "Cotton"
+      - "Polyester"  
+      - "Wool"
+      - "Denim"
+      - "Leather"
+      
+  sizes:
+    clothing: ["XS", "S", "M", "L", "XL", "XXL"]
+    shoes_eu: ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"]
+
+# Customer Behavior Patterns
+customer_behavior:
+  loyalty_program_adoption: 0.35   # 35% of customers join loyalty program
+  marketing_opt_in_rate: 0.42      # GDPR-compliant opt-in rates
+  newsletter_subscription_rate: 0.28
+  
+  # Customer lifecycle segments
+  lifecycle_distribution:
+    new_customers: 0.25             # First-time buyers
+    developing: 0.35                # 2-5 orders
+    established: 0.25               # 6-15 orders  
+    loyal: 0.15                     # 16+ orders
+    
+  # Channel preferences by country
+  channel_preferences:
+    DE: { online: 0.62, instore: 0.38 }
+    FR: { online: 0.58, instore: 0.42 }  
+    NL: { online: 0.75, instore: 0.25 }  # Highest online adoption
+    BE: { online: 0.60, instore: 0.40 }
+    LU: { online: 0.55, instore: 0.45 }  # More traditional shopping
+
+# Store Configuration
+store_formats:
+  flagship:
+    count: 5
+    avg_sqm: 800
+    cities: ["Amsterdam", "Paris", "Berlin", "Brussels", "Munich"]
+    
+  standard:
+    count: 35
+    avg_sqm: 450
+    
+  outlet:
+    count: 5
+    avg_sqm: 600
+    
+  popup:
+    count: 2  
+    avg_sqm: 200
+
+# Data Quality Settings
+data_quality:
+  null_rates:
+    optional_fields: 0.15           # 15% of optional fields are null
+    phone_numbers: 0.08             # Some customers don't provide phone
+    secondary_colors: 0.30          # Not all products have secondary colors
+    
+  duplicate_rates:
+    customer_emails: 0.002          # Very low email duplication
+    
+  data_errors:
+    invalid_postal_codes: 0.001     # Minimal data entry errors
+    
+# Performance Settings
+generation:
+  batch_size: 10000                # Records per batch for large tables
+  progress_update_frequency: 5000  # Progress bar update frequency
+  max_memory_mb: 1024              # Memory limit for data generation
+  
+  # Parallel processing
+  use_multiprocessing: true
+  max_workers: 4                   # CPU cores to use
+  
+# Output Settings
+output:
+  export_csv: true                 # Export to CSV for inspection
+  csv_path: "../data/csv/"
+  validate_data: true              # Run data quality checks
+  generate_summary_report: true    # Create data generation summary

@@ -1,0 +1,259 @@
+
+# EuroStyle Fashion - API Specifications & Integration Guide
+
+## API AUTHENTICATION
+
+All APIs use OAuth 2.0 Bearer Token authentication:
+```
+Authorization: Bearer {access_token}
+Content-Type: application/json
+```
+
+## OPERATIONAL SYSTEM APIs
+
+### Base URL: https://api.eurostyle-erp.com/v2/
+
+#### Customers API
+```
+GET /customers?country={NL,DE,FR,BE,LU}&limit=100
+Response:
+{
+  "customers": [
+    {
+      "customer_id": "CUST_EU_000001",
+      "email": "customer@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "country_code": "NL",
+      "loyalty_tier": "Gold",
+      "total_spent": 1250.00,
+      "marketing_opt_in": true
+    }
+  ],
+  "total_count": 310000,
+  "page": 1
+}
+```
+
+#### Products API
+```
+GET /products?category=Women&subcategory=Tops&active=true
+Response:
+{
+  "products": [
+    {
+      "product_id": "PROD_EU_000001",
+      "product_name": "Sustainable Cotton T-Shirt",
+      "category_l1": "Women",
+      "category_l2": "Tops",
+      "category_l3": "T-Shirts",
+      "price_eur": 29.99,
+      "sustainability_score": 8,
+      "current_stock_total": 150
+    }
+  ]
+}
+```
+
+#### Orders API
+```
+POST /orders
+Request:
+{
+  "customer_id": "CUST_EU_000001",
+  "order_lines": [
+    {
+      "product_id": "PROD_EU_000001",
+      "size": "M",
+      "color": "Navy",
+      "quantity": 2,
+      "unit_price_eur": 29.99
+    }
+  ],
+  "shipping_method": "standard",
+  "delivery_country": "NL"
+}
+```
+
+## WEBSHOP ANALYTICS APIs
+
+### Base URL: https://api.eurostyle-webshop.com/v2/
+
+#### Session Analytics
+```
+GET /analytics/sessions?date_from=2024-01-01&country_code=NL
+Response:
+{
+  "sessions": [
+    {
+      "session_id": "SES_2024_NL_000001",
+      "customer_id": "CUST_EU_000001",
+      "country_code": "NL",
+      "device_type": "desktop",
+      "session_duration_seconds": 1200,
+      "page_views": 8,
+      "conversion_session": true
+    }
+  ]
+}
+```
+
+#### Product Recommendations
+```
+GET /recommendations/{customer_id}?type=personalized&limit=10
+Response:
+{
+  "recommendations": [
+    {
+      "product_id": "PROD_EU_000123",
+      "recommendation_type": "similar_items",
+      "confidence_score": 0.8542,
+      "reason": "Customers who bought this also bought..."
+    }
+  ]
+}
+```
+
+## FINANCE SYSTEM APIs
+
+### Base URL: https://api.eurostyle-finance.com/v2/
+
+#### Legal Entities
+```
+GET /entities
+Response:
+{
+  "entities": [
+    {
+      "entity_id": "ENTITY_NL_HOLDING",
+      "entity_code": "ESLH",
+      "entity_name": "EuroStyle Fashion Holding B.V.",
+      "country_code": "NL",
+      "functional_currency": "EUR",
+      "is_active": true
+    }
+  ]
+}
+```
+
+#### General Ledger
+```
+POST /gl-transactions
+Request:
+{
+  "entity_id": "ENTITY_NL_HOLDING",
+  "period_id": "PER_2024_01",
+  "journal_date": "2024-01-15",
+  "description": "Sales Revenue - January 2024",
+  "journal_lines": [
+    {
+      "account_id": "COA_1200_001",  // Accounts Receivable
+      "debit_amount": 10000.00,
+      "credit_amount": 0.00
+    },
+    {
+      "account_id": "COA_4000_001",  // Sales Revenue
+      "debit_amount": 0.00,
+      "credit_amount": 10000.00
+    }
+  ]
+}
+```
+
+## HR SYSTEM APIs
+
+### Base URL: https://api.eurostyle-hr.com/v2/
+
+#### Employees (GDPR Protected)
+```
+GET /employees?entity_id=ENTITY_NL_HOLDING&active=true
+Response:
+{
+  "employees": [
+    {
+      "employee_id": "EMP_000001",
+      "employee_number": "ESLH000001",
+      "work_email": "john.doe@eurostyle.com",
+      "first_name": "[MASKED]",  // GDPR protected
+      "last_name": "[MASKED]",   // GDPR protected
+      "department_id": "DEPT_NL_001",
+      "position_title": "Senior Developer",
+      "employee_status": "ACTIVE"
+    }
+  ]
+}
+```
+
+#### Leave Requests
+```
+POST /leave-requests
+Request:
+{
+  "employee_id": "EMP_000001",
+  "leave_type": "ANNUAL",
+  "start_date": "2024-07-01",
+  "end_date": "2024-07-05",
+  "total_days": 5.0,
+  "comments": "Summer vacation"
+}
+```
+
+## ERROR HANDLING
+
+All APIs return standard HTTP status codes:
+- 200: Success
+- 400: Bad Request (validation errors)
+- 401: Unauthorized (invalid token)
+- 403: Forbidden (insufficient permissions)
+- 404: Not Found
+- 429: Rate Limited
+- 500: Internal Server Error
+
+Error Response Format:
+```
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid customer_id format",
+    "details": {
+      "field": "customer_id",
+      "expected_format": "CUST_EU_XXXXXX"
+    }
+  }
+}
+```
+
+## RATE LIMITING
+
+- Standard: 1000 requests/hour per API key
+- Burst: 100 requests/minute
+- Analytics: 10000 requests/hour (higher limit)
+
+## WEBHOOKS
+
+Real-time event notifications available for:
+- New orders (operational)
+- Customer registrations (operational) 
+- Cart abandonments (webshop)
+- Payment completions (finance)
+- Employee status changes (HR)
+
+Webhook payload example:
+```
+{
+  "event_type": "order.created",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "order_id": "ORD_EU_2024_000001",
+    "customer_id": "CUST_EU_000001",
+    "total_amount_eur": 59.98
+  }
+}
+```
+
+## SDK AVAILABILITY
+
+- Python SDK: `pip install eurostyle-api-client`
+- Node.js SDK: `npm install @eurostyle/api-client`
+- Java SDK: Available via Maven Central
+- .NET SDK: Available via NuGet

@@ -1,0 +1,1 @@
+# Utils package for EuroStyle Fashion data generation

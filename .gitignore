@@ -1,0 +1,76 @@
+# =============================================================================
+# EuroStyle Fashion - .gitignore
+# =============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+data-generator/venv/
+venv/
+env/
+ENV/
+
+# ClickHouse Runtime Data
+data/data/
+data/store/
+data/user_files/
+data/tmp/
+data/logs/
+data/access/
+data/dictionaries_lib/
+data/flags/
+data/format_schemas/
+data/metadata/
+data/metadata_dropped/
+data/named_collections/
+data/preprocessed_configs/
+data/user_defined/
+data/user_scripts/
+
+# Generated Data (runtime)
+generated_data/
+*.csv.gz
+*.log
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Docker
+.docker/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# None of your business
+WARP.md

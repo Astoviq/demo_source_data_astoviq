@@ -1,0 +1,744 @@
+# EuroStyle Operational Database Schema Configuration
+# =================================================
+# Configuration-driven schema definition following WARP.md rules
+
+database: "eurostyle_operational"
+description: "Customer orders, products, stores, inventory management"
+
+tables:
+  customers:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "customer_id"
+    order_by: "customer_id"
+    columns:
+      customer_id:
+        type: "String"
+        nullable: false
+        comment: "CUST_EU_000001, CUST_EU_000002"
+      email:
+        type: "String"
+        nullable: false
+        comment: "primary identifier for online"
+      first_name:
+        type: "String"
+        nullable: false
+      last_name:
+        type: "String" 
+        nullable: false
+      phone:
+        type: "String"
+        nullable: true
+      date_of_birth:
+        type: "Date"
+        nullable: true
+      gender:
+        type: "Enum8('M' = 1, 'F' = 2, 'O' = 3)"
+        nullable: true
+      language_preference:
+        type: "String"
+        nullable: true
+        comment: "nl, de, fr, en"
+      # Address information
+      street_address:
+        type: "String"
+        nullable: true
+      city:
+        type: "String"
+        nullable: true
+      postal_code:
+        type: "String"
+        nullable: true
+      country_code:
+        type: "String"
+        nullable: true
+        comment: "NL, BE, DE, FR, LU"
+      region:
+        type: "String"
+        nullable: true
+      # Customer lifecycle
+      registration_date:
+        type: "DateTime"
+        nullable: false
+      registration_channel:
+        type: "String"
+        nullable: true
+        comment: "online, in-store, social, referral"
+      customer_status:
+        type: "Enum8('active' = 1, 'inactive' = 2, 'suspended' = 3)"
+        default: "'active'"
+      # Marketing preferences (GDPR compliant)
+      marketing_opt_in:
+        type: "Bool"
+        default: "false"
+      newsletter_subscription:
+        type: "Bool"
+        default: "false"
+      sms_opt_in:
+        type: "Bool"
+        default: "false"
+      # Customer value metrics
+      total_orders:
+        type: "UInt32"
+        default: "0"
+      total_spent:
+        type: "Decimal64(2)"
+        default: "0.00"
+      average_order_value:
+        type: "Decimal64(2)"
+        default: "0.00"
+      last_order_date:
+        type: "Date"
+        nullable: true
+      # Loyalty program
+      loyalty_member:
+        type: "Bool"
+        default: "false"
+      loyalty_points:
+        type: "UInt32"
+        default: "0"
+      loyalty_tier:
+        type: "String"
+        nullable: true
+        comment: "Bronze, Silver, Gold, Platinum"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  products:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "product_id"
+    order_by: "product_id"
+    columns:
+      product_id:
+        type: "String"
+        nullable: false
+        comment: "PROD_EU_000001, SKU format"
+      product_name:
+        type: "String"
+        nullable: false
+      product_name_local:
+        type: "Map(String, String)"
+        nullable: true
+        comment: "translations per country"
+      # Product hierarchy
+      category_l1:
+        type: "String"
+        nullable: true
+        comment: "Women, Men, Kids, Accessories"
+      category_l2:
+        type: "String"
+        nullable: true
+        comment: "Tops, Bottoms, Dresses, Shoes"
+      category_l3:
+        type: "String"
+        nullable: true
+        comment: "T-Shirts, Jeans, Casual Dresses"
+      # Product attributes
+      brand:
+        type: "String"
+        nullable: true
+      color_primary:
+        type: "String"
+        nullable: true
+      color_secondary:
+        type: "String"
+        nullable: true
+      size_range:
+        type: "Array(String)"
+        nullable: true
+      material_composition:
+        type: "String"
+        nullable: true
+      # Pricing (multi-currency)
+      price_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      price_local:
+        type: "Map(String, Decimal64(2))"
+        nullable: true
+      cost_price_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      margin_percentage:
+        type: "Decimal64(2)"
+        nullable: true
+      # Sustainability metrics
+      sustainability_score:
+        type: "UInt8"
+        nullable: true
+        comment: "1-10 rating"
+      eco_friendly_materials:
+        type: "Bool"
+        default: "false"
+      carbon_footprint_kg:
+        type: "Decimal32(2)"
+        nullable: true
+      production_country:
+        type: "String"
+        nullable: true
+      # Inventory management
+      current_stock_total:
+        type: "UInt32"
+        default: "0"
+      reorder_level:
+        type: "UInt32"
+        nullable: true
+      lead_time_days:
+        type: "UInt16"
+        nullable: true
+      # Product lifecycle
+      launch_date:
+        type: "Date"
+        nullable: true
+      season:
+        type: "String"
+        nullable: true
+        comment: "Spring/Summer, Fall/Winter"
+      is_active:
+        type: "Bool"
+        default: "true"
+      discontinue_date:
+        type: "Nullable(Date)"
+        nullable: true
+      # Web presence
+      online_availability:
+        type: "Bool"
+        default: "true"
+      product_url:
+        type: "String"
+        nullable: true
+      image_urls:
+        type: "Array(String)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  stores:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "store_id"
+    order_by: "store_id"
+    columns:
+      store_id:
+        type: "String"
+        nullable: false
+        comment: "STORE_NL_001, STORE_DE_001, etc."
+      store_name:
+        type: "String"
+        nullable: false
+      # Location details
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "NL, BE, DE, FR, LU"
+      city:
+        type: "String"
+        nullable: false
+      address:
+        type: "String"
+        nullable: true
+      postal_code:
+        type: "String"
+        nullable: true
+      latitude:
+        type: "Decimal64(6)"
+        nullable: true
+      longitude:
+        type: "Decimal64(6)"
+        nullable: true
+      # Store characteristics
+      store_format:
+        type: "String"
+        nullable: true
+        comment: "flagship, standard, outlet, popup"
+      floor_area_sqm:
+        type: "UInt32"
+        nullable: true
+      opening_date:
+        type: "Date"
+        nullable: true
+      # Operational details
+      manager_name:
+        type: "String"
+        nullable: true
+      staff_count:
+        type: "UInt16"
+        nullable: true
+      operating_hours:
+        type: "String"
+        nullable: true
+      # Performance tier
+      performance_tier:
+        type: "String"
+        nullable: true
+        comment: "A, B, C based on revenue"
+      target_monthly_revenue:
+        type: "Decimal64(2)"
+        nullable: true
+      # Store amenities
+      has_fitting_rooms:
+        type: "Bool"
+        default: "true"
+      has_personal_styling:
+        type: "Bool"
+        default: "false"
+      has_click_and_collect:
+        type: "Bool"
+        default: "false"
+      wheelchair_accessible:
+        type: "Bool"
+        default: "true"
+      is_active:
+        type: "Bool"
+        default: "true"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  orders:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "(order_date, order_id)"
+    order_by: "(order_date, order_id)"
+    columns:
+      order_id:
+        type: "String"
+        nullable: false
+        comment: "ORD_EU_2024_000001"
+      customer_id:
+        type: "String"
+        nullable: false
+        comment: "FK to customers"
+      store_id:
+        type: "String"
+        default: "'ONLINE'"
+        comment: "'ONLINE' for online orders, store ID for in-store"
+      # Order timing
+      order_date:
+        type: "Date"
+        nullable: false
+      order_datetime:
+        type: "DateTime"
+        nullable: false
+      delivery_date:
+        type: "Nullable(Date)"
+        nullable: true
+      promised_delivery_date:
+        type: "Nullable(Date)"
+        nullable: true
+      # Financial details
+      subtotal_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      tax_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      shipping_cost_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      discount_amount_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      total_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # Local currency (for non-EUR countries)
+      currency_code:
+        type: "String"
+        default: "'EUR'"
+      exchange_rate:
+        type: "Decimal64(4)"
+        default: "1.0000"
+      total_amount_local:
+        type: "Decimal64(2)"
+        nullable: false
+      # Order fulfillment
+      order_status:
+        type: "String"
+        nullable: false
+        comment: "pending, confirmed, shipped, delivered, cancelled, returned"
+      fulfillment_center:
+        type: "String"
+        nullable: true
+      shipping_method:
+        type: "String"
+        nullable: true
+        comment: "standard, express, same-day, in-store-pickup"
+      tracking_number:
+        type: "Nullable(String)"
+        nullable: true
+      # Channel attribution
+      order_channel:
+        type: "String"
+        nullable: true
+        comment: "online, in-store, mobile-app, phone"
+      traffic_source:
+        type: "String"
+        nullable: true
+        comment: "organic, paid-search, social, email, direct"
+      campaign_code:
+        type: "Nullable(String)"
+        nullable: true
+      # Payment details
+      payment_method:
+        type: "String"
+        nullable: true
+        comment: "credit-card, paypal, klarna, bancontact, ideal"
+      payment_status:
+        type: "String"
+        nullable: true
+        comment: "pending, completed, failed, refunded"
+      # Customer service
+      customer_service_notes:
+        type: "Nullable(String)"
+        nullable: true
+      return_reason:
+        type: "Nullable(String)"
+        nullable: true
+      return_date:
+        type: "Nullable(Date)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  order_lines:
+    engine: "MergeTree()"
+    primary_key: "(order_id, order_line_id)"
+    order_by: "(order_id, order_line_id)"
+    columns:
+      order_line_id:
+        type: "String"
+        nullable: false
+      order_id:
+        type: "String"
+        nullable: false
+        comment: "FK to orders"
+      product_id:
+        type: "String"
+        nullable: false
+        comment: "FK to products"
+      # Product variant details
+      size:
+        type: "String"
+        nullable: true
+      color:
+        type: "String"
+        nullable: true
+      # Quantity and pricing
+      quantity:
+        type: "UInt16"
+        nullable: false
+      unit_price_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      unit_cost_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      line_discount_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      line_total_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # Fulfillment tracking
+      fulfillment_status:
+        type: "String"
+        nullable: true
+        comment: "pending, picked, packed, shipped, delivered"
+      shipped_quantity:
+        type: "UInt16"
+        default: "0"
+      # Returns and exchanges
+      returned_quantity:
+        type: "UInt16"
+        default: "0"
+      return_reason:
+        type: "Nullable(String)"
+        nullable: true
+      exchange_product_id:
+        type: "Nullable(String)"
+        nullable: true
+      # Inventory impact
+      inventory_reserved_at:
+        type: "DateTime"
+        nullable: true
+      inventory_fulfilled_at:
+        type: "Nullable(DateTime)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  inventory:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "(product_id, store_id, size, color)"
+    order_by: "(product_id, store_id, size, color)"
+    columns:
+      inventory_id:
+        type: "String"
+        nullable: false
+      product_id:
+        type: "String"
+        nullable: false
+        comment: "FK to products"
+      store_id:
+        type: "String"
+        default: "'DC'"
+        comment: "'DC' for distribution center, store ID for stores"
+      location_type:
+        type: "String"
+        nullable: true
+        comment: "store, distribution-center, warehouse"
+      # Product variant
+      size:
+        type: "String"
+        nullable: true
+      color:
+        type: "String"
+        nullable: true
+      # Stock levels
+      quantity_on_hand:
+        type: "UInt32"
+        default: "0"
+      quantity_reserved:
+        type: "UInt32"
+        default: "0"
+      quantity_available:
+        type: "UInt32"
+        default: "0"
+      quantity_on_order:
+        type: "UInt32"
+        default: "0"
+      # Inventory management
+      reorder_point:
+        type: "UInt32"
+        nullable: true
+      max_stock_level:
+        type: "UInt32"
+        nullable: true
+      last_restock_date:
+        type: "Date"
+        nullable: true
+      next_restock_date:
+        type: "Nullable(Date)"
+        nullable: true
+      # Inventory valuation
+      unit_cost_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      inventory_value_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Movement tracking
+      last_movement_date:
+        type: "DateTime"
+        nullable: true
+      last_movement_type:
+        type: "String"
+        nullable: true
+        comment: "received, sold, transferred, adjusted"
+      # Seasonal management
+      season:
+        type: "String"
+        nullable: true
+      markdown_date:
+        type: "Nullable(Date)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  campaigns:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "campaign_id"
+    order_by: "campaign_id"
+    columns:
+      campaign_id:
+        type: "String"
+        nullable: false
+        comment: "CAMP_2024_SPRING_001"
+      campaign_name:
+        type: "String"
+        nullable: false
+      # Campaign details
+      campaign_type:
+        type: "String"
+        nullable: true
+        comment: "product-launch, seasonal, clearance, brand-awareness"
+      channel:
+        type: "String"
+        nullable: true
+        comment: "email, social-media, google-ads, display, influencer"
+      target_countries:
+        type: "Array(String)"
+        nullable: true
+      # Timing
+      start_date:
+        type: "Date"
+        nullable: true
+      end_date:
+        type: "Date"
+        nullable: true
+      # Budget and performance
+      budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      spend_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      target_impressions:
+        type: "UInt64"
+        nullable: true
+      actual_impressions:
+        type: "UInt64"
+        default: "0"
+      target_clicks:
+        type: "UInt64"
+        nullable: true
+      actual_clicks:
+        type: "UInt64"
+        default: "0"
+      target_conversions:
+        type: "UInt32"
+        nullable: true
+      actual_conversions:
+        type: "UInt32"
+        default: "0"
+      # Content
+      campaign_message:
+        type: "String"
+        nullable: true
+      discount_percentage:
+        type: "Nullable(Decimal32(2))"
+        nullable: true
+      promotional_code:
+        type: "Nullable(String)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  european_geography:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "(country_code, city, postal_code)"
+    order_by: "(country_code, city, postal_code)"
+    columns:
+      geo_id:
+        type: "String"
+        nullable: false
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "NL, BE, DE, FR, LU"
+      country_name:
+        type: "String"
+        nullable: false
+      region:
+        type: "String"
+        nullable: true
+      city:
+        type: "String"
+        nullable: false
+      postal_code:
+        type: "String"
+        nullable: true
+      latitude:
+        type: "Decimal64(6)"
+        nullable: true
+      longitude:
+        type: "Decimal64(6)"
+        nullable: true
+      population:
+        type: "UInt32"
+        nullable: true
+      economic_index:
+        type: "Decimal32(2)"
+        nullable: true
+      timezone:
+        type: "String"
+        nullable: true
+      # Market characteristics
+      fashion_market_size_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      competition_density:
+        type: "String"
+        nullable: true
+        comment: "low, medium, high"
+      avg_income_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  fashion_calendar:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "(date, country_code)"
+    order_by: "(date, country_code)"
+    columns:
+      date:
+        type: "Date"
+        nullable: false
+      country_code:
+        type: "String"
+        nullable: false
+      event_name:
+        type: "String"
+        nullable: false
+      event_type:
+        type: "String"
+        nullable: true
+        comment: "fashion-event, shopping-holiday, cultural-holiday"
+      impact_level:
+        type: "String"
+        nullable: true
+        comment: "high, medium, low"
+      expected_sales_lift:
+        type: "Decimal32(2)"
+        nullable: true
+      # Season mapping
+      fashion_season:
+        type: "String"
+        nullable: true
+      collection_phase:
+        type: "String"
+        nullable: true
+        comment: "launch, peak, markdown, clearance"
+      # Marketing relevance
+      campaign_opportunity:
+        type: "Bool"
+        default: "false"
+      inventory_planning:
+        type: "Bool"
+        default: "false"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
