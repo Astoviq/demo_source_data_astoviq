@@ -1,0 +1,380 @@
+# EuroStyle Webshop Database Configuration  
+# ==========================================
+# WARP.md Rule 1: All database schemas, data generation, and loading must be driven by YAML configuration files
+# Following rule: "dont hard code, always use guidelines and framework principles"
+
+database: eurostyle_webshop
+
+# Customer Analytics Configuration
+customers:
+  sessions:
+    generation_rules:
+      sessions_per_day: [250, 1000]  # Daily session range based on mode
+      session_duration_minutes: [2, 45]  # Average 2-45 minutes per session
+      bounce_rate: 0.35  # 35% single page sessions
+      
+    data_patterns:
+      device_distribution:
+        DESKTOP: 0.45
+        MOBILE: 0.40
+        TABLET: 0.15
+        
+      browser_distribution:
+        CHROME: 0.65
+        SAFARI: 0.15
+        FIREFOX: 0.12
+        EDGE: 0.06
+        OTHER: 0.02
+        
+      os_distribution:
+        WINDOWS: 0.45
+        IOS: 0.25
+        ANDROID: 0.20
+        MACOS: 0.08
+        OTHER: 0.02
+
+  page_views:
+    generation_rules:
+      pages_per_session: [1, 8]  # Average 1-8 pages per session
+      conversion_funnel_pattern: true
+      
+    data_patterns:
+      page_categories:
+        HOMEPAGE: 0.25
+        PRODUCT_LISTING: 0.30
+        PRODUCT_DETAIL: 0.20
+        CART: 0.08
+        CHECKOUT: 0.05
+        ACCOUNT: 0.07
+        SEARCH: 0.05
+        
+      conversion_funnel:
+        HOMEPAGE:
+          next_pages: ["PRODUCT_LISTING", "SEARCH", "ACCOUNT"]
+          weights: [0.60, 0.25, 0.15]
+          
+        PRODUCT_LISTING:
+          next_pages: ["PRODUCT_DETAIL", "SEARCH", "HOMEPAGE"]
+          weights: [0.70, 0.20, 0.10]
+          
+        PRODUCT_DETAIL:
+          next_pages: ["CART", "PRODUCT_LISTING", "HOMEPAGE"]
+          weights: [0.35, 0.45, 0.20]
+          
+        CART:
+          next_pages: ["CHECKOUT", "PRODUCT_LISTING", "HOMEPAGE"]
+          weights: [0.60, 0.25, 0.15]
+
+# E-commerce Events Configuration
+ecommerce_events:
+  products:
+    generation_rules:
+      event_types: ["PRODUCT_VIEW", "ADD_TO_CART", "REMOVE_FROM_CART", "ADD_TO_WISHLIST", "PRODUCT_SHARE"]
+      events_per_session: [1, 5]
+      
+    data_patterns:
+      event_distribution:
+        PRODUCT_VIEW: 0.55       # 55% product views
+        ADD_TO_CART: 0.25        # 25% cart additions
+        REMOVE_FROM_CART: 0.08   # 8% cart removals
+        ADD_TO_WISHLIST: 0.07    # 7% wishlist additions
+        PRODUCT_SHARE: 0.05      # 5% product shares
+        
+      conversion_rates:
+        VIEW_TO_CART: 0.45       # 45% of views lead to cart
+        CART_TO_PURCHASE: 0.75   # 75% of carts convert to purchase
+
+  search:
+    generation_rules:
+      search_terms_variety: 500  # 500 unique search terms
+      search_sessions_percentage: 0.30  # 30% of sessions include search
+      
+    data_patterns:
+      search_categories:
+        PRODUCT_NAME: 0.40
+        CATEGORY: 0.30
+        BRAND: 0.15
+        COLOR: 0.10
+        FEATURE: 0.05
+        
+      search_results:
+        NO_RESULTS: 0.15         # 15% searches return no results
+        LOW_RESULTS: 0.25        # 25% return 1-5 results
+        MEDIUM_RESULTS: 0.35     # 35% return 6-20 results
+        HIGH_RESULTS: 0.25       # 25% return 20+ results
+
+# Marketing & Campaign Configuration
+marketing:
+  campaigns:
+    generation_rules:
+      campaign_types: ["EMAIL", "SOCIAL_MEDIA", "PAID_SEARCH", "DISPLAY", "AFFILIATE"]
+      active_campaigns: 12
+      seasonal_campaigns: true
+      
+    data_patterns:
+      campaign_channels:
+        EMAIL: 0.35              # 35% email campaigns
+        SOCIAL_MEDIA: 0.25       # 25% social media
+        PAID_SEARCH: 0.20        # 20% paid search
+        DISPLAY: 0.15            # 15% display advertising
+        AFFILIATE: 0.05          # 5% affiliate marketing
+        
+      seasonal_campaigns:
+        Q1_NEW_YEAR:
+          name: "New Year Sale 2024"
+          type: "EMAIL"
+          discount_percent: 0.20
+          duration_days: 14
+          
+        Q2_SPRING:
+          name: "Spring Collection Launch"
+          type: "SOCIAL_MEDIA"
+          discount_percent: 0.15
+          duration_days: 30
+          
+        Q3_SUMMER:
+          name: "Summer Clearance Sale"
+          type: "PAID_SEARCH"
+          discount_percent: 0.30
+          duration_days: 21
+          
+        Q4_HOLIDAY:
+          name: "Holiday Shopping Bonanza"
+          type: "DISPLAY"
+          discount_percent: 0.25
+          duration_days: 45
+
+  newsletters:
+    generation_rules:
+      subscriber_percentage: 0.25  # 25% of customers are subscribers
+      send_frequency: "WEEKLY"
+      engagement_rates: "industry_standard"
+      
+    data_patterns:
+      subscription_status:
+        SUBSCRIBED: 0.80
+        UNSUBSCRIBED: 0.15
+        BOUNCED: 0.03
+        PENDING: 0.02
+        
+      engagement_rates:
+        OPEN_RATE: 0.22          # 22% open rate
+        CLICK_RATE: 0.05         # 5% click-through rate
+        CONVERSION_RATE: 0.02    # 2% conversion rate
+
+# User Behavior Analytics Configuration
+user_behavior:
+  cart_analytics:
+    generation_rules:
+      cart_abandonment_rate: 0.70  # 70% cart abandonment (e-commerce standard)
+      average_cart_items: [1.5, 4.2]
+      
+    data_patterns:
+      abandonment_stages:
+        CART_PAGE: 0.45          # 45% abandon at cart page
+        CHECKOUT_START: 0.25     # 25% abandon at checkout start
+        PAYMENT_INFO: 0.20       # 20% abandon at payment info
+        FINAL_REVIEW: 0.10       # 10% abandon at final review
+        
+      cart_recovery:
+        EMAIL_REMINDER: 0.15     # 15% recover via email
+        PUSH_NOTIFICATION: 0.08  # 8% recover via push
+        RETARGETING_AD: 0.12     # 12% recover via ads
+
+  customer_segments:
+    generation_rules:
+      segment_types: ["NEW_VISITOR", "RETURNING_CUSTOMER", "VIP_CUSTOMER", "PRICE_SENSITIVE", "BRAND_LOYAL"]
+      segment_based_behavior: true
+      
+    data_patterns:
+      segment_distribution:
+        NEW_VISITOR: 0.40        # 40% new visitors
+        RETURNING_CUSTOMER: 0.35 # 35% returning customers
+        VIP_CUSTOMER: 0.08       # 8% VIP customers
+        PRICE_SENSITIVE: 0.12    # 12% price sensitive
+        BRAND_LOYAL: 0.05        # 5% brand loyal
+        
+      behavior_by_segment:
+        VIP_CUSTOMER:
+          avg_session_duration: 15.5  # minutes
+          pages_per_session: 6.8
+          conversion_rate: 0.45
+          
+        NEW_VISITOR:
+          avg_session_duration: 3.2   # minutes
+          pages_per_session: 2.1
+          conversion_rate: 0.08
+
+# Product Analytics Configuration
+product_analytics:
+  reviews:
+    generation_rules:
+      review_rate: 0.15        # 15% of purchases get reviewed
+      review_distribution: "realistic_curve"
+      
+    data_patterns:
+      rating_distribution:
+        RATING_5: 0.40           # 40% give 5 stars
+        RATING_4: 0.30           # 30% give 4 stars
+        RATING_3: 0.15           # 15% give 3 stars
+        RATING_2: 0.10           # 10% give 2 stars
+        RATING_1: 0.05           # 5% give 1 star
+        
+      review_content:
+        DETAILED_REVIEW: 0.25    # 25% detailed reviews with text
+        RATING_ONLY: 0.75        # 75% rating only
+
+  recommendations:
+    generation_rules:
+      algorithm_types: ["COLLABORATIVE_FILTERING", "CONTENT_BASED", "HYBRID"]
+      recommendation_positions: ["PRODUCT_PAGE", "CART", "HOMEPAGE"]
+      
+    data_patterns:
+      recommendation_performance:
+        CLICK_THROUGH_RATE: 0.08  # 8% CTR on recommendations
+        CONVERSION_RATE: 0.15     # 15% conversion from clicks
+        
+      algorithm_effectiveness:
+        COLLABORATIVE_FILTERING:
+          click_rate: 0.09
+          conversion_rate: 0.18
+        CONTENT_BASED:
+          click_rate: 0.07
+          conversion_rate: 0.12
+        HYBRID:
+          click_rate: 0.10
+          conversion_rate: 0.20
+
+# Customer Journey Configuration
+customer_journey:
+  acquisition:
+    generation_rules:
+      acquisition_channels: ["ORGANIC_SEARCH", "PAID_SEARCH", "SOCIAL_MEDIA", "EMAIL", "DIRECT", "REFERRAL"]
+      channel_attribution: true
+      
+    data_patterns:
+      channel_distribution:
+        ORGANIC_SEARCH: 0.35     # 35% organic search
+        PAID_SEARCH: 0.20        # 20% paid search
+        SOCIAL_MEDIA: 0.15       # 15% social media
+        EMAIL: 0.10              # 10% email marketing
+        DIRECT: 0.15             # 15% direct traffic
+        REFERRAL: 0.05           # 5% referral traffic
+        
+      cost_per_acquisition:
+        ORGANIC_SEARCH: 0        # Free
+        PAID_SEARCH: 15.50       # €15.50 CPA
+        SOCIAL_MEDIA: 12.30      # €12.30 CPA
+        EMAIL: 3.75              # €3.75 CPA
+        DIRECT: 0                # Free
+        REFERRAL: 8.90           # €8.90 CPA (referral incentives)
+
+  retention:
+    generation_rules:
+      cohort_analysis: true
+      retention_periods: [7, 30, 90, 365]  # 7 days, 30 days, 90 days, 1 year
+      
+    data_patterns:
+      retention_rates:
+        DAY_7: 0.25              # 25% return within 7 days
+        DAY_30: 0.15             # 15% return within 30 days
+        DAY_90: 0.08             # 8% return within 90 days
+        YEAR_1: 0.05             # 5% return within 1 year
+
+# Performance Metrics Configuration
+performance_metrics:
+  site_performance:
+    generation_rules:
+      page_load_time_ms: [800, 3500]  # 0.8-3.5 seconds
+      performance_impact_on_conversion: true
+      
+    data_patterns:
+      performance_thresholds:
+        EXCELLENT: 1000          # < 1s load time
+        GOOD: 2000               # < 2s load time
+        ACCEPTABLE: 3000         # < 3s load time
+        POOR: 5000               # > 3s load time
+        
+      conversion_impact:
+        EXCELLENT: 1.0           # 100% baseline conversion
+        GOOD: 0.95               # 95% of baseline conversion
+        ACCEPTABLE: 0.85         # 85% of baseline conversion
+        POOR: 0.60               # 60% of baseline conversion
+
+  error_tracking:
+    generation_rules:
+      error_rate: 0.02           # 2% error rate
+      error_types: ["404_NOT_FOUND", "500_SERVER_ERROR", "PAYMENT_ERROR", "VALIDATION_ERROR"]
+      
+    data_patterns:
+      error_distribution:
+        404_NOT_FOUND: 0.60      # 60% of errors
+        500_SERVER_ERROR: 0.20   # 20% of errors
+        PAYMENT_ERROR: 0.15      # 15% of errors
+        VALIDATION_ERROR: 0.05   # 5% of errors
+
+# Web Analytics Events Configuration  
+web_analytics_events:
+  generation_rules:
+    count_by_mode:
+      demo: 6000
+      fast: 30000
+      full: 75000
+    events_per_session: [5, 15]  # 5-15 events per session
+    
+  data_patterns:
+    event_types:
+      PAGE_VIEW: 0.40            # 40% page views
+      PRODUCT_VIEW: 0.25         # 25% product views
+      ADD_TO_CART: 0.12          # 12% add to cart
+      REMOVE_FROM_CART: 0.05     # 5% remove from cart
+      SEARCH_PERFORMED: 0.08     # 8% search events
+      CHECKOUT_START: 0.06       # 6% checkout initiated
+      PURCHASE_COMPLETE: 0.04    # 4% purchase completed
+      
+    event_sequences:
+      typical_journey:
+        - PAGE_VIEW
+        - PRODUCT_VIEW
+        - ADD_TO_CART
+        - CHECKOUT_START
+        - PURCHASE_COMPLETE
+        
+    metadata_patterns:
+      referrer_sources: ["google.com", "facebook.com", "instagram.com", "direct", "email"]
+      device_categories: ["DESKTOP", "MOBILE", "TABLET"]
+      browser_types: ["Chrome", "Safari", "Firefox", "Edge"]
+
+# Cross-Database Relationships
+relationships:
+  to_operational:
+    - sessions.customer_id -> eurostyle_operational.customers.customer_id
+    - ecommerce_events.product_id -> eurostyle_operational.products.product_id
+    - page_views.order_id -> eurostyle_operational.orders.order_id
+    
+  to_finance:
+    - campaign_performance.budget_account -> eurostyle_finance.chart_of_accounts.account_id
+    - marketing_costs.cost_center_id -> eurostyle_finance.cost_centers.cost_center_id
+
+# Data Validation Rules
+validation:
+  sessions:
+    required_fields: [session_id, customer_id, start_timestamp, device_type]
+    business_rules:
+      - session_duration: "end_timestamp >= start_timestamp"
+      - device_type: "in ['DESKTOP', 'MOBILE', 'TABLET']"
+      - customer_exists: "eurostyle_operational.customers.customer_id"
+      
+  page_views:
+    required_fields: [page_view_id, session_id, page_url, timestamp]
+    business_rules:
+      - page_load_time: "page_load_time_ms > 0"
+      - session_exists: "sessions.session_id"
+      - timestamp_order: "timestamp within session start/end range"
+      
+  ecommerce_events:
+    required_fields: [event_id, session_id, event_type, timestamp]
+    business_rules:
+      - event_type: "in ['PRODUCT_VIEW', 'ADD_TO_CART', 'REMOVE_FROM_CART', 'ADD_TO_WISHLIST', 'PRODUCT_SHARE']"
+      - product_exists: "eurostyle_operational.products.product_id" 
+      - event_sequence: "ADD_TO_CART must precede REMOVE_FROM_CART for same product"

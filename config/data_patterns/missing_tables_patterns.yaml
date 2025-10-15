@@ -1,0 +1,293 @@
+# Missing Tables Data Patterns Configuration
+# ==========================================
+# WARP.md Rule 6: All data generation patterns must be externalized to YAML configuration
+# Following rule: "dont hard code, always use guidelines and framework principles"
+
+# OPERATIONAL DATABASE TABLES
+operational_tables:
+  order_lines:
+    generation_rules:
+      lines_per_order:
+        min: 1
+        max: 8
+        avg: 2.5
+      size_distribution:
+        XS: 0.05
+        S: 0.20
+        M: 0.35
+        L: 0.25
+        XL: 0.12
+        XXL: 0.03
+      
+    data_patterns:
+      return_patterns:
+        return_rate: 0.08
+        return_reasons:
+          TOO_SMALL: 0.30
+          TOO_LARGE: 0.25
+          DEFECTIVE: 0.15
+          CHANGED_MIND: 0.20
+          WRONG_COLOR: 0.10
+      
+      fulfillment_timing:
+        same_day_rate: 0.15
+        next_day_rate: 0.45
+        standard_rate: 0.40
+
+  inventory:
+    generation_rules:
+      stock_levels_by_store_format:
+        flagship: [500, 2000]
+        standard: [200, 800]
+        outlet: [50, 300]
+      
+    data_patterns:
+      seasonal_adjustments:
+        SPRING: 1.2
+        SUMMER: 1.0
+        AUTUMN: 1.1
+        WINTER: 1.4
+      
+      reorder_patterns:
+        reorder_point_multiplier: 0.25
+        max_stock_multiplier: 3.0
+        lead_time_days: [7, 21]
+
+  european_geography:
+    generation_rules:
+      cities_per_country:
+        NL: 50
+        DE: 80
+        FR: 75
+        BE: 45
+        LU: 15
+    
+    data_patterns:
+      market_characteristics:
+        economic_index_ranges:
+          NL: [0.95, 1.15]
+          DE: [0.90, 1.20]
+          FR: [0.85, 1.10]
+          BE: [0.92, 1.08]
+          LU: [1.20, 1.35]
+      
+      competition_density:
+        HIGH: 0.30
+        MEDIUM: 0.50
+        LOW: 0.20
+
+  campaigns:
+    generation_rules:
+      campaigns_per_year: 12
+      campaign_types:
+        PRODUCT_LAUNCH: 0.25
+        SEASONAL: 0.30
+        CLEARANCE: 0.20
+        BRAND_AWARENESS: 0.15
+        FLASH_SALE: 0.10
+    
+    data_patterns:
+      performance_metrics:
+        conversion_rates:
+          PRODUCT_LAUNCH: [0.02, 0.08]
+          SEASONAL: [0.03, 0.12]
+          CLEARANCE: [0.05, 0.18]
+          FLASH_SALE: [0.08, 0.25]
+      
+      budget_ranges_eur:
+        PRODUCT_LAUNCH: [25000, 100000]
+        SEASONAL: [50000, 200000]
+        CLEARANCE: [15000, 75000]
+        BRAND_AWARENESS: [75000, 300000]
+        FLASH_SALE: [10000, 50000]
+
+  fashion_calendar:
+    generation_rules:
+      events_per_year: 45
+      event_types:
+        FASHION_EVENT: 0.25
+        SHOPPING_HOLIDAY: 0.35
+        CULTURAL_HOLIDAY: 0.30
+        SEASONAL_TRANSITION: 0.10
+    
+    data_patterns:
+      sales_impact:
+        high_impact_events: ["Black Friday", "Christmas", "Summer Sale", "Fashion Week"]
+        sales_lift_ranges:
+          HIGH: [1.5, 3.0]
+          MEDIUM: [1.1, 1.4]
+          LOW: [0.9, 1.1]
+
+# WEBSHOP DATABASE TABLES  
+webshop_tables:
+  page_views:
+    generation_rules:
+      views_per_session:
+        min: 1
+        max: 25
+        avg: 4.2
+      bounce_rate: 0.35
+      
+    data_patterns:
+      page_types:
+        HOMEPAGE: 0.25
+        CATEGORY: 0.30
+        PRODUCT: 0.35
+        CHECKOUT: 0.05
+        ACCOUNT: 0.03
+        HELP: 0.02
+      
+      time_on_page_seconds:
+        HOMEPAGE: [30, 180]
+        CATEGORY: [45, 300]
+        PRODUCT: [60, 600]
+        CHECKOUT: [120, 900]
+      
+      scroll_depth_distribution:
+        "0-25": 0.40
+        "26-50": 0.30
+        "51-75": 0.20
+        "76-100": 0.10
+
+# HR DATABASE TABLES
+hr_tables:
+  survey_responses:
+    generation_rules:
+      response_rate: 0.75
+      surveys_per_year: 8
+      
+    data_patterns:
+      survey_types:
+        ENGAGEMENT: 0.30
+        SATISFACTION: 0.25
+        TRAINING_FEEDBACK: 0.20
+        EXIT_INTERVIEW: 0.15
+        ONBOARDING: 0.10
+      
+      response_quality:
+        DETAILED: 0.60
+        BRIEF: 0.30
+        MINIMAL: 0.10
+      
+      sentiment_distribution:
+        POSITIVE: 0.65
+        NEUTRAL: 0.25
+        NEGATIVE: 0.10
+
+  performance_reviews:
+    generation_rules:
+      reviews_per_employee_per_year: 2
+      review_types:
+        ANNUAL: 0.50
+        MID_YEAR: 0.30
+        QUARTERLY: 0.20
+    
+    data_patterns:
+      rating_distribution:
+        EXCEEDS_EXPECTATIONS: 0.15
+        MEETS_EXPECTATIONS: 0.70
+        BELOW_EXPECTATIONS: 0.10
+        NEEDS_IMPROVEMENT: 0.05
+      
+      goal_achievement:
+        EXCEEDED: 0.20
+        ACHIEVED: 0.65
+        PARTIALLY_ACHIEVED: 0.12
+        NOT_ACHIEVED: 0.03
+
+# FINANCE DATABASE TABLES
+finance_tables:
+  exchange_rates:
+    generation_rules:
+      base_currency: EUR
+      target_currencies: [USD, GBP, CHF, SEK, DKK, NOK, PLN, CZK]
+      daily_rates: true
+      
+    data_patterns:
+      volatility_patterns:
+        USD: 0.02  # 2% daily volatility
+        GBP: 0.015
+        CHF: 0.008
+        SEK: 0.012
+        DKK: 0.005  # DKK pegged to EUR
+        NOK: 0.018
+        PLN: 0.025
+        CZK: 0.020
+      
+      rate_ranges:
+        USDEUR: [0.85, 0.95]
+        GBPEUR: [1.10, 1.25]
+        CHFEUR: [0.95, 1.05]
+
+  entity_accounts:
+    generation_rules:
+      accounts_per_entity: [8, 15]
+      account_types:
+        BANK_ACCOUNT: 0.60
+        CREDIT_ACCOUNT: 0.25
+        INVESTMENT_ACCOUNT: 0.10
+        ESCROW_ACCOUNT: 0.05
+    
+    data_patterns:
+      bank_distribution:
+        ING: 0.30
+        RABOBANK: 0.25
+        ABN_AMRO: 0.20
+        DEUTSCHE_BANK: 0.15
+        BNP_PARIBAS: 0.10
+      
+      balance_ranges_eur:
+        BANK_ACCOUNT: [10000, 500000]
+        CREDIT_ACCOUNT: [0, 100000]
+        INVESTMENT_ACCOUNT: [50000, 1000000]
+
+  currencies:
+    generation_rules:
+      supported_currencies: [EUR, USD, GBP, CHF, SEK, DKK, NOK, PLN, CZK]
+      
+    data_patterns:
+      currency_info:
+        EUR:
+          name: Euro
+          symbol: €
+          decimal_places: 2
+          countries: [NL, DE, FR, BE, LU, IT, ES, AT, FI]
+        USD:
+          name: US Dollar
+          symbol: $
+          decimal_places: 2
+          countries: [US]
+        GBP:
+          name: British Pound
+          symbol: £
+          decimal_places: 2
+          countries: [GB]
+
+# VALIDATION RULES
+validation_rules:
+  referential_integrity:
+    order_lines:
+      - order_id: "eurostyle_operational.orders.order_id"
+      - product_id: "eurostyle_operational.products.product_id"
+    
+    inventory:
+      - product_id: "eurostyle_operational.products.product_id"
+      - store_id: "eurostyle_operational.stores.store_id"
+    
+    page_views:
+      - session_id: "eurostyle_webshop.web_sessions.session_id"
+      - customer_id: "eurostyle_operational.customers.customer_id"
+    
+    survey_responses:
+      - employee_id: "eurostyle_hr.employees.employee_id"
+    
+    performance_reviews:
+      - employee_id: "eurostyle_hr.employees.employee_id"
+      - reviewer_id: "eurostyle_hr.employees.employee_id"
+
+# DATA GENERATION SEQUENCING
+generation_order:
+  phase_1: [currencies, exchange_rates, european_geography, fashion_calendar]
+  phase_2: [campaigns, inventory]
+  phase_3: [order_lines, page_views]  
+  phase_4: [survey_responses, performance_reviews, entity_accounts]

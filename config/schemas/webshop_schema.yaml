@@ -1,0 +1,675 @@
+# EuroStyle Webshop Database Schema Configuration
+# ===============================================
+# Configuration-driven schema definition following WARP.md Rule 5
+# WARP.md: "All database schemas must be defined in YAML configuration files"
+
+database: "eurostyle_webshop"
+description: "E-commerce analytics, customer behavior, marketing campaigns, product analytics"
+
+tables:
+  sessions:
+    engine: "MergeTree()"
+    primary_key: "session_id"
+    order_by: "session_id, start_timestamp"
+    columns:
+      session_id:
+        type: "String"
+        nullable: false
+        comment: "SES_2024_000001, unique session identifier"
+      customer_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.customers.customer_id, null for anonymous"
+      # Session timing
+      start_timestamp:
+        type: "DateTime"
+        nullable: false
+      end_timestamp:
+        type: "DateTime"
+        nullable: true
+      session_duration_minutes:
+        type: "UInt32"
+        nullable: true
+        comment: "Calculated duration in minutes"
+      # Device information
+      device_type:
+        type: "Enum8('DESKTOP' = 1, 'MOBILE' = 2, 'TABLET' = 3)"
+        nullable: false
+      device_brand:
+        type: "String"
+        nullable: true
+        comment: "Apple, Samsung, Dell, etc."
+      device_model:
+        type: "String"
+        nullable: true
+      # Browser information
+      browser:
+        type: "String"
+        nullable: false
+        comment: "Chrome, Safari, Firefox, Edge"
+      browser_version:
+        type: "String"
+        nullable: true
+      operating_system:
+        type: "String"
+        nullable: false
+        comment: "Windows, iOS, Android, macOS"
+      os_version:
+        type: "String"
+        nullable: true
+      # Geographic information
+      country_code:
+        type: "String"
+        nullable: true
+        comment: "NL, DE, FR, BE derived from IP"
+      city:
+        type: "String"
+        nullable: true
+      ip_address:
+        type: "String"
+        nullable: true
+        comment: "Anonymized IP for analytics"
+      # Traffic source
+      referrer_url:
+        type: "String"
+        nullable: true
+      traffic_source:
+        type: "String"
+        nullable: true
+        comment: "ORGANIC_SEARCH, PAID_SEARCH, SOCIAL_MEDIA, EMAIL, DIRECT"
+      utm_campaign:
+        type: "String"
+        nullable: true
+      utm_medium:
+        type: "String"
+        nullable: true
+      utm_source:
+        type: "String"
+        nullable: true
+      # Session metrics
+      page_views:
+        type: "UInt32"
+        default: "0"
+      bounce_session:
+        type: "Bool"
+        default: "false"
+        comment: "True if only one page viewed"
+      converted:
+        type: "Bool"
+        default: "false"
+        comment: "True if session resulted in purchase"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  page_views:
+    engine: "MergeTree()"
+    primary_key: "page_view_id"
+    order_by: "session_id, timestamp"
+    columns:
+      page_view_id:
+        type: "String"
+        nullable: false
+        comment: "PV_2024_000001, unique page view identifier"
+      session_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to sessions.session_id"
+      # Page information
+      page_url:
+        type: "String"
+        nullable: false
+      page_title:
+        type: "String"
+        nullable: true
+      page_type:
+        type: "String"
+        nullable: false
+        comment: "HOMEPAGE, PRODUCT_LISTING, PRODUCT_DETAIL, CART, CHECKOUT, ACCOUNT, SEARCH"
+      page_category:
+        type: "String"
+        nullable: true
+        comment: "For product pages: category hierarchy"
+      # Timing
+      timestamp:
+        type: "DateTime"
+        nullable: false
+      time_on_page_seconds:
+        type: "UInt32"
+        nullable: true
+      page_load_time_ms:
+        type: "UInt16"
+        nullable: true
+        comment: "Page load time in milliseconds"
+      # User interaction
+      scroll_depth_percentage:
+        type: "UInt8"
+        nullable: true
+        comment: "How far user scrolled (0-100)"
+      clicks_on_page:
+        type: "UInt16"
+        default: "0"
+      # Product context (for product pages)
+      product_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.products.product_id"
+      product_category:
+        type: "String"
+        nullable: true
+      # Order context (for checkout/confirmation pages)
+      order_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.orders.order_id"
+      # Exit information
+      exit_page:
+        type: "Bool"
+        default: "false"
+      next_page_url:
+        type: "String"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  ecommerce_events:
+    engine: "MergeTree()"
+    primary_key: "event_id"
+    order_by: "session_id, timestamp"
+    columns:
+      event_id:
+        type: "String"
+        nullable: false
+        comment: "EVT_2024_000001, unique event identifier"
+      session_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to sessions.session_id"
+      customer_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.customers.customer_id"
+      # Event classification
+      event_type:
+        type: "Enum8('PRODUCT_VIEW' = 1, 'ADD_TO_CART' = 2, 'REMOVE_FROM_CART' = 3, 'ADD_TO_WISHLIST' = 4, 'PRODUCT_SHARE' = 5, 'SEARCH' = 6, 'FILTER_APPLY' = 7, 'COUPON_APPLY' = 8)"
+        nullable: false
+      event_category:
+        type: "String"
+        nullable: false
+        comment: "PRODUCT_INTERACTION, SEARCH, CART, MARKETING"
+      # Timing
+      timestamp:
+        type: "DateTime"
+        nullable: false
+      # Product information
+      product_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.products.product_id"
+      product_name:
+        type: "String"
+        nullable: true
+      product_category:
+        type: "String"
+        nullable: true
+      product_price_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Quantity and variants
+      quantity:
+        type: "UInt32"
+        nullable: true
+        default: "1"
+      product_variant:
+        type: "String"
+        nullable: true
+        comment: "Size, color, etc."
+      # Event context
+      search_term:
+        type: "String"
+        nullable: true
+        comment: "For search events"
+      filter_applied:
+        type: "String"
+        nullable: true
+        comment: "For filter events: JSON of filters"
+      coupon_code:
+        type: "String"
+        nullable: true
+        comment: "For coupon events"
+      # Event metadata
+      event_value_eur:
+        type: "Decimal64(2)"
+        nullable: true
+        comment: "Value associated with event"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  search_queries:
+    engine: "MergeTree()"
+    primary_key: "search_id"
+    order_by: "session_id, timestamp"
+    columns:
+      search_id:
+        type: "String"
+        nullable: false
+        comment: "SEARCH_2024_000001"
+      session_id:
+        type: "String"
+        nullable: false
+      customer_id:
+        type: "String"
+        nullable: true
+      # Search details
+      search_term:
+        type: "String"
+        nullable: false
+      search_term_normalized:
+        type: "String"
+        nullable: false
+        comment: "Lowercase, trimmed version"
+      search_category:
+        type: "String"
+        nullable: true
+        comment: "Category filter applied"
+      search_filters:
+        type: "String"
+        nullable: true
+        comment: "JSON of applied filters"
+      # Results
+      results_count:
+        type: "UInt32"
+        nullable: false
+      results_clicked:
+        type: "UInt32"
+        default: "0"
+      first_result_position_clicked:
+        type: "UInt16"
+        nullable: true
+        comment: "Position of first clicked result"
+      # Search performance
+      search_timestamp:
+        type: "DateTime"
+        nullable: false
+      response_time_ms:
+        type: "UInt16"
+        nullable: true
+      # User behavior
+      search_abandoned:
+        type: "Bool"
+        default: "false"
+        comment: "True if user left without clicking results"
+      search_refined:
+        type: "Bool"
+        default: "false"
+        comment: "True if user modified search"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  marketing_campaigns:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "campaign_id"
+    order_by: "campaign_id"
+    columns:
+      campaign_id:
+        type: "String"
+        nullable: false
+        comment: "CAMP_2024_SPRING_001"
+      campaign_name:
+        type: "String"
+        nullable: false
+      campaign_type:
+        type: "Enum8('EMAIL' = 1, 'SOCIAL_MEDIA' = 2, 'PAID_SEARCH' = 3, 'DISPLAY' = 4, 'AFFILIATE' = 5, 'INFLUENCER' = 6)"
+        nullable: false
+      # Campaign details
+      campaign_description:
+        type: "String"
+        nullable: true
+      campaign_objective:
+        type: "String"
+        nullable: true
+        comment: "BRAND_AWARENESS, LEAD_GENERATION, SALES, RETENTION"
+      # Timeline
+      start_date:
+        type: "Date"
+        nullable: false
+      end_date:
+        type: "Date"
+        nullable: true
+      campaign_status:
+        type: "Enum8('PLANNED' = 1, 'ACTIVE' = 2, 'PAUSED' = 3, 'COMPLETED' = 4, 'CANCELLED' = 5)"
+        default: "'PLANNED'"
+      # Targeting
+      target_audience:
+        type: "String"
+        nullable: true
+        comment: "Demographics/segment description"
+      target_countries:
+        type: "Array(String)"
+        nullable: true
+        comment: "['NL', 'DE', 'FR', 'BE']"
+      # Budget
+      budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      spent_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      cost_per_click_eur:
+        type: "Decimal64(4)"
+        nullable: true
+      cost_per_acquisition_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Creative
+      creative_assets:
+        type: "String"
+        nullable: true
+        comment: "JSON array of asset URLs"
+      landing_page_url:
+        type: "String"
+        nullable: true
+      # UTM parameters
+      utm_campaign:
+        type: "String"
+        nullable: false
+      utm_medium:
+        type: "String"
+        nullable: false
+      utm_source:
+        type: "String"
+        nullable: false
+      utm_content:
+        type: "String"
+        nullable: true
+      utm_term:
+        type: "String"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  campaign_performance:
+    engine: "MergeTree()"
+    primary_key: "performance_id"
+    order_by: "campaign_id, performance_date"
+    columns:
+      performance_id:
+        type: "String"
+        nullable: false
+        comment: "PERF_2024_000001"
+      campaign_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to marketing_campaigns.campaign_id"
+      performance_date:
+        type: "Date"
+        nullable: false
+      # Reach metrics
+      impressions:
+        type: "UInt32"
+        default: "0"
+      clicks:
+        type: "UInt32"
+        default: "0"
+      click_through_rate:
+        type: "Decimal32(4)"
+        nullable: true
+        comment: "clicks/impressions"
+      # Engagement metrics
+      sessions_generated:
+        type: "UInt32"
+        default: "0"
+      bounce_rate:
+        type: "Decimal32(4)"
+        nullable: true
+      avg_session_duration_minutes:
+        type: "Decimal32(2)"
+        nullable: true
+      # Conversion metrics
+      conversions:
+        type: "UInt32"
+        default: "0"
+      conversion_rate:
+        type: "Decimal32(4)"
+        nullable: true
+      revenue_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      return_on_ad_spend:
+        type: "Decimal32(4)"
+        nullable: true
+        comment: "revenue/spend"
+      # Cost metrics
+      daily_spend_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      cost_per_click_eur:
+        type: "Decimal64(4)"
+        nullable: true
+      cost_per_acquisition_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Financial integration
+      budget_account:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  newsletter_subscriptions:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "subscription_id"
+    order_by: "subscription_id"
+    columns:
+      subscription_id:
+        type: "String"
+        nullable: false
+        comment: "SUB_2024_000001"
+      customer_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.customers.customer_id"
+      email:
+        type: "String"
+        nullable: false
+      # Subscription details
+      subscription_date:
+        type: "Date"
+        nullable: false
+      subscription_source:
+        type: "String"
+        nullable: true
+        comment: "WEBSITE, STORE, CAMPAIGN_ID"
+      # Status
+      subscription_status:
+        type: "Enum8('SUBSCRIBED' = 1, 'UNSUBSCRIBED' = 2, 'BOUNCED' = 3, 'PENDING' = 4)"
+        default: "'SUBSCRIBED'"
+      unsubscribe_date:
+        type: "Date"
+        nullable: true
+      unsubscribe_reason:
+        type: "String"
+        nullable: true
+      # Preferences
+      frequency_preference:
+        type: "String"
+        nullable: true
+        comment: "WEEKLY, MONTHLY, PROMOTIONS_ONLY"
+      categories_interest:
+        type: "Array(String)"
+        nullable: true
+        comment: "['WOMEN', 'MEN', 'KIDS', 'ACCESSORIES']"
+      language_preference:
+        type: "String"
+        nullable: true
+        comment: "NL, DE, FR, EN"
+      # Engagement tracking
+      emails_sent:
+        type: "UInt32"
+        default: "0"
+      emails_opened:
+        type: "UInt32"
+        default: "0"
+      emails_clicked:
+        type: "UInt32"
+        default: "0"
+      last_engagement_date:
+        type: "Date"
+        nullable: true
+      engagement_score:
+        type: "Decimal32(2)"
+        nullable: true
+        comment: "0-1 engagement score"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  product_recommendations:
+    engine: "MergeTree()"
+    primary_key: "recommendation_id"
+    order_by: "session_id, timestamp"
+    columns:
+      recommendation_id:
+        type: "String"
+        nullable: false
+        comment: "REC_2024_000001"
+      session_id:
+        type: "String"
+        nullable: false
+      customer_id:
+        type: "String"
+        nullable: true
+      # Recommendation context
+      timestamp:
+        type: "DateTime"
+        nullable: false
+      page_type:
+        type: "String"
+        nullable: false
+        comment: "PRODUCT_PAGE, CART, HOMEPAGE, EMAIL"
+      trigger_product_id:
+        type: "String"
+        nullable: true
+        comment: "Product that triggered recommendations"
+      # Algorithm information
+      algorithm_type:
+        type: "Enum8('COLLABORATIVE_FILTERING' = 1, 'CONTENT_BASED' = 2, 'HYBRID' = 3, 'TRENDING' = 4, 'CROSS_SELL' = 5, 'UP_SELL' = 6)"
+        nullable: false
+      algorithm_version:
+        type: "String"
+        nullable: true
+      recommendation_position:
+        type: "UInt8"
+        nullable: false
+        comment: "1, 2, 3... position in recommendation list"
+      # Recommended product
+      recommended_product_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.products.product_id"
+      recommendation_score:
+        type: "Decimal32(4)"
+        nullable: true
+        comment: "Algorithm confidence score 0-1"
+      # User interaction
+      viewed:
+        type: "Bool"
+        default: "false"
+      clicked:
+        type: "Bool"
+        default: "false"
+      added_to_cart:
+        type: "Bool"
+        default: "false"
+      purchased:
+        type: "Bool"
+        default: "false"
+      click_timestamp:
+        type: "DateTime"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  cart_analytics:
+    engine: "MergeTree()"
+    primary_key: "cart_event_id"
+    order_by: "session_id, timestamp"
+    columns:
+      cart_event_id:
+        type: "String"
+        nullable: false
+        comment: "CART_2024_000001"
+      session_id:
+        type: "String"
+        nullable: false
+      customer_id:
+        type: "String"
+        nullable: true
+      # Event details
+      timestamp:
+        type: "DateTime"
+        nullable: false
+      cart_action:
+        type: "Enum8('CREATE' = 1, 'ADD_ITEM' = 2, 'REMOVE_ITEM' = 3, 'UPDATE_QUANTITY' = 4, 'APPLY_COUPON' = 5, 'REMOVE_COUPON' = 6, 'ABANDON' = 7, 'CHECKOUT_START' = 8, 'CHECKOUT_COMPLETE' = 9)"
+        nullable: false
+      # Product information (for item actions)
+      product_id:
+        type: "String"
+        nullable: true
+      quantity_before:
+        type: "UInt32"
+        nullable: true
+      quantity_after:
+        type: "UInt32"
+        nullable: true
+      # Cart state
+      cart_total_items:
+        type: "UInt32"
+        nullable: false
+        default: "0"
+      cart_total_value_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      # Coupon information
+      coupon_code:
+        type: "String"
+        nullable: true
+      discount_amount_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Abandonment analysis
+      abandonment_stage:
+        type: "String"
+        nullable: true
+        comment: "CART_PAGE, CHECKOUT_START, PAYMENT_INFO, FINAL_REVIEW"
+      abandonment_reason:
+        type: "String"
+        nullable: true
+        comment: "HIGH_SHIPPING, OUT_OF_STOCK, PRICE_CONCERN, TECHNICAL_ISSUE"
+      # Recovery tracking
+      recovery_email_sent:
+        type: "Bool"
+        default: "false"
+      recovered_via_email:
+        type: "Bool"
+        default: "false"
+      recovery_timestamp:
+        type: "DateTime"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"

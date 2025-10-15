@@ -118,7 +118,7 @@ load_csv_to_table() {
 setup_schema() {
     log_section "Setting Up HR Database Schema"
     
-    local schema_file="$SCHEMA_DIR/04_create_hr_database.sql"
+    local schema_file="$SCHEMA_DIR/databases/04_hr_tables.sql"
     
     if [[ ! -f "$schema_file" ]]; then
         log_error "Schema file not found: $schema_file"

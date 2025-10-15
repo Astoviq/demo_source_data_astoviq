@@ -1,0 +1,289 @@
+# Webshop Missing Tables Data Patterns
+# ====================================
+# WARP.md-compliant configuration for populating critical missing webshop tables
+# Following rule: "All database schemas must be defined in YAML configuration files"
+
+database: eurostyle_webshop
+
+# Product Reviews - Customer Feedback System
+product_reviews:
+  generation_rules:
+    pattern_type: "realistic_customer_reviews"
+    total_records: 2500
+    review_rate: 0.05  # 5% of orders result in reviews
+    rating_distribution: "natural_bias_positive"
+    include_verified_purchase: true
+    
+  data_patterns:
+    rating_distribution:
+      5_STAR: 0.45  # 45% - Positive bias typical in e-commerce
+      4_STAR: 0.25  # 25%
+      3_STAR: 0.15  # 15%
+      2_STAR: 0.10  # 10%
+      1_STAR: 0.05  # 5%
+      
+    review_characteristics:
+      review_length:
+        SHORT: 0.40      # 1-50 characters (40%)
+        MEDIUM: 0.45     # 51-200 characters (45%)
+        DETAILED: 0.15   # 201+ characters (15%)
+        
+      reviewer_types:
+        VERIFIED_BUYER: 0.85    # 85% verified purchases
+        GUEST_REVIEWER: 0.15    # 15% guest reviews
+        
+    content_templates:
+      positive:
+        - "Great product, exactly as described!"
+        - "Fast delivery and excellent quality"
+        - "Would recommend to others"
+        - "Perfect fit, very satisfied"
+        - "Outstanding customer service"
+        
+      neutral:
+        - "Good product, meets expectations"
+        - "Decent quality for the price"
+        - "As advertised, nothing special"
+        
+      negative:
+        - "Not as described, disappointed"
+        - "Poor quality materials"
+        - "Delivery was delayed"
+        - "Would not buy again"
+
+# Product Recommendations - AI/ML-driven suggestions
+product_recommendations:
+  generation_rules:
+    pattern_type: "collaborative_filtering_simulation"
+    total_records: 15000
+    recommendation_types: ["SIMILAR_PRODUCTS", "FREQUENTLY_BOUGHT_TOGETHER", "CUSTOMERS_ALSO_VIEWED"]
+    confidence_scoring: true
+    
+  data_patterns:
+    recommendation_types:
+      SIMILAR_PRODUCTS: 0.50       # 50% - Based on product attributes
+      FREQUENTLY_BOUGHT_TOGETHER: 0.30  # 30% - Based on purchase patterns
+      CUSTOMERS_ALSO_VIEWED: 0.20  # 20% - Based on browsing behavior
+      
+    confidence_levels:
+      HIGH: 0.25      # 80-100% confidence
+      MEDIUM: 0.45    # 60-79% confidence
+      LOW: 0.30       # 40-59% confidence
+      
+    business_logic:
+      same_category_preference: 0.70    # 70% recommendations within same category
+      price_range_similarity: 0.80     # 80% within ±30% price range
+      seasonal_relevance: 0.60         # 60% consider seasonal trends
+
+# Wishlist Management
+wishlist_items:
+  generation_rules:
+    pattern_type: "customer_wishlist_behavior"
+    total_records: 8000
+    wishlist_adoption_rate: 0.30  # 30% of customers use wishlists
+    avg_items_per_wishlist: 5.5
+    seasonal_patterns: true
+    
+  data_patterns:
+    wishlist_behavior:
+      add_to_cart_conversion: 0.25    # 25% of wishlist items eventually purchased
+      sharing_rate: 0.15              # 15% of wishlists are shared
+      removal_rate: 0.40              # 40% of items eventually removed
+      
+    seasonal_trends:
+      Q4: 0.40  # 40% - Holiday season wishlist activity
+      Q2: 0.25  # 25% - Spring/early summer
+      Q3: 0.20  # 20% - Summer
+      Q1: 0.15  # 15% - Post-holiday lull
+      
+    product_categories_popular_in_wishlists:
+      ELECTRONICS: 0.30
+      FASHION: 0.25
+      HOME_GARDEN: 0.20
+      SPORTS: 0.15
+      OTHER: 0.10
+
+# Shopping Cart Analytics
+cart_activities:
+  generation_rules:
+    pattern_type: "cart_abandonment_simulation"
+    total_records: 20000
+    abandonment_rate: 0.68  # 68% typical e-commerce abandonment rate
+    session_correlation: true
+    
+  data_patterns:
+    cart_actions:
+      ADD_ITEM: 0.50        # 50%
+      REMOVE_ITEM: 0.20     # 20%
+      UPDATE_QUANTITY: 0.15 # 15%
+      CLEAR_CART: 0.05      # 5%
+      CHECKOUT_START: 0.10  # 10%
+      
+    abandonment_stages:
+      PRODUCT_BROWSE: 0.25      # 25% abandon while browsing
+      CART_REVIEW: 0.30         # 30% abandon at cart review
+      SHIPPING_INFO: 0.25       # 25% abandon at shipping
+      PAYMENT_INFO: 0.15        # 15% abandon at payment
+      FINAL_CONFIRMATION: 0.05   # 5% abandon at final step
+      
+    cart_value_distribution:
+      LOW: 0.40     # €0-50 (40%)
+      MEDIUM: 0.35  # €51-150 (35%)
+      HIGH: 0.20    # €151-500 (20%)
+      PREMIUM: 0.05 # €500+ (5%)
+
+# Search Query Analytics
+search_queries:
+  generation_rules:
+    pattern_type: "customer_search_behavior"
+    total_records: 12000
+    search_to_session_ratio: 2.5  # 2.5 searches per session on average
+    include_typos: true
+    include_filters: true
+    
+  data_patterns:
+    search_types:
+      PRODUCT_NAME: 0.35    # 35% - Direct product searches
+      CATEGORY: 0.25        # 25% - Category browsing
+      BRAND: 0.20           # 20% - Brand searches
+      DESCRIPTIVE: 0.15     # 15% - Descriptive terms
+      MODEL_NUMBER: 0.05    # 5% - Specific model searches
+      
+    search_results_interaction:
+      NO_RESULTS: 0.12         # 12% searches return no results
+      RESULTS_NO_CLICK: 0.23   # 23% see results but don't click
+      RESULTS_WITH_CLICK: 0.65 # 65% see results and click
+      
+    popular_search_terms:
+      electronics:
+        - "laptop"
+        - "smartphone"
+        - "headphones"
+        - "tablet"
+        - "smartwatch"
+      fashion:
+        - "shoes"
+        - "jacket"
+        - "jeans"
+        - "dress"
+        - "sneakers"
+
+# Email Marketing Analytics
+email_marketing:
+  generation_rules:
+    pattern_type: "email_campaign_simulation"
+    total_records: 150
+    campaign_types: ["NEWSLETTER", "PROMOTIONAL", "ABANDONED_CART", "PRODUCT_RECOMMENDATION"]
+    performance_metrics: true
+    
+  data_patterns:
+    campaign_types:
+      NEWSLETTER: 0.30          # 30% - Regular newsletters
+      PROMOTIONAL: 0.35         # 35% - Sales and promotions
+      ABANDONED_CART: 0.20      # 20% - Cart abandonment recovery
+      PRODUCT_RECOMMENDATION: 0.15  # 15% - Personalized recommendations
+      
+    performance_benchmarks:
+      email_open_rate:
+        NEWSLETTER: 0.22        # 22% open rate
+        PROMOTIONAL: 0.18       # 18% open rate
+        ABANDONED_CART: 0.35    # 35% open rate
+        PRODUCT_RECOMMENDATION: 0.25  # 25% open rate
+        
+      click_through_rate:
+        NEWSLETTER: 0.03        # 3% CTR
+        PROMOTIONAL: 0.05       # 5% CTR
+        ABANDONED_CART: 0.12    # 12% CTR
+        PRODUCT_RECOMMENDATION: 0.08  # 8% CTR
+        
+    seasonal_campaign_frequency:
+      Q4: 0.40  # 40% - Holiday season intensive campaigns
+      Q2: 0.25  # 25% - Spring campaigns
+      Q3: 0.20  # 20% - Summer campaigns
+      Q1: 0.15  # 15% - Post-holiday campaigns
+
+# A/B Testing Framework
+ab_test_results:
+  generation_rules:
+    pattern_type: "ab_testing_simulation"
+    total_records: 25
+    test_types: ["LAYOUT", "PRICING", "CONTENT", "FUNCTIONALITY"]
+    statistical_significance: true
+    
+  data_patterns:
+    test_types:
+      LAYOUT: 0.30      # 30% - UI/UX layout tests
+      PRICING: 0.25     # 25% - Pricing strategy tests
+      CONTENT: 0.25     # 25% - Content and messaging tests
+      FUNCTIONALITY: 0.20  # 20% - Feature functionality tests
+      
+    test_outcomes:
+      VARIANT_A_WINS: 0.35      # 35% - Control wins
+      VARIANT_B_WINS: 0.40      # 40% - Test variant wins
+      NO_SIGNIFICANT_DIFF: 0.25  # 25% - No statistically significant difference
+      
+    improvement_ranges:
+      SMALL: 0.50       # 1-5% improvement (50% of winning tests)
+      MEDIUM: 0.30      # 6-15% improvement (30% of winning tests)
+      LARGE: 0.15       # 16-30% improvement (15% of winning tests)
+      EXCEPTIONAL: 0.05 # 30%+ improvement (5% of winning tests)
+      
+    test_areas:
+      - test_area: "CHECKOUT_PROCESS"
+        description: "Optimization of checkout flow and payment process"
+        typical_metrics: ["conversion_rate", "cart_abandonment"]
+        
+      - test_area: "PRODUCT_PAGE_LAYOUT"
+        description: "Product page design and information presentation"
+        typical_metrics: ["add_to_cart_rate", "time_on_page"]
+        
+      - test_area: "SEARCH_FUNCTIONALITY"
+        description: "Search results presentation and filtering"
+        typical_metrics: ["search_conversion", "results_interaction"]
+        
+      - test_area: "PRICING_DISPLAY"
+        description: "Price presentation and discount visualization"
+        typical_metrics: ["conversion_rate", "perceived_value"]
+
+# Web Analytics Events - Detailed behavioral tracking
+web_analytics_events:
+  generation_rules:
+    pattern_type: "comprehensive_web_analytics"
+    total_records: 75000
+    events_per_session: 12    # Average events per session
+    event_distribution: "realistic_user_behavior"
+    
+  data_patterns:
+    event_types:
+      PAGE_VIEW: 0.35           # 35% - Page navigation
+      PRODUCT_VIEW: 0.20        # 20% - Product detail views
+      ADD_TO_CART: 0.08         # 8% - Add to cart actions
+      REMOVE_FROM_CART: 0.03    # 3% - Remove from cart
+      SEARCH_PERFORMED: 0.10    # 10% - Search queries
+      FILTER_APPLIED: 0.08      # 8% - Category/price filters
+      WISHLIST_ADD: 0.04        # 4% - Wishlist additions
+      REVIEW_SUBMITTED: 0.02    # 2% - Customer reviews
+      SHARE_PRODUCT: 0.02       # 2% - Social sharing
+      OTHER: 0.08               # 8% - Other interactions
+      
+    user_engagement_levels:
+      HIGH_ENGAGEMENT: 0.20     # 20% - 20+ events per session
+      MEDIUM_ENGAGEMENT: 0.45   # 45% - 8-19 events per session
+      LOW_ENGAGEMENT: 0.35      # 35% - 1-7 events per session
+      
+    conversion_funnel_tracking:
+      - stage: "AWARENESS"
+        typical_events: ["PAGE_VIEW", "SEARCH_PERFORMED"]
+        conversion_to_next: 0.75
+        
+      - stage: "INTEREST"
+        typical_events: ["PRODUCT_VIEW", "FILTER_APPLIED"]
+        conversion_to_next: 0.45
+        
+      - stage: "CONSIDERATION"
+        typical_events: ["ADD_TO_CART", "WISHLIST_ADD"]
+        conversion_to_next: 0.30
+        
+      - stage: "PURCHASE"
+        typical_events: ["CHECKOUT_START", "PAYMENT_COMPLETE"]
+        conversion_to_next: 1.0

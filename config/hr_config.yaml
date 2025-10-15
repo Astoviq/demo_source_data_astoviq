@@ -1,0 +1,444 @@
+# EuroStyle HR Database Configuration
+# ==================================
+# WARP.md Rule 1: All database schemas, data generation, and loading must be driven by YAML configuration files  
+# Following rule: "dont hard code, always use guidelines and framework principles"
+
+database: eurostyle_hr
+
+# Employee Management Configuration
+entities:
+  employees:
+    generation_rules:
+      count_by_mode:
+        demo: 85
+        fast: 250
+        full: 850
+      countries: [NL, DE, FR, BE, LU]
+      distribution_by_entity:
+        HOLDING: [15, 25]     # 15-25 employees in holding company
+        OPERATING: [80, 150]  # 80-150 employees per operating entity
+        
+    data_patterns:
+      demographics:
+        age_distribution:
+          "22-30": 0.25
+          "31-40": 0.35
+          "41-50": 0.25
+          "51-60": 0.12
+          "61-67": 0.03
+          
+      visa_status_distribution:
+        EU_CITIZEN: 0.90
+        WORK_PERMIT: 0.07
+        STUDENT_VISA: 0.02
+        OTHER: 0.01
+        
+      employment_status:
+        ACTIVE: 0.85
+        ON_LEAVE: 0.10
+        INACTIVE: 0.03
+        TERMINATED: 0.02
+
+  departments:
+    generation_rules:
+      pattern_type: "european_corporate_structure"
+      hierarchy_levels: 4
+      total_departments: 20
+      
+    data_patterns:
+      department_structure:
+        EXECUTIVE:
+          - department_code: "EXEC"
+            department_name: "Executive Management"
+            level: 1
+            type: "EXECUTIVE"
+            
+        CORE_FUNCTIONS:
+          - department_code: "SALES"
+            department_name: "Sales & Marketing"
+            level: 2
+            type: "REVENUE_GENERATING"
+          - department_code: "FINANCE" 
+            department_name: "Finance & Administration"
+            level: 2
+            type: "SUPPORT"
+          - department_code: "TECH"
+            department_name: "Technology & Innovation"
+            level: 2
+            type: "SUPPORT"
+            
+        REGIONAL_OPERATIONS:
+          - department_code: "SALES_NL"
+            department_name: "Sales Netherlands"
+            parent: "SALES"
+            level: 3
+            type: "REGIONAL"
+
+  job_positions:
+    generation_rules:
+      pattern_type: "european_job_grades"
+      salary_bands: "european_standards"
+      total_positions: 25
+      
+    data_patterns:
+      position_hierarchy:
+        C_LEVEL:
+          - title: "Chief Executive Officer"
+            code: "CEO"
+            family: "EXECUTIVE" 
+            min_salary_eur: 180000
+            max_salary_eur: 300000
+          - title: "Chief Financial Officer"
+            code: "CFO" 
+            family: "EXECUTIVE"
+            min_salary_eur: 140000
+            max_salary_eur: 220000
+            
+        DIRECTOR:
+          - title: "Sales Director"
+            code: "SALES_DIR"
+            family: "SALES"
+            min_salary_eur: 90000
+            max_salary_eur: 140000
+            
+        MANAGER:
+          - title: "Sales Manager"
+            code: "SALES_MGR"
+            family: "SALES"
+            min_salary_eur: 65000
+            max_salary_eur: 95000
+          - title: "Finance Manager"
+            code: "FIN_MGR"
+            family: "FINANCE"
+            min_salary_eur: 70000
+            max_salary_eur: 100000
+            
+        SPECIALIST:
+          - title: "Sales Representative"
+            code: "SALES_REP"
+            family: "SALES"
+            min_salary_eur: 35000
+            max_salary_eur: 55000
+          - title: "Financial Accountant"
+            code: "ACCOUNTANT" 
+            family: "FINANCE"
+            min_salary_eur: 40000
+            max_salary_eur: 60000
+
+# Employment Contracts Configuration
+employment_contracts:
+  generation_rules:
+    pattern_type: "european_employment_law"
+    contract_types: ["PERMANENT", "TEMPORARY", "CONTRACTOR"]
+    compliance: "eu_labor_directives"
+    
+  data_patterns:
+    contract_templates:
+      PERMANENT_NL:
+        country_code: "NL"
+        employment_law: "DUTCH_LABOR_LAW"
+        probation_period_months: 2
+        notice_period_months: 1
+        annual_leave_days: 25
+        sick_leave_days: 730  # 2 years Dutch law
+        work_week_hours: 40
+        
+      PERMANENT_DE:
+        country_code: "DE"
+        employment_law: "GERMAN_LABOR_LAW"
+        probation_period_months: 6
+        notice_period_months: 4
+        annual_leave_days: 24
+        sick_leave_days: 78   # 6 weeks + insurance
+        work_week_hours: 40
+        
+      PERMANENT_FR:
+        country_code: "FR"
+        employment_law: "FRENCH_LABOR_CODE"
+        probation_period_months: 4
+        notice_period_months: 2
+        annual_leave_days: 25
+        sick_leave_days: 365
+        work_week_hours: 35   # French 35-hour work week
+
+# Compensation History Configuration
+compensation_history:
+  generation_rules:
+    count_by_mode:
+      demo: 50
+      fast: 150
+      full: 500
+    changes_per_employee: [1, 3]
+    
+  data_patterns:
+    change_reasons:
+      ANNUAL_REVIEW:
+        weight: 0.40
+        salary_change_range: [0.02, 0.08]
+      PROMOTION:
+        weight: 0.25
+        salary_change_range: [0.10, 0.25]
+      MERIT_INCREASE:
+        weight: 0.20
+        salary_change_range: [0.03, 0.12]
+      MARKET_ADJUSTMENT:
+        weight: 0.10
+        salary_change_range: [0.05, 0.15]
+      ROLE_CHANGE:
+        weight: 0.05
+        salary_change_range: [-0.05, 0.20]
+        
+    benefit_patterns:
+      bonus_percentage_range: [0.05, 0.15]
+      commission_rate_range: [0.01, 0.05]
+      pension_contribution_range: [0.03, 0.08]
+      health_insurance_range: [100, 500]
+
+# Performance Management Configuration
+performance_management:
+  cycles:
+    generation_rules:
+      cycle_frequency: "ANNUAL"
+      include_mid_year: true
+      total_cycles: 5
+      
+    data_patterns:
+      cycle_types:
+        ANNUAL_REVIEW:
+          duration_months: 12
+          participants: "ALL_EMPLOYEES"
+          mandatory: true
+          
+        MID_YEAR_REVIEW:
+          duration_months: 6
+          participants: "MANAGEMENT_PLUS"
+          mandatory: false
+          
+        QUARTERLY_REVIEW:
+          duration_months: 3
+          participants: "PROBATION_EMPLOYEES"
+          mandatory: true
+          
+        PROJECT_REVIEW:
+          duration_months: "PROJECT_DEPENDENT"
+          participants: "PROJECT_TEAMS"
+          mandatory: false
+          
+        PROBATION_REVIEW:
+          duration_months: "PROBATION_PERIOD"
+          participants: "NEW_EMPLOYEES"
+          mandatory: true
+
+  reviews:
+    generation_rules:
+      rating_scale: "1_to_5"
+      dimensions: ["GOAL_ACHIEVEMENT", "COMPETENCIES", "COLLABORATION", "INNOVATION"]
+      
+    data_patterns:
+      rating_distribution:
+        EXCEPTIONAL: 0.10           # 5/5 rating
+        EXCEEDS_EXPECTATIONS: 0.25  # 4/5 rating
+        MEETS_EXPECTATIONS: 0.50    # 3/5 rating
+        BELOW_EXPECTATIONS: 0.10    # 2/5 rating
+        NEEDS_IMPROVEMENT: 0.05     # 1/5 rating
+        
+      performance_dimensions:
+        GOAL_ACHIEVEMENT:
+          weight: 0.40
+          description: "Achievement of set objectives and KPIs"
+        COMPETENCIES:
+          weight: 0.30
+          description: "Technical and behavioral competencies"
+        COLLABORATION:
+          weight: 0.20
+          description: "Teamwork and cross-functional collaboration"
+        INNOVATION:
+          weight: 0.10
+          description: "Innovation and continuous improvement"
+
+# Training and Development Configuration  
+training_management:
+  programs:
+    generation_rules:
+      program_categories: ["COMPLIANCE", "TECHNICAL", "LEADERSHIP", "PROFESSIONAL"]
+      total_programs: 50
+      mandatory_compliance: true
+      
+    data_patterns:
+      program_distribution:
+        COMPLIANCE: 0.30  # 30% compliance training
+        TECHNICAL: 0.35   # 35% technical skills
+        LEADERSHIP: 0.20  # 20% leadership development
+        PROFESSIONAL: 0.15 # 15% professional development
+        
+      european_compliance_mandatory:
+        - program_name: "GDPR Data Protection Training"
+          type: "COMPLIANCE"
+          duration_hours: 4
+          validity_months: 12
+          provider: "Internal"
+          
+        - program_name: "Workplace Safety & Health"
+          type: "COMPLIANCE"
+          duration_hours: 2
+          validity_months: 12
+          provider: "External"
+          
+        - program_name: "Anti-Discrimination & Inclusion"
+          type: "COMPLIANCE"
+          duration_hours: 3
+          validity_months: 24
+          provider: "Internal"
+
+  assignments:
+    generation_rules:
+      completion_rate: 0.85  # 85% completion rate
+      assign_based_on_role: true
+      
+    data_patterns:
+      assignment_rules:
+        mandatory_for_all:
+          - "GDPR Data Protection Training"
+          - "Workplace Safety & Health"
+          - "Anti-Discrimination & Inclusion"
+          
+      role_specific:
+        MANAGER:
+          - "Leadership Development Program"
+          - "Performance Management Training"
+        SALES:
+          - "Advanced Sales Techniques"
+          - "Customer Relationship Management"
+        FINANCE:
+          - "Financial Analysis & Reporting"
+          - "IFRS Compliance Training"
+  
+  training_records:
+    generation_rules:
+      records_per_employee: [2, 6]  # 2-6 training records per employee
+      completion_rate: 0.85
+      
+    data_patterns:
+      completion_status_distribution:
+        COMPLETED: 0.75
+        IN_PROGRESS: 0.15
+        NOT_STARTED: 0.10
+        
+      score_distribution:
+        COMPLETED:
+          min_score: 70
+          max_score: 100
+          mean: 85
+
+# Leave Management Configuration
+leave_management:
+  balances:
+    generation_rules:
+      calculation_basis: "employment_contract"
+      carryover_rules: "country_specific"
+      year: 2024
+      
+    data_patterns:
+      leave_types:
+        ANNUAL_LEAVE:
+          calculation: "contract_based"
+          carryover_allowed: true
+          max_carryover_days: 5
+          
+        SICK_LEAVE:
+          calculation: "contract_based"
+          carryover_allowed: false
+          
+        PERSONAL_LEAVE:
+          entitlement_days: 3
+          carryover_allowed: false
+          
+        PARENTAL_LEAVE:
+          country_specific_entitlements:
+            NL: 126  # 18 weeks
+            DE: 365  # 52 weeks  
+            FR: 112  # 16 weeks
+            BE: 105  # 15 weeks
+
+  requests:
+    generation_rules:
+      requests_per_employee_year: [2, 5]  # 2-5 requests per employee per year
+      seasonal_patterns: true
+      
+    data_patterns:
+      seasonal_distribution:
+        Q1: 0.15  # 15% of annual leave requests
+        Q2: 0.30  # 30% spring/early summer
+        Q3: 0.40  # 40% summer holidays
+        Q4: 0.15  # 15% holiday season
+        
+      duration_patterns:
+        SHORT_LEAVE: 0.60    # 1-3 days (60%)
+        WEEK_LEAVE: 0.25     # 4-7 days (25%) 
+        EXTENDED_LEAVE: 0.15 # 8+ days (15%)
+        
+      approval_rates:
+        APPROVED: 0.90
+        PENDING: 0.05
+        REJECTED: 0.05
+
+# Compensation Management
+compensation_management:
+  generation_rules:
+    currency: "EUR"
+    salary_review_frequency: "ANNUAL"
+    bonus_eligibility: "PERFORMANCE_BASED"
+    
+  data_patterns:
+    salary_bands:
+      ENTRY_LEVEL: [25000, 35000]
+      JUNIOR: [35000, 50000]
+      SENIOR: [50000, 75000]
+      MANAGER: [75000, 120000]
+      DIRECTOR: [120000, 180000]
+      EXECUTIVE: [180000, 350000]
+      
+    bonus_structure:
+      TARGET_BONUS_PERCENT:
+        ENTRY_LEVEL: 0.05      # 5% of base salary
+        JUNIOR: 0.08           # 8% of base salary
+        SENIOR: 0.12           # 12% of base salary
+        MANAGER: 0.20          # 20% of base salary
+        DIRECTOR: 0.30         # 30% of base salary
+        EXECUTIVE: 0.50        # 50% of base salary
+
+# Cross-Database Relationships
+relationships:
+  to_finance:
+    - employees.entity_id -> eurostyle_finance.legal_entities.entity_id
+    - departments.cost_center_id -> eurostyle_finance.cost_centers.cost_center_id
+    - compensation_history.gl_account -> eurostyle_finance.chart_of_accounts.account_id
+    
+  to_operational:
+    - employment_contracts.store_id -> eurostyle_operational.stores.store_id
+    
+  to_pos:
+    - employees.employee_id -> eurostyle_pos.employee_assignments.employee_id
+
+# Data Validation Rules
+validation:
+  employees:
+    required_fields: [employee_id, first_name, last_name, entity_id]
+    business_rules:
+      - hire_date: "cannot be future date"
+      - visa_status: "in ['EU_CITIZEN', 'WORK_PERMIT', 'STUDENT_VISA', 'OTHER']"
+      - entity_exists: "eurostyle_finance.legal_entities.entity_id"
+      
+  employment_contracts:
+    required_fields: [contract_id, employee_id, contract_type, start_date]
+    business_rules:
+      - contract_dates: "end_date >= start_date OR end_date IS NULL"
+      - annual_leave_days: "between 20 and 35 days (EU compliance)"
+      - work_week_hours: "between 32 and 48 hours (EU compliance)"
+      
+  performance_reviews:
+    required_fields: [review_id, employee_id, cycle_id, overall_rating]
+    business_rules:
+      - rating_range: "overall_rating between 1 and 5"
+      - review_period: "review_date within cycle start/end dates"
+      - reviewer_hierarchy: "reviewer must be employee's manager or above"

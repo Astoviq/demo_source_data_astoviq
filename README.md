@@ -137,72 +137,81 @@ FROM eurostyle_operational.orders"
 ./eurostyle.sh clean --force
 ```
 
-## 🔄 Incremental Data Generation - Business Day Simulation
+## 🔄 Incremental Data Generation - Complete Business Operations
 
 ### Overview
-Simulate realistic daily business operations on top of your existing dataset. Generate new orders, customer registrations, webshop sessions, and HR activities that maintain **perfect consistency** with your existing data.
+Simulate realistic daily business operations with both **new records** and **updates to existing data**. Generate new orders, customer registrations, webshop sessions, plus operational changes like product price updates, employee promotions, and customer loyalty upgrades that maintain **perfect consistency**.
 
 ### Key Features
 - **✅ Perfect Continuity**: New data continues existing ID sequences (e.g., orders 005001, 005002...)
 - **✅ Referential Integrity**: Uses existing customers, products, and stores
 - **✅ GL Consistency**: Every new order generates matching finance entries
-- **✅ Realistic Volumes**: ~100 orders, ~20 customers, ~500 sessions per business day
-- **✅ Business Logic**: VAT calculation, shipping rules, store assignments
+- **✅ Realistic Business Updates**: Price changes, employee promotions, loyalty upgrades
+- **✅ Automatic Loading**: Data is automatically loaded into ClickHouse after generation
+- **✅ Business Logic**: VAT calculation, shipping rules, store assignments, promotion logic
 
-### Quick Examples
+### 🆕 Enhanced Quick Examples (Unified Commands)
 
 ```bash
-# Generate 1 business day of activity
-python3 scripts/data-generation/universal_incremental_generator.py --days 1
+# Complete business day (new records + updates) - RECOMMENDED
+./eurostyle.sh increment --days 1
 
-# Generate 1 week of business activity  
-python3 scripts/data-generation/universal_incremental_generator.py --days 7
+# Multi-day business growth simulation with automatic loading
+./eurostyle.sh increment --days 7 --intensity normal
 
-# High-volume day (Black Friday simulation)
-python3 scripts/data-generation/universal_incremental_generator.py --days 1 --intensity heavy
+# Black Friday simulation (high volume)
+./eurostyle.sh increment --days 1 --intensity heavy
 
-# Specific business activities only
-python3 scripts/data-generation/universal_incremental_generator.py --types "orders,customers" --days 3
+# Specific update operations only
+./eurostyle.sh increment --types "customer_updates,product_updates" --days 1
+./eurostyle.sh increment --types "employee_updates" --days 1
 
-# Department reorganization simulation
-python3 scripts/data-generation/universal_incremental_generator.py --types "departments" --days 1
+# New records only (classic incremental)
+./eurostyle.sh increment --types "orders,customers,sessions" --days 3
 ```
 
-### Daily Business Activity Volumes
-
-| Intensity | Orders/Day | New Customers | Webshop Sessions | Revenue/Day |
-|-----------|------------|---------------|------------------|-------------|
-| **Light** | 50 | 10 | 250 | ~€20K |
-| **Normal** | 100 | 20 | 500 | ~€40K |
-| **Heavy** | 200 | 40 | 1000 | ~€80K |
-
-### Loading Incremental Data
+### 🔧 Advanced Generator Usage (Direct)
 
 ```bash
-# Load all incremental data files into ClickHouse
-cat data/csv/eurostyle_operational.orders_incremental.csv.gz | gunzip | \
-  docker exec -i eurostyle_clickhouse_retail clickhouse-client \
-  --query="INSERT INTO eurostyle_operational.orders FORMAT CSVWithNames"
+# Direct generator usage for advanced scenarios
+python3 scripts/data-generation/universal_incremental_generator.py --days 1
+python3 scripts/data-generation/universal_incremental_generator.py --days 1 --intensity heavy
+python3 scripts/data-generation/universal_incremental_generator.py --types "customer_updates" --days 1
+python3 scripts/data-generation/universal_incremental_generator.py --update-only --types "employee_updates" --days 1
+```
 
-cat data/csv/eurostyle_operational.customers_incremental.csv.gz | gunzip | \
-  docker exec -i eurostyle_clickhouse_retail clickhouse-client \
-  --query="INSERT INTO eurostyle_operational.customers FORMAT CSVWithNames"
+### 📊 Enhanced Daily Business Activity Volumes
 
-cat data/csv/eurostyle_finance.gl_journal_headers_incremental.csv.gz | gunzip | \
-  docker exec -i eurostyle_clickhouse_retail clickhouse-client \
-  --query="INSERT INTO eurostyle_finance.gl_journal_headers FORMAT CSVWithNames"
+| Intensity | New Records | Update Operations | Revenue/Day |
+|-----------|-------------|-------------------|--------------|
+| | Orders/Customers/Sessions | Customer/Product/Employee Updates | |
+| **Light** | 50/10/250 | 25/15/3 | ~€20K |
+| **Normal** | 100/20/500 | 50/30/5 | ~€40K |
+| **Heavy** | 200/40/1000 | 100/60/10 | ~€80K |
 
-cat data/csv/eurostyle_finance.gl_journal_lines_incremental.csv.gz | gunzip | \
-  docker exec -i eurostyle_clickhouse_retail clickhouse-client \
-  --query="INSERT INTO eurostyle_finance.gl_journal_lines FORMAT CSVWithNames"
+**Update Operations Include:**
+- **Customer Updates**: Address changes, loyalty upgrades, preference changes
+- **Product Updates**: Price adjustments, stock updates, seasonal changes, cost price updates
+- **Employee Updates**: Salary increases/promotions, status changes, visa updates
 
-cat data/csv/eurostyle_webshop.web_sessions_incremental.csv.gz | gunzip | \
-  docker exec -i eurostyle_clickhouse_retail clickhouse-client \
-  --query="INSERT INTO eurostyle_webshop.web_sessions FORMAT CSVWithNames"
+### 📥 Automated Incremental Data Loading
 
-# Verify consistency after incremental load
+**✅ AUTOMATIC (Recommended)**: Loading happens automatically when using `./eurostyle.sh increment`
+
+**🔧 MANUAL (Advanced)**: For manual control or troubleshooting
+```bash
+# Load all incremental data files (both new records and updates)
+bash scripts/data-loading/load_incremental_data.sh
+
+# Verify system status after loading
 ./eurostyle.sh status
 ```
+
+**👀 What Gets Loaded Automatically:**
+- `*_incremental.csv.gz` → New records (orders, customers, sessions, GL entries)
+- `*_updates.csv.gz` → Updates to existing records (customers, products, employees)
+- Complex table names supported (e.g., `gl_journal_headers_incremental.csv.gz`)
+- Automatic database status reporting after successful loading
 
 ### Business Scenarios
 
@@ -231,15 +240,22 @@ python3 scripts/data-generation/universal_incremental_generator.py --days 1 --in
 python3 scripts/data-generation/universal_incremental_generator.py --types "departments,employees" --days 1
 ```
 
-### Data Types Available
+### 📋 Enhanced Data Types Available
 
 | Type | Description | Impact |
 |------|-------------|--------|
+| **NEW RECORDS** | |
 | **orders** | New customer orders | Revenue, inventory, GL entries |
 | **customers** | New registrations | Customer base growth, potential orders |
 | **sessions** | Webshop activity | Customer journey, conversion tracking |
 | **departments** | HR reorganization | Employee transfers, promotions, salary changes |
-| **all** | Complete business day | All above activities combined |
+| **UPDATE OPERATIONS** | |
+| **customer_updates** | Address/loyalty/preference changes | Customer profile improvements |
+| **product_updates** | Price/stock/seasonal adjustments | Market dynamics, inventory management |
+| **employee_updates** | Promotions/salary/status changes | HR operations, payroll updates |
+| **cost_center_updates** | Budget/spending/manager changes | Financial planning, org changes |
+| **COMBINED** | |
+| **all** (default) | Complete business day | All new records + all update operations |
 
 ### Consistency Verification
 

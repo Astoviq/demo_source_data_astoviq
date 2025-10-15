@@ -1,0 +1,319 @@
+# EuroStyle Operational Database Column Mappings
+# ==============================================
+# Configuration-driven column mappings following WARP.md Rule 7
+# WARP.md: "CSV-to-database column mappings must be in configuration files"
+
+database: "eurostyle_operational"
+description: "Column mappings for CSV data loading into operational database"
+
+tables:
+  customers:
+    csv_file_pattern: "eurostyle_operational.customers.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      # CSV column name -> Database column name
+      customer_id: "customer_id"
+      email: "email"
+      first_name: "first_name"
+      last_name: "last_name"
+      phone: "phone"
+      date_of_birth: "date_of_birth"
+      gender: "gender"
+      language_preference: "language_preference"
+      street_address: "street_address"
+      city: "city"
+      postal_code: "postal_code"
+      country_code: "country_code"
+      region: "region"
+      registration_date: "registration_date"
+      registration_channel: "registration_channel"
+      customer_status: "customer_status"
+      marketing_opt_in: "marketing_opt_in"
+      newsletter_subscription: "newsletter_subscription"
+      sms_opt_in: "sms_opt_in"
+      total_orders: "total_orders"
+      total_spent: "total_spent"
+      average_order_value: "average_order_value"
+      last_order_date: "last_order_date"
+      loyalty_member: "loyalty_member"
+      loyalty_points: "loyalty_points"
+      loyalty_tier: "loyalty_tier"
+      
+    # Auto-generated columns (not in CSV)
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    # Data transformations
+    transformations:
+      date_of_birth:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      registration_date:
+        type: "datetime_conversion"
+        input_format: "YYYY-MM-DD HH:MI:SS"
+      last_order_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  products:
+    csv_file_pattern: "eurostyle_operational.products.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      product_id: "product_id"
+      product_name: "product_name"
+      category_l1: "category_l1"
+      category_l2: "category_l2"
+      category_l3: "category_l3"
+      brand: "brand"
+      color_primary: "color_primary"
+      color_secondary: "color_secondary"
+      size_range: "size_range"
+      material_composition: "material_composition"
+      price_eur: "price_eur"
+      cost_price_eur: "cost_price_eur"
+      margin_percentage: "margin_percentage"
+      sustainability_score: "sustainability_score"
+      eco_friendly_materials: "eco_friendly_materials"
+      carbon_footprint_kg: "carbon_footprint_kg"
+      production_country: "production_country"
+      current_stock_total: "current_stock_total"
+      reorder_level: "reorder_level"
+      lead_time_days: "lead_time_days"
+      launch_date: "launch_date"
+      season: "season"
+      is_active: "is_active"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      price_eur:
+        type: "decimal_conversion"
+        precision: 2
+      cost_price_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      launch_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      size_range:
+        type: "array_conversion"
+        input_format: "comma_separated"
+
+  orders:
+    csv_file_pattern: "eurostyle_operational.orders.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      order_id: "order_id"
+      customer_id: "customer_id"
+      order_date: "order_date"
+      order_status: "order_status"
+      order_channel: "order_channel"
+      store_id: "store_id"
+      subtotal_eur: "subtotal_eur"
+      shipping_cost_eur: "shipping_cost_eur"
+      tax_amount_eur: "tax_amount_eur"
+      discount_amount_eur: "discount_amount_eur"
+      total_amount_eur: "total_amount_eur"
+      payment_method: "payment_method"
+      payment_status: "payment_status"
+      currency_code: "currency_code"
+      exchange_rate: "exchange_rate"
+      shipping_address: "shipping_address"
+      shipping_city: "shipping_city"
+      shipping_postal_code: "shipping_postal_code"
+      shipping_country_code: "shipping_country_code"
+      billing_address: "billing_address"
+      billing_city: "billing_city"
+      billing_postal_code: "billing_postal_code"
+      billing_country_code: "billing_country_code"
+      estimated_delivery_date: "estimated_delivery_date"
+      actual_delivery_date: "actual_delivery_date"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      order_date:
+        type: "datetime_conversion"
+        input_format: "YYYY-MM-DD HH:MI:SS"
+      subtotal_eur:
+        type: "decimal_conversion"
+        precision: 2
+      total_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+      estimated_delivery_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      actual_delivery_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  order_items:
+    csv_file_pattern: "eurostyle_operational.order_items.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      order_item_id: "order_item_id"
+      order_id: "order_id"
+      product_id: "product_id"
+      line_number: "line_number"
+      quantity: "quantity"
+      unit_price_eur: "unit_price_eur"
+      line_total_eur: "line_total_eur"
+      discount_percentage: "discount_percentage"
+      discount_amount_eur: "discount_amount_eur"
+      product_variant: "product_variant"
+      size: "size"
+      color: "color"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      
+    transformations:
+      unit_price_eur:
+        type: "decimal_conversion"
+        precision: 2
+      line_total_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  stores:
+    csv_file_pattern: "eurostyle_operational.stores.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      store_id: "store_id"
+      store_code: "store_code"
+      store_name: "store_name"
+      store_type: "store_type"
+      country_code: "country_code"
+      city: "city"
+      postal_code: "postal_code"
+      street_address: "street_address"
+      phone: "phone"
+      email: "email"
+      manager_name: "manager_name"
+      opening_date: "opening_date"
+      store_size_sqm: "store_size_sqm"
+      monthly_rent_eur: "monthly_rent_eur"
+      is_active: "is_active"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      opening_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      monthly_rent_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  inventory:
+    csv_file_pattern: "eurostyle_operational.inventory.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      inventory_id: "inventory_id"
+      product_id: "product_id"
+      store_id: "store_id"
+      current_stock: "current_stock"
+      reserved_stock: "reserved_stock"
+      available_stock: "available_stock"
+      minimum_stock: "minimum_stock"
+      maximum_stock: "maximum_stock"
+      last_count_date: "last_count_date"
+      last_reorder_date: "last_reorder_date"
+      avg_daily_sales: "avg_daily_sales"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      last_count_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      last_reorder_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      avg_daily_sales:
+        type: "decimal_conversion"
+        precision: 2
+
+  suppliers:
+    csv_file_pattern: "eurostyle_operational.suppliers.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      supplier_id: "supplier_id"
+      supplier_name: "supplier_name"
+      contact_person: "contact_person"
+      email: "email"
+      phone: "phone"
+      country_code: "country_code"
+      city: "city"
+      postal_code: "postal_code"
+      street_address: "street_address"
+      supplier_type: "supplier_type"
+      payment_terms: "payment_terms"
+      lead_time_days: "lead_time_days"
+      quality_rating: "quality_rating"
+      is_active: "is_active"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      quality_rating:
+        type: "decimal_conversion"
+        precision: 1
+        nullable: true
+
+# Global loading configuration
+loading_config:
+  batch_size: 10000
+  error_handling: "continue_on_error"
+  max_errors: 100
+  compression: "gzip"
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:MI:SS"
+  decimal_separator: "."
+  
+# Validation rules
+validation_rules:
+  required_fields_check: true
+  foreign_key_check: false  # Skip during initial load
+  data_type_validation: true
+  duplicate_check: false    # Allow duplicates for initial load

@@ -1,0 +1,389 @@
+# EuroStyle Finance Database Configuration
+# =======================================
+# WARP.md Rule 1: All database schemas, data generation, and loading must be driven by YAML configuration files
+# Following rule: "dont hard code, always use guidelines and framework principles"
+
+database: eurostyle_finance
+
+# Corporate Structure Configuration
+entities:
+  legal_entities:
+    generation_rules:
+      fixed_entities: true  # Always generate the same 5 entities
+      
+    data_patterns:
+      entity_structure:
+        HOLDING:
+          - entity_id: "ENTITY_NL_HOLDING"
+            entity_code: "ESLH" 
+            entity_name: "EuroStyle Holding B.V."
+            country_code: "NL"
+            currency: "EUR"
+            legal_form: "BV"
+            
+        OPERATING:
+          - entity_id: "ENTITY_NL_RETAIL"
+            entity_code: "ESLR"
+            entity_name: "EuroStyle Retail Nederland B.V."
+            country_code: "NL"
+            currency: "EUR"
+            legal_form: "BV"
+            
+          - entity_id: "ENTITY_DE_RETAIL"
+            entity_code: "ESDR"
+            entity_name: "EuroStyle Deutschland GmbH"
+            country_code: "DE"
+            currency: "EUR"
+            legal_form: "GmbH"
+            
+          - entity_id: "ENTITY_FR_RETAIL"
+            entity_code: "ESFR"
+            entity_name: "EuroStyle France SARL"
+            country_code: "FR"
+            currency: "EUR"
+            legal_form: "SARL"
+            
+          - entity_id: "ENTITY_BE_RETAIL"
+            entity_code: "ESBR"
+            entity_name: "EuroStyle Belgium BVBA"
+            country_code: "BE"
+            currency: "EUR"
+            legal_form: "BVBA"
+
+# Chart of Accounts Configuration  
+chart_of_accounts:
+  generation_rules:
+    pattern_type: "ifrs_compliant"
+    total_accounts: 50  # Extended from basic 10
+    
+  data_patterns:
+    account_structure:
+      assets:
+        current_assets:
+          - range: [1000, 1199]
+            type: "ASSET"
+            subtype: "CURRENT_ASSET"
+            accounts: ["Cash and Cash Equivalents", "Accounts Receivable", "Inventory", "Prepaid Expenses"]
+        non_current_assets:
+          - range: [1200, 1999]
+            type: "ASSET" 
+            subtype: "NON_CURRENT_ASSET"
+            accounts: ["Property Plant Equipment", "Intangible Assets", "Investments", "Deferred Tax Assets"]
+            
+      liabilities:
+        current_liabilities:
+          - range: [2000, 2199]
+            type: "LIABILITY"
+            subtype: "CURRENT_LIABILITY"
+            accounts: ["Accounts Payable", "Tax Payable", "Accrued Expenses", "Short-term Debt"]
+        non_current_liabilities:
+          - range: [2200, 2999]
+            type: "LIABILITY"
+            subtype: "NON_CURRENT_LIABILITY"  
+            accounts: ["Long-term Debt", "Pension Obligations", "Deferred Tax Liabilities"]
+            
+      equity:
+        - range: [3000, 3999]
+          type: "EQUITY"
+          subtype: "EQUITY"
+          accounts: ["Share Capital", "Retained Earnings", "Other Comprehensive Income"]
+          
+      revenue:
+        - range: [4000, 4999]
+          type: "REVENUE"
+          subtype: "OPERATING_REVENUE"
+          accounts: ["Sales Revenue", "Service Revenue", "Other Operating Income"]
+          
+      expenses:
+        - range: [5000, 5999]
+          type: "EXPENSE"
+          subtype: "OPERATING_EXPENSE"
+          accounts: ["Cost of Goods Sold", "Salaries and Wages", "Rent", "Utilities", "Depreciation"]
+
+# General Ledger Configuration
+general_ledger:
+  generation_rules:
+    entry_types: ["SALES", "PURCHASE", "PAYROLL", "ACCRUAL", "ADJUSTMENT"]
+    posting_frequency: "DAILY"
+    
+  data_patterns:
+    posting_rules:
+      SALES:
+        debit_accounts: ["1100"]  # Accounts Receivable
+        credit_accounts: ["4000"]  # Sales Revenue
+        tax_accounts: ["2100"]  # Tax Payable
+        
+      PAYROLL:
+        debit_accounts: ["5100"]  # Salaries and Wages
+        credit_accounts: ["2000", "2100"]  # Accounts Payable, Tax Payable
+
+# Budget Management Configuration
+budget_management:
+  generation_rules:
+    budget_cycles: ["ANNUAL", "QUARTERLY", "MONTHLY"]
+    versions: ["ORIGINAL", "REVISED", "FORECAST"]
+    
+  data_patterns:
+    budget_categories:
+      REVENUE:
+        accounts: [4000, 4100, 4200]
+        growth_rates: [0.05, 0.15]  # 5-15% growth
+        
+      OPEX:
+        accounts: [5000, 5100, 5200]
+        inflation_rates: [0.02, 0.08]  # 2-8% inflation
+        
+      CAPEX:
+        accounts: [1200, 1300, 1400]
+        investment_rates: [0.10, 0.25]  # 10-25% of revenue
+
+# Fixed Assets Configuration
+fixed_assets:
+  generation_rules:
+    count_by_mode:
+      demo: 25
+      fast: 100
+      full: 500
+      
+  data_patterns:
+    asset_categories:
+      BUILDINGS:
+        depreciation_method: "STRAIGHT_LINE"
+        useful_life_years: 40
+        residual_value_percent: 0.10
+        
+      EQUIPMENT:
+        depreciation_method: "STRAIGHT_LINE"
+        useful_life_years: 7
+        residual_value_percent: 0.05
+        
+      IT_HARDWARE:
+        depreciation_method: "STRAIGHT_LINE"
+        useful_life_years: 3
+        residual_value_percent: 0.00
+        
+      FURNITURE:
+        depreciation_method: "STRAIGHT_LINE"
+        useful_life_years: 10
+        residual_value_percent: 0.05
+
+# Cost Centers Configuration
+cost_centers:
+  generation_rules:
+    pattern_type: "functional_organizational"
+    entity_assignment: "auto_distribute"
+    
+  data_patterns:
+    cost_center_types:
+      PROFIT_CENTER:
+        centers: ["Sales NL", "Sales DE", "Sales FR", "Sales BE"]
+        characteristics: ["revenue_generating", "fully_allocated"]
+        
+      COST_CENTER:
+        centers: ["Marketing", "IT", "HR", "Finance", "Logistics"]
+        characteristics: ["support_function", "cost_allocation"]
+        
+      INVESTMENT_CENTER:
+        centers: ["R&D", "New Markets", "Digital Transformation"]
+        characteristics: ["strategic_investment", "roi_tracking"]
+
+# Currency and Exchange Rates
+currency_management:
+  generation_rules:
+    base_currency: "EUR"
+    foreign_currencies: ["USD", "GBP", "CHF", "SEK", "NOK"]
+    rate_frequency: "DAILY"
+    
+  data_patterns:
+    exchange_rate_volatility:
+      USD_EUR: 
+        base_rate: 0.90
+        volatility: 0.05  # ±5%
+      GBP_EUR:
+        base_rate: 1.17
+        volatility: 0.08  # ±8%
+
+# Reporting Periods Configuration
+reporting_periods:
+  generation_rules:
+    financial_year_end: "2024-12-31"
+    reporting_frequency: ["MONTHLY", "QUARTERLY", "ANNUALLY"]
+    
+  data_patterns:
+    period_structure:
+      ANNUAL:
+        periods: 1
+        names: ["FY2024"]
+      QUARTERLY:
+        periods: 4
+        names: ["Q1-2024", "Q2-2024", "Q3-2024", "Q4-2024"]
+      MONTHLY:
+        periods: 12
+        names: ["Jan-2024", "Feb-2024", "Mar-2024", "Apr-2024", 
+               "May-2024", "Jun-2024", "Jul-2024", "Aug-2024",
+               "Sep-2024", "Oct-2024", "Nov-2024", "Dec-2024"]
+
+# Cross-Database Relationships
+relationships:
+  to_operational:
+    - legal_entities.entity_id -> eurostyle_operational.stores.entity_id
+    - legal_entities.entity_id -> eurostyle_operational.orders.entity_id
+    
+  to_hr:
+    - legal_entities.entity_id -> eurostyle_hr.employees.entity_id  
+    - cost_centers.cost_center_id -> eurostyle_hr.departments.cost_center_id
+    
+  to_pos:
+    - legal_entities.entity_id -> eurostyle_pos.transactions.entity_id
+    - chart_of_accounts.account_id -> eurostyle_pos.gl_postings.account_id
+
+# Entity Accounts Configuration
+entity_accounts:
+  generation_rules:
+    count_by_mode:
+      demo: 15
+      fast: 50
+      full: 200
+    
+  data_patterns:
+    account_assignment:
+      HOLDING:
+        required_accounts: ["1000", "3000", "4000", "5000"]
+        optional_accounts: ["1100", "2000", "6000"]
+      OPERATING:
+        required_accounts: ["1000", "1100", "2000", "3000", "4000", "5000"]
+        optional_accounts: ["1200", "1300", "2100", "2200", "6000", "6100"]
+        
+    local_coding:
+      enable_local_codes: true
+      code_patterns: ["L{account_code}", "{entity_code}-{account_code}", "LOC{account_code}"]
+
+# Entity Relationships Configuration
+entity_relationships:
+  generation_rules:
+    count_by_mode:
+      demo: 4
+      fast: 10
+      full: 25
+    
+  data_patterns:
+    relationship_types:
+      SUBSIDIARY:
+        ownership_range: [51.0, 100.0]
+        weight: 0.70
+      JOINT_VENTURE:
+        ownership_range: [25.0, 50.0]
+        weight: 0.20
+      ASSOCIATE:
+        ownership_range: [20.0, 49.0]
+        weight: 0.10
+
+# Reporting Periods Configuration (Enhanced)
+reporting_periods:
+  generation_rules:
+    count_by_mode:
+      demo: 12
+      fast: 24
+      full: 60
+    period_types: ["MONTHLY", "QUARTERLY", "ANNUAL"]
+    
+  data_patterns:
+    period_structure:
+      MONTHLY:
+        periods_per_year: 12
+        status_distribution:
+          CLOSED: 0.75
+          OPEN: 0.20
+          LOCKED: 0.05
+      QUARTERLY:
+        periods_per_year: 4
+        status_distribution:
+          CLOSED: 0.80
+          OPEN: 0.15
+          LOCKED: 0.05
+      ANNUAL:
+        periods_per_year: 1
+        status_distribution:
+          CLOSED: 0.90
+          OPEN: 0.10
+
+# Budget Versions Configuration
+budget_versions:
+  generation_rules:
+    count_by_mode:
+      demo: 8
+      fast: 20
+      full: 50
+    fiscal_years: [2024, 2025]
+    
+  data_patterns:
+    version_types:
+      ORIGINAL:
+        weight: 0.30
+        status: "APPROVED"
+        approval_required: true
+      REVISED:
+        weight: 0.40
+        status: "DRAFT"
+        approval_required: true
+      FORECAST:
+        weight: 0.30
+        status: "ACTIVE"
+        approval_required: false
+        
+    version_naming:
+      ORIGINAL: ["Original Budget {year}", "Initial Plan {year}"]
+      REVISED: ["Revised Budget {year} v{version}", "Updated Plan {year} v{version}"]
+      FORECAST: ["Rolling Forecast {year}", "Operational Forecast {year}"]
+
+# Budget Data Configuration
+budget_data:
+  generation_rules:
+    count_by_mode:
+      demo: 30
+      fast: 150
+      full: 500
+    budget_periods: ["2024", "2025"]
+    
+  data_patterns:
+    budget_scenarios:
+      BASE:
+        weight: 0.60
+        variance: 0.05  # ±5% variance
+      OPTIMISTIC:
+        weight: 0.25
+        variance: 0.15  # +15% upside
+      PESSIMISTIC:
+        weight: 0.15
+        variance: -0.10  # -10% downside
+        
+    account_budget_types:
+      REVENUE_ACCOUNTS: [4000, 4100, 4200]
+      EXPENSE_ACCOUNTS: [5000, 5100, 5200, 6000, 6100]
+      CAPEX_ACCOUNTS: [1200, 1300, 1400]
+
+# Data Validation Rules
+validation:
+  legal_entities:
+    required_fields: [entity_id, entity_code, entity_name, entity_type]
+    business_rules:
+      - entity_type: "in ['HOLDING', 'OPERATING', 'SUBSIDIARY']"
+      - currency: "ISO_4217_currency_code"
+      
+  chart_of_accounts:
+    required_fields: [account_id, account_code, account_name, account_type]
+    business_rules:
+      - account_balance: "DEBIT accounts must have normal_balance = 'DEBIT'"
+      - account_hierarchy: "Asset accounts start with 1xxx"
+      
+  gl_journal_entries:
+    required_fields: [entry_id, account_id, debit_amount, credit_amount]
+    business_rules:
+      - double_entry: "sum(debit_amount) = sum(credit_amount) per journal_id"
+      - amount_validation: "debit_amount >= 0 AND credit_amount >= 0"
+      
+  budget_data:
+    required_fields: [budget_id, entity_id, account_id, period_year, budget_amount_eur]
+    business_rules:
+      - period_validation: "period_year >= 2024"
+      - amount_validation: "budget_amount_eur != 0"

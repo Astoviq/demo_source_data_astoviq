@@ -1,0 +1,379 @@
+# HR Missing Tables Data Patterns
+# ===============================
+# WARP.md-compliant configuration for populating critical missing HR tables
+# Following rule: "All database schemas must be defined in YAML configuration files"
+
+database: eurostyle_hr
+
+# Departments - European Corporate Structure
+departments:
+  generation_rules:
+    pattern_type: "european_corporate_structure"
+    total_records: 12
+    hierarchy_levels: 3
+    entity_mapping: "auto_detect"
+    
+  data_patterns:
+    executive:
+      - department_id: "DEPT_EXEC"
+        department_code: "EXEC"
+        department_name: "Executive Management"
+        parent_department_id: null
+        department_level: 1
+        department_type: "EXECUTIVE"
+        is_active: true
+        
+    core_operations:
+      - department_id: "DEPT_SALES"
+        department_code: "SALES"
+        department_name: "Sales & Marketing"
+        parent_department_id: "DEPT_EXEC"
+        department_level: 2
+        department_type: "REVENUE_GENERATING"
+        is_active: true
+        
+      - department_id: "DEPT_FINANCE"
+        department_code: "FINANCE"
+        department_name: "Finance & Administration"
+        parent_department_id: "DEPT_EXEC"
+        department_level: 2
+        department_type: "SUPPORT"
+        is_active: true
+        
+      - department_id: "DEPT_TECHNOLOGY"
+        department_code: "TECH"
+        department_name: "Technology & Innovation"
+        parent_department_id: "DEPT_EXEC"
+        department_level: 2
+        department_type: "SUPPORT"
+        is_active: true
+        
+    regional_operations:
+      - department_id: "DEPT_SALES_NL"
+        department_code: "SALES_NL"
+        department_name: "Sales Netherlands"
+        parent_department_id: "DEPT_SALES"
+        department_level: 3
+        department_type: "REGIONAL"
+        is_active: true
+        
+      - department_id: "DEPT_SALES_DE"
+        department_code: "SALES_DE"
+        department_name: "Sales Germany"
+        parent_department_id: "DEPT_SALES"
+        department_level: 3
+        department_type: "REGIONAL"
+        is_active: true
+
+# Job Positions - European Role Structure
+job_positions:
+  generation_rules:
+    pattern_type: "european_job_structure"
+    total_records: 15
+    salary_bands: "european_standards"
+    compliance: "eu_employment_law"
+    
+  data_patterns:
+    executive_positions:
+      - job_position_id: "POS_CEO"
+        job_title: "Chief Executive Officer"
+        job_code: "CEO"
+        job_family: "EXECUTIVE"
+        job_level: "C_LEVEL"
+        seniority_level: "EXECUTIVE"
+        min_salary_eur: 180000
+        max_salary_eur: 300000
+        currency: "EUR"
+        requires_eu_work_permit: false
+        
+      - job_position_id: "POS_CFO"
+        job_title: "Chief Financial Officer"
+        job_code: "CFO"
+        job_family: "EXECUTIVE"
+        job_level: "C_LEVEL"
+        seniority_level: "EXECUTIVE"
+        min_salary_eur: 140000
+        max_salary_eur: 220000
+        currency: "EUR"
+        requires_eu_work_permit: false
+        
+    management_positions:
+      - job_position_id: "POS_SALES_MGR"
+        job_title: "Sales Manager"
+        job_code: "SALES_MGR"
+        job_family: "SALES"
+        job_level: "MANAGER"
+        seniority_level: "SENIOR"
+        min_salary_eur: 65000
+        max_salary_eur: 95000
+        currency: "EUR"
+        requires_eu_work_permit: false
+        
+      - job_position_id: "POS_FIN_MGR"
+        job_title: "Finance Manager"
+        job_code: "FIN_MGR"
+        job_family: "FINANCE"
+        job_level: "MANAGER"
+        seniority_level: "SENIOR"
+        min_salary_eur: 70000
+        max_salary_eur: 100000
+        currency: "EUR"
+        requires_eu_work_permit: false
+        
+    specialist_positions:
+      - job_position_id: "POS_SALES_REP"
+        job_title: "Sales Representative"
+        job_code: "SALES_REP"
+        job_family: "SALES"
+        job_level: "INDIVIDUAL_CONTRIBUTOR"
+        seniority_level: "MID"
+        min_salary_eur: 35000
+        max_salary_eur: 55000
+        currency: "EUR"
+        requires_eu_work_permit: false
+        
+      - job_position_id: "POS_ACCOUNTANT"
+        job_title: "Financial Accountant"
+        job_code: "ACCOUNTANT"
+        job_family: "FINANCE"
+        job_level: "INDIVIDUAL_CONTRIBUTOR"
+        seniority_level: "MID"
+        min_salary_eur: 40000
+        max_salary_eur: 60000
+        currency: "EUR"
+        requires_eu_work_permit: false
+
+# Employment Contracts - European Legal Compliance
+employment_contracts:
+  generation_rules:
+    pattern_type: "european_employment_law"
+    total_records: "match_employee_count"
+    contract_types: ["PERMANENT", "TEMPORARY", "CONTRACTOR"]
+    compliance: "eu_labor_directives"
+    probation_periods: "country_specific"
+    
+  data_patterns:
+    contract_templates:
+      permanent_nl:
+        contract_type: "PERMANENT"
+        country_code: "NL"
+        employment_law: "DUTCH_LABOR_LAW"
+        probation_period_months: 2
+        notice_period_months: 1
+        annual_leave_days: 25
+        sick_leave_days: 730  # 2 years (Dutch law)
+        work_week_hours: 40
+        
+      permanent_de:
+        contract_type: "PERMANENT"
+        country_code: "DE"
+        employment_law: "GERMAN_LABOR_LAW"
+        probation_period_months: 6
+        notice_period_months: 4
+        annual_leave_days: 24
+        sick_leave_days: 78  # 6 weeks + insurance
+        work_week_hours: 40
+        
+      permanent_fr:
+        contract_type: "PERMANENT"
+        country_code: "FR"
+        employment_law: "FRENCH_LABOR_CODE"
+        probation_period_months: 4
+        notice_period_months: 2
+        annual_leave_days: 25
+        sick_leave_days: 365
+        work_week_hours: 35
+
+# Performance Management System
+performance_cycles:
+  generation_rules:
+    pattern_type: "annual_performance_management"
+    total_records: 3
+    cycle_frequency: "annual"
+    include_mid_year_review: true
+    
+  data_patterns:
+    - cycle_id: "PERF_2024"
+      cycle_name: "Annual Performance Review 2024"
+      cycle_year: 2024
+      cycle_period: "ANNUAL"
+      start_date: "2024-01-01"
+      end_date: "2024-12-31"
+      review_due_date: "2024-12-15"
+      is_active: true
+      
+    - cycle_id: "PERF_2023"
+      cycle_name: "Annual Performance Review 2023"
+      cycle_year: 2023
+      cycle_period: "ANNUAL"
+      start_date: "2023-01-01"
+      end_date: "2023-12-31"
+      review_due_date: "2023-12-15"
+      is_active: false
+      
+    - cycle_id: "MID_2024"
+      cycle_name: "Mid-Year Review 2024"
+      cycle_year: 2024
+      cycle_period: "MID_YEAR"
+      start_date: "2024-01-01"
+      end_date: "2024-06-30"
+      review_due_date: "2024-07-15"
+      is_active: false
+
+performance_reviews:
+  generation_rules:
+    pattern_type: "structured_performance_reviews"
+    total_records: "match_employee_count_per_cycle"
+    rating_scale: "1_to_5"
+    include_goals: true
+    manager_assignment: "auto_detect"
+    
+  data_patterns:
+    rating_distribution:
+      EXCEPTIONAL: 0.10    # 10% of employees
+      EXCEEDS_EXPECTATIONS: 0.25   # 25%
+      MEETS_EXPECTATIONS: 0.50     # 50%
+      BELOW_EXPECTATIONS: 0.10     # 10%
+      NEEDS_IMPROVEMENT: 0.05      # 5%
+      
+    review_dimensions:
+      - dimension: "GOAL_ACHIEVEMENT"
+        weight: 0.40
+        description: "Achievement of set objectives and KPIs"
+        
+      - dimension: "COMPETENCIES"
+        weight: 0.30
+        description: "Technical and behavioral competencies"
+        
+      - dimension: "COLLABORATION"
+        weight: 0.20
+        description: "Teamwork and cross-functional collaboration"
+        
+      - dimension: "INNOVATION"
+        weight: 0.10
+        description: "Innovation and continuous improvement"
+
+# Training and Development
+training_programs:
+  generation_rules:
+    pattern_type: "european_training_programs"
+    total_records: 8
+    compliance_training: "mandatory"
+    development_training: "optional"
+    
+  data_patterns:
+    compliance_training:
+      - program_id: "TRAIN_GDPR"
+        program_name: "GDPR Data Protection Training"
+        program_type: "COMPLIANCE"
+        is_mandatory: true
+        duration_hours: 4
+        validity_months: 12
+        provider: "Internal"
+        
+      - program_id: "TRAIN_SAFETY"
+        program_name: "Workplace Safety & Health"
+        program_type: "COMPLIANCE"
+        is_mandatory: true
+        duration_hours: 2
+        validity_months: 12
+        provider: "External"
+        
+    development_training:
+      - program_id: "TRAIN_LEADERSHIP"
+        program_name: "Leadership Development Program"
+        program_type: "DEVELOPMENT"
+        is_mandatory: false
+        duration_hours: 24
+        validity_months: null
+        provider: "External"
+        
+      - program_id: "TRAIN_SALES"
+        program_name: "Advanced Sales Techniques"
+        program_type: "SKILLS"
+        is_mandatory: false
+        duration_hours: 16
+        validity_months: null
+        provider: "Internal"
+
+employee_training:
+  generation_rules:
+    pattern_type: "employee_training_assignments"
+    total_records: "calculated"  # employees × avg_training_per_employee
+    completion_rate: 0.85
+    assign_based_on_role: true
+    
+  data_patterns:
+    assignment_rules:
+      mandatory_for_all:
+        - "TRAIN_GDPR"
+        - "TRAIN_SAFETY"
+        
+      role_specific:
+        MANAGER:
+          - "TRAIN_LEADERSHIP"
+        SALES:
+          - "TRAIN_SALES"
+        FINANCE:
+          - "TRAIN_FINANCE_SYSTEMS"
+
+# Leave Management System
+leave_balances:
+  generation_rules:
+    pattern_type: "european_leave_entitlements"
+    total_records: "match_employee_count"
+    calculation_basis: "employment_contract"
+    year: 2024
+    
+  data_patterns:
+    leave_types:
+      annual_leave:
+        leave_type: "ANNUAL_LEAVE"
+        calculation: "contract_based"  # From employment_contracts.annual_leave_days
+        carryover_allowed: true
+        max_carryover_days: 5
+        
+      sick_leave:
+        leave_type: "SICK_LEAVE"
+        calculation: "contract_based"  # From employment_contracts.sick_leave_days
+        carryover_allowed: false
+        
+      personal_leave:
+        leave_type: "PERSONAL_LEAVE"
+        entitlement_days: 3
+        carryover_allowed: false
+        
+    country_specific_entitlements:
+      NL:
+        parental_leave_days: 126  # 18 weeks
+        study_leave_days: 5
+      DE:
+        parental_leave_days: 365  # 52 weeks
+        study_leave_days: 10
+      FR:
+        parental_leave_days: 112  # 16 weeks
+        study_leave_days: 5
+
+leave_requests:
+  generation_rules:
+    pattern_type: "realistic_leave_patterns"
+    total_records: "calculated"  # Based on employee count and historical patterns
+    seasonal_patterns: true
+    approval_workflow: true
+    
+  data_patterns:
+    seasonal_distribution:
+      Q1: 0.15  # 15% of annual leave requests
+      Q2: 0.30  # 30% (spring/early summer)
+      Q3: 0.40  # 40% (summer holidays)
+      Q4: 0.15  # 15% (holiday season)
+      
+    leave_duration_patterns:
+      SHORT_LEAVE: 0.60    # 1-3 days (60%)
+      WEEK_LEAVE: 0.25     # 4-7 days (25%)
+      EXTENDED_LEAVE: 0.15 # 8+ days (15%)
+      
+    approval_rates:
+      APPROVED: 0.90
+      PENDING: 0.05
+      REJECTED: 0.05

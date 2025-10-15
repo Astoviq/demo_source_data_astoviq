@@ -45,14 +45,28 @@ generation_modes:
   demo:
     description: "Small demo dataset for testing"
     scale_factor: 0.1
+    time_period:
+      start_date: "2024-06-01"
+      end_date: "2024-12-31"
+      description: "6 months of recent data for quick testing"
   
   fast:
-    description: "Quick generation for development"  
+    description: "Quick generation for development - 1 year focus"
     scale_factor: 0.5
+    time_period:
+      start_date: "2024-01-01"
+      end_date: "2024-12-31"
+      description: "1 full year of data for comprehensive testing"
+      historical_depth: "1_year"
     
   full:
-    description: "Complete dataset for production demo"
+    description: "Complete dataset for production demo - multi-year history"
     scale_factor: 1.0
+    time_period:
+      start_date: "2020-01-01"
+      end_date: "2024-12-31"
+      description: "5 years of historical data for production-like scenarios"
+      historical_depth: "5_years"
 
 validation:
   enabled: true

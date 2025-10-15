@@ -457,7 +457,7 @@ generate_webshop_data() {
     # Generate webshop data
     echo -e "${YELLOW}🔄 Generating webshop CSV files...${NC}"
     
-    if python3 scripts/generate_complete_webshop_data.py; then
+    if python3 scripts/data-generation/generate_complete_webshop_data.py; then
         echo -e "${GREEN}✅ Webshop CSV generation completed${NC}"
     else
         echo -e "${RED}❌ Webshop CSV generation failed${NC}"
@@ -467,7 +467,7 @@ generate_webshop_data() {
     # Load data into database
     echo -e "${YELLOW}📥 Loading webshop data into ClickHouse...${NC}"
     
-    if ./scripts/load_webshop_data.sh; then
+    if ./scripts/data-loading/load_webshop_data.sh; then
         echo -e "${GREEN}✅ Webshop data loading completed${NC}"
     else
         echo -e "${RED}❌ Webshop data loading failed${NC}"
@@ -494,7 +494,7 @@ generate_finance_data() {
     # Generate finance data
     echo -e "${YELLOW}🔄 Generating finance CSV files...${NC}"
     
-    if python3 scripts/generate_complete_finance_data.py; then
+    if python3 scripts/data-generation/generate_complete_finance_data.py; then
         echo -e "${GREEN}✅ Finance CSV generation completed${NC}"
     else
         echo -e "${RED}❌ Finance CSV generation failed${NC}"
@@ -504,7 +504,7 @@ generate_finance_data() {
     # Load data into database
     echo -e "${YELLOW}📥 Loading finance data into ClickHouse...${NC}"
     
-    if ./scripts/load_finance_data.sh; then
+    if ./scripts/data-loading/load_finance_data.sh; then
         echo -e "${GREEN}✅ Finance data loading completed${NC}"
     else
         echo -e "${RED}❌ Finance data loading failed${NC}"
@@ -532,7 +532,7 @@ generate_hr_data() {
     # Generate HR data
     echo -e "${YELLOW}🔄 Generating HR CSV files...${NC}"
     
-    if python3 scripts/generate_complete_hr_data.py; then
+    if python3 scripts/data-generation/generate_complete_hr_data.py; then
         echo -e "${GREEN}✅ HR CSV generation completed${NC}"
     else
         echo -e "${RED}❌ HR CSV generation failed${NC}"
@@ -542,7 +542,7 @@ generate_hr_data() {
     # Load data into database
     echo -e "${YELLOW}📥 Loading HR data into ClickHouse...${NC}"
     
-    if ./scripts/load_hr_data.sh --setup; then
+    if ./scripts/data-loading/load_hr_data.sh --setup; then
         echo -e "${GREEN}✅ HR data loading completed${NC}"
     else
         echo -e "${RED}❌ HR data loading failed${NC}"

@@ -1,0 +1,305 @@
+# EuroStyle POS Database Configuration
+# ====================================
+# WARP.md Rule 1: All database schemas, data generation, and loading must be driven by YAML configuration files
+# Following rule: "dont hard code, always use guidelines and framework principles"
+# Status: Following WARP.md POS Integration achievement with 37K+ transactions and perfect VAT compliance
+
+database: eurostyle_pos
+
+# Transaction Management Configuration  
+transactions:
+  generation_rules:
+    daily_volumes:
+      demo: 750       # 750 transactions per day (demo mode)
+      fast: 1500      # 1500 transactions per day (fast mode)  
+      full: 3000      # 3000 transactions per day (full mode)
+    business_hours: [9, 21]      # Store operating hours: 9 AM - 9 PM
+    peak_hours: [12, 14, 18, 20] # Lunch and evening rush periods
+    
+  data_patterns:
+    transaction_types:
+      SALE: 0.85          # 85% regular sales transactions
+      RETURN: 0.10        # 10% return transactions
+      EXCHANGE: 0.03      # 3% exchange transactions 
+      VOID: 0.02          # 2% void transactions
+      
+    hourly_distribution:
+      "09": 0.03   # 3% of daily volume at 9 AM
+      "10": 0.05   # 5% at 10 AM
+      "11": 0.07   # 7% at 11 AM  
+      "12": 0.12   # 12% at 12 PM (lunch peak)
+      "13": 0.11   # 11% at 1 PM
+      "14": 0.09   # 9% at 2 PM
+      "15": 0.08   # 8% at 3 PM
+      "16": 0.08   # 8% at 4 PM
+      "17": 0.09   # 9% at 5 PM
+      "18": 0.12   # 12% at 6 PM (evening peak)
+      "19": 0.10   # 10% at 7 PM
+      "20": 0.06   # 6% at 8 PM
+
+# Payment Processing Configuration
+payment_processing:
+  generation_rules:
+    payment_method_distribution_by_country: true
+    fraud_detection_simulation: true
+    processing_fees: true
+    
+  data_patterns:
+    payment_methods:
+      NL:  # Netherlands payment preferences
+        DEBIT_CARD: 0.70     # 70% debit cards (Maestro/Bancontact)
+        CREDIT_CARD: 0.15    # 15% credit cards
+        CASH: 0.10           # 10% cash (declining trend)
+        MOBILE_PAYMENT: 0.05 # 5% mobile payments (Apple Pay, Google Pay)
+        
+      DE:  # Germany payment preferences
+        DEBIT_CARD: 0.50     # 50% debit cards
+        CREDIT_CARD: 0.20    # 20% credit cards
+        CASH: 0.25           # 25% cash (higher cash usage)
+        MOBILE_PAYMENT: 0.05 # 5% mobile payments
+        
+      FR:  # France payment preferences  
+        DEBIT_CARD: 0.60     # 60% debit cards
+        CREDIT_CARD: 0.25    # 25% credit cards
+        CASH: 0.10           # 10% cash
+        MOBILE_PAYMENT: 0.05 # 5% mobile payments
+        
+      BE:  # Belgium payment preferences
+        DEBIT_CARD: 0.65     # 65% debit cards
+        CREDIT_CARD: 0.20    # 20% credit cards
+        CASH: 0.12           # 12% cash
+        MOBILE_PAYMENT: 0.03 # 3% mobile payments
+        
+    processing_fees:
+      DEBIT_CARD: 0.008    # 0.8% processing fee
+      CREDIT_CARD: 0.025   # 2.5% processing fee
+      CASH: 0.0            # No processing fee
+      MOBILE_PAYMENT: 0.012 # 1.2% processing fee
+      
+    transaction_limits:
+      CASH_LIMIT_EUR: 1000      # €1000 cash transaction limit (EU regulation)
+      CONTACTLESS_LIMIT_EUR: 50 # €50 contactless payment limit
+      PIN_REQUIRED_ABOVE_EUR: 25 # PIN required above €25
+
+# VAT Management Configuration
+vat_management:
+  generation_rules:
+    compliance_level: "EU_DIRECTIVE_2006_112_EC"  # EU VAT Directive compliance
+    vat_calculation_precision: 2  # 2 decimal places for EUR
+    
+  data_patterns:
+    vat_rates_by_country:
+      NL:  # Netherlands VAT rates
+        standard_rate: 0.21        # 21% standard VAT rate
+        reduced_rate: 0.09         # 9% reduced rate (food, books)
+        zero_rate: 0.00            # 0% rate (exports, certain services)
+        gl_account_standard: "2300_NL_VAT_PAYABLE"
+        gl_account_reduced: "2301_NL_VAT_PAYABLE_REDUCED"
+        
+      DE:  # Germany VAT rates
+        standard_rate: 0.19        # 19% standard VAT rate
+        reduced_rate: 0.07         # 7% reduced rate (food, books, transport)
+        zero_rate: 0.00            # 0% rate (exports)
+        gl_account_standard: "2300_DE_VAT_PAYABLE"
+        gl_account_reduced: "2301_DE_VAT_PAYABLE_REDUCED"
+        
+      FR:  # France VAT rates
+        standard_rate: 0.20        # 20% standard VAT rate
+        reduced_rate: 0.055        # 5.5% reduced rate (food, books)
+        super_reduced_rate: 0.021  # 2.1% super reduced rate (medicines, press)
+        zero_rate: 0.00            # 0% rate (exports)
+        gl_account_standard: "2300_FR_VAT_PAYABLE"
+        gl_account_reduced: "2301_FR_VAT_PAYABLE_REDUCED"
+        
+      BE:  # Belgium VAT rates  
+        standard_rate: 0.21        # 21% standard VAT rate
+        reduced_rate: 0.06         # 6% reduced rate (food, medicines)
+        intermediate_rate: 0.12    # 12% intermediate rate (restaurants)
+        zero_rate: 0.00            # 0% rate (exports)
+        gl_account_standard: "2300_BE_VAT_PAYABLE"
+        gl_account_reduced: "2301_BE_VAT_PAYABLE_REDUCED"
+        
+    product_vat_classification:
+      CLOTHING: "STANDARD"         # Standard VAT rate for clothing
+      FOOD: "REDUCED"              # Reduced VAT rate for food items  
+      BOOKS: "REDUCED"             # Reduced VAT rate for books
+      ELECTRONICS: "STANDARD"      # Standard VAT rate for electronics
+      HEALTHCARE: "REDUCED"        # Reduced VAT rate for healthcare products
+
+# Store Operations Configuration
+store_operations:
+  generation_rules:
+    store_types: ["FLAGSHIP", "STANDARD", "OUTLET", "POP_UP"]
+    operating_schedule: "european_retail_hours"
+    staff_shifts: "realistic_scheduling"
+    
+  data_patterns:
+    store_performance_tiers:
+      FLAGSHIP:
+        daily_transaction_volume: [800, 1200]  # High-volume flagship stores
+        average_transaction_value_eur: [85, 150]
+        customer_service_rating: [4.2, 4.8]
+        
+      STANDARD:  
+        daily_transaction_volume: [300, 600]   # Standard retail locations
+        average_transaction_value_eur: [45, 85] 
+        customer_service_rating: [3.8, 4.3]
+        
+      OUTLET:
+        daily_transaction_volume: [150, 400]   # Outlet/discount stores
+        average_transaction_value_eur: [25, 55]
+        customer_service_rating: [3.5, 4.0]
+        
+      POP_UP:
+        daily_transaction_volume: [50, 150]    # Temporary pop-up locations
+        average_transaction_value_eur: [30, 70]
+        customer_service_rating: [3.7, 4.2]
+        
+    seasonal_adjustments:
+      Q1_POST_HOLIDAY: 0.75       # 75% of baseline volume (January slowdown)
+      Q2_SPRING: 1.10             # 110% of baseline volume (spring shopping)
+      Q3_SUMMER: 0.90             # 90% of baseline volume (summer vacation)
+      Q4_HOLIDAY: 1.45            # 145% of baseline volume (holiday shopping)
+
+# Employee Management Configuration  
+employee_management:
+  generation_rules:
+    shift_patterns: ["FULL_TIME", "PART_TIME", "SEASONAL", "TEMP"]
+    role_distribution: "retail_hierarchy"
+    performance_tracking: true
+    
+  data_patterns:
+    role_hierarchy:
+      STORE_MANAGER:
+        count_per_store: 1
+        hourly_rate_eur: [18, 25]
+        responsibilities: ["STORE_OPERATIONS", "STAFF_MANAGEMENT", "REPORTING"]
+        
+      ASSISTANT_MANAGER:
+        count_per_store: [1, 2] 
+        hourly_rate_eur: [15, 20]
+        responsibilities: ["SHIFT_SUPERVISION", "CUSTOMER_SERVICE", "INVENTORY"]
+        
+      SALES_ASSOCIATE:
+        count_per_store: [8, 15]
+        hourly_rate_eur: [12, 16]
+        responsibilities: ["SALES", "CUSTOMER_SERVICE", "CHECKOUT"]
+        
+      CASHIER:
+        count_per_store: [4, 8]
+        hourly_rate_eur: [11, 14]
+        responsibilities: ["PAYMENT_PROCESSING", "CUSTOMER_SERVICE"]
+        
+      SEASONAL_TEMP:
+        count_per_store: [2, 6]
+        hourly_rate_eur: [10, 13]
+        responsibilities: ["SALES_SUPPORT", "STOCKING", "CUSTOMER_SERVICE"]
+        seasonal_months: [11, 12, 1]  # November, December, January
+        
+    performance_metrics:
+      sales_targets:
+        SALES_ASSOCIATE: [2000, 3500]   # €2000-€3500 monthly sales target
+        ASSISTANT_MANAGER: [4000, 6000] # €4000-€6000 monthly sales target
+        STORE_MANAGER: [15000, 25000]   # €15K-€25K monthly store target
+        
+      customer_service_scores:
+        rating_scale: [1, 5]           # 1-5 customer service rating
+        target_score: 4.0              # Target 4.0+ rating
+        measurement_frequency: "MONTHLY"
+
+# Inventory Integration Configuration
+inventory_integration:
+  generation_rules:
+    real_time_sync: true
+    stock_level_validation: true  
+    reorder_point_calculation: true
+    
+  data_patterns:
+    stock_movements:
+      SALE: -1                    # Reduce stock by quantity sold
+      RETURN: +1                  # Increase stock by quantity returned
+      EXCHANGE: 0                 # No net stock change for exchanges
+      VOID: +1                    # Restore stock for voided transactions
+      
+    reorder_triggers:
+      LOW_STOCK_THRESHOLD: 10     # Reorder when stock drops below 10 units
+      ZERO_STOCK_HANDLING: "BACKORDER"  # Allow backorders for zero stock
+      SEASONAL_ADJUSTMENTS: true  # Adjust reorder points seasonally
+      
+    inventory_accuracy:
+      cycle_count_frequency: "MONTHLY"   # Monthly inventory cycle counts
+      accuracy_target: 0.98              # 98% inventory accuracy target  
+      variance_tolerance_eur: 50         # €50 variance tolerance per item
+
+# Financial Integration Configuration
+financial_integration:
+  generation_rules:
+    gl_posting_frequency: "REAL_TIME"  # Real-time GL postings
+    bank_reconciliation: "DAILY"       # Daily bank reconciliation
+    cash_management: "AUTOMATED"       # Automated cash management
+    
+  data_patterns:
+    gl_account_mapping:
+      SALES_REVENUE:
+        account_pattern: "4000_{COUNTRY}_{STORE_ID}"
+        description: "Retail Sales Revenue - {STORE_NAME}"
+        
+      VAT_PAYABLE:
+        account_pattern: "2300_{COUNTRY}_VAT_PAYABLE"
+        description: "VAT Payable - {COUNTRY}"
+        
+      CASH_RECEIPTS:
+        account_pattern: "1100_{COUNTRY}_{STORE_ID}_CASH"
+        description: "Cash Till - {STORE_NAME}"
+        
+      CARD_RECEIPTS:
+        account_pattern: "1150_{COUNTRY}_{STORE_ID}_CARD"
+        description: "Card Terminal - {STORE_NAME}"
+        
+    daily_reconciliation:
+      cash_variance_tolerance_eur: 5.00  # €5 cash variance tolerance
+      card_processing_delay_hours: 2     # 2-hour card processing delay
+      end_of_day_procedures: true        # Automated end-of-day procedures
+
+# Cross-Database Relationships  
+relationships:
+  to_operational:
+    - transactions.customer_id -> eurostyle_operational.customers.customer_id
+    - transaction_items.product_id -> eurostyle_operational.products.product_id
+    - transactions.store_id -> eurostyle_operational.stores.store_id
+    
+  to_finance:
+    - transactions.gl_revenue_account -> eurostyle_finance.chart_of_accounts.account_id
+    - vat_transactions.gl_vat_account -> eurostyle_finance.chart_of_accounts.account_id
+    - payment_processing_fees.gl_expense_account -> eurostyle_finance.chart_of_accounts.account_id
+    
+  to_hr:
+    - employee_assignments.employee_id -> eurostyle_hr.employees.employee_id
+    - shift_schedules.employee_id -> eurostyle_hr.employees.employee_id
+
+# Data Validation Rules
+validation:
+  transactions:
+    required_fields: [transaction_id, store_id, employee_id, total_amount_eur, payment_method]
+    business_rules:
+      - total_amount: "total_amount_eur >= 0 OR transaction_type = 'RETURN'"
+      - vat_calculation: "vat_amount_eur = (subtotal_eur * vat_rate) rounded to 2 decimals"
+      - payment_method: "in ['DEBIT_CARD', 'CREDIT_CARD', 'CASH', 'MOBILE_PAYMENT']"
+      - store_exists: "eurostyle_operational.stores.store_id"
+      - employee_exists: "eurostyle_hr.employees.employee_id"
+      
+  payment_processing:
+    required_fields: [payment_id, transaction_id, payment_method, amount_eur, status]
+    business_rules:
+      - payment_amount: "amount_eur > 0"
+      - cash_limit: "amount_eur <= 1000 OR payment_method != 'CASH'"
+      - contactless_limit: "amount_eur <= 50 OR pin_verified = true"
+      - processing_fee: "fee_eur = amount_eur * rate for non-cash payments"
+      
+  vat_transactions:
+    required_fields: [vat_transaction_id, transaction_id, vat_rate, vat_amount_eur, country_code]
+    business_rules:
+      - vat_rate_validation: "vat_rate in country-specific allowed rates"
+      - vat_amount_calculation: "vat_amount_eur = net_amount_eur * vat_rate (rounded to 2 decimals)"  
+      - country_compliance: "country_code in ['NL', 'DE', 'FR', 'BE']"
+      - gl_account_exists: "eurostyle_finance.chart_of_accounts.account_id"

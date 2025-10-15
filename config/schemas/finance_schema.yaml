@@ -1,0 +1,580 @@
+# EuroStyle Finance Database Schema Configuration
+# ==============================================
+# Configuration-driven schema definition following WARP.md Rule 5
+# WARP.md: "All database schemas must be defined in YAML configuration files"
+
+database: "eurostyle_finance"
+description: "Financial management, legal entities, general ledger, budgets, fixed assets"
+
+tables:
+  legal_entities:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "entity_id"
+    order_by: "entity_id"
+    columns:
+      entity_id:
+        type: "String"
+        nullable: false
+        comment: "HOLDING_001, OPERATING_NL_001"
+      entity_name:
+        type: "String"
+        nullable: false
+      entity_type:
+        type: "Enum8('HOLDING' = 1, 'OPERATING' = 2, 'SUBSIDIARY' = 3)"
+        nullable: false
+      parent_entity_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to parent entity"
+      country_of_incorporation:
+        type: "String"
+        nullable: false
+        comment: "NL, DE, FR, BE"
+      # Legal identifiers
+      legal_registration_number:
+        type: "String"
+        nullable: false
+        comment: "KvK number, Handelsregister number"
+      tax_identification_number:
+        type: "String"
+        nullable: false
+        comment: "VAT number, BTW nummer"
+      # Address information
+      registered_address:
+        type: "String"
+        nullable: false
+      city:
+        type: "String"
+        nullable: false
+      postal_code:
+        type: "String"
+        nullable: false
+      country_code:
+        type: "String"
+        nullable: false
+      # Financial information
+      base_currency:
+        type: "String"
+        nullable: false
+        default: "'EUR'"
+      fiscal_year_end_month:
+        type: "UInt8"
+        nullable: false
+        default: "12"
+        comment: "1-12, typically December (12)"
+      # Status and dates
+      incorporation_date:
+        type: "Date"
+        nullable: false
+      entity_status:
+        type: "Enum8('ACTIVE' = 1, 'INACTIVE' = 2, 'DISSOLVED' = 3)"
+        default: "'ACTIVE'"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  chart_of_accounts:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "account_id"
+    order_by: "account_id"
+    columns:
+      account_id:
+        type: "String"
+        nullable: false
+        comment: "1000_CASH, 4000_SALES_REVENUE"
+      account_code:
+        type: "String"
+        nullable: false
+        comment: "Numeric account code: 1000, 4000, 5000"
+      account_name:
+        type: "String"
+        nullable: false
+      account_name_local:
+        type: "Map(String, String)"
+        nullable: true
+        comment: "Translations: nl -> 'Kas', de -> 'Kasse'"
+      # Account classification
+      account_type:
+        type: "Enum8('ASSET' = 1, 'LIABILITY' = 2, 'EQUITY' = 3, 'REVENUE' = 4, 'EXPENSE' = 5)"
+        nullable: false
+      account_subtype:
+        type: "String"
+        nullable: true
+        comment: "CURRENT_ASSET, FIXED_ASSET, ACCOUNTS_PAYABLE, etc."
+      # Account hierarchy
+      parent_account_id:
+        type: "String"
+        nullable: true
+        comment: "For sub-accounts"
+      account_level:
+        type: "UInt8"
+        nullable: false
+        default: "1"
+        comment: "1=main account, 2=sub-account, etc."
+      # Account properties
+      normal_balance_side:
+        type: "Enum8('DEBIT' = 1, 'CREDIT' = 2)"
+        nullable: false
+      is_control_account:
+        type: "Bool"
+        default: "false"
+        comment: "True for control accounts like Accounts Receivable"
+      requires_cost_center:
+        type: "Bool"
+        default: "false"
+      # Currency and reporting
+      currency_code:
+        type: "String"
+        nullable: false
+        default: "'EUR'"
+      is_active:
+        type: "Bool"
+        default: "true"
+      # Audit trail
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  general_ledger:
+    engine: "MergeTree()"
+    primary_key: "transaction_id, line_number"
+    order_by: "transaction_id, line_number"
+    columns:
+      transaction_id:
+        type: "String"
+        nullable: false
+        comment: "GL_2024_000001, GL_2024_000002"
+      line_number:
+        type: "UInt16"
+        nullable: false
+        comment: "Line number within transaction (1, 2, 3...)"
+      # Transaction header information
+      transaction_date:
+        type: "Date"
+        nullable: false
+      posting_date:
+        type: "Date"
+        nullable: false
+        comment: "Date when posted to GL"
+      period_year:
+        type: "UInt16"
+        nullable: false
+      period_month:
+        type: "UInt8"
+        nullable: false
+      # Account information
+      account_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to chart_of_accounts"
+      entity_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to legal_entities"
+      cost_center_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to cost_centers"
+      # Transaction details
+      transaction_type:
+        type: "String"
+        nullable: false
+        comment: "SALES, PURCHASE, PAYROLL, ADJUSTMENT, etc."
+      transaction_source:
+        type: "String"
+        nullable: false
+        comment: "OPERATIONAL, POS, PAYROLL, MANUAL, etc."
+      reference_number:
+        type: "String"
+        nullable: true
+        comment: "External reference (invoice, order number)"
+      description:
+        type: "String"
+        nullable: false
+      # Amounts (always in EUR)
+      debit_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      credit_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      # Original currency (if different from EUR)
+      original_currency:
+        type: "String"
+        nullable: true
+      original_amount:
+        type: "Decimal64(2)"
+        nullable: true
+      exchange_rate:
+        type: "Decimal64(4)"
+        nullable: true
+      # Audit and control
+      journal_entry_id:
+        type: "String"
+        nullable: true
+        comment: "Batch/journal reference"
+      created_by:
+        type: "String"
+        nullable: false
+        default: "'SYSTEM'"
+      approved_by:
+        type: "String"
+        nullable: true
+      posting_status:
+        type: "Enum8('DRAFT' = 1, 'POSTED' = 2, 'REVERSED' = 3)"
+        default: "'POSTED'"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  cost_centers:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "cost_center_id"
+    order_by: "cost_center_id"
+    columns:
+      cost_center_id:
+        type: "String"
+        nullable: false
+        comment: "CC_SALES_NL, CC_FINANCE_HQ"
+      cost_center_code:
+        type: "String"
+        nullable: false
+        comment: "SALES_NL, FINANCE_HQ"
+      cost_center_name:
+        type: "String"
+        nullable: false
+      cost_center_name_local:
+        type: "Map(String, String)"
+        nullable: true
+      # Hierarchy
+      parent_cost_center_id:
+        type: "String"
+        nullable: true
+      cost_center_level:
+        type: "UInt8"
+        nullable: false
+        default: "1"
+      # Classification
+      cost_center_type:
+        type: "Enum8('REVENUE' = 1, 'COST' = 2, 'PROFIT' = 3, 'SERVICE' = 4)"
+        nullable: false
+      functional_area:
+        type: "String"
+        nullable: true
+        comment: "SALES, MARKETING, FINANCE, HR, IT"
+      # Financial control
+      entity_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to legal_entities"
+      budget_responsible_employee:
+        type: "String"
+        nullable: true
+      # Status
+      is_active:
+        type: "Bool"
+        default: "true"
+      effective_from_date:
+        type: "Date"
+        nullable: false
+      effective_to_date:
+        type: "Date"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  budgets:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "budget_id"
+    order_by: "budget_id"
+    columns:
+      budget_id:
+        type: "String"
+        nullable: false
+        comment: "BUDGET_2024_SALES_NL"
+      budget_name:
+        type: "String"
+        nullable: false
+      # Budget scope
+      entity_id:
+        type: "String"
+        nullable: false
+      cost_center_id:
+        type: "String"
+        nullable: true
+      account_id:
+        type: "String"
+        nullable: true
+        comment: "Account-specific budget or null for cost center total"
+      # Time period
+      budget_year:
+        type: "UInt16"
+        nullable: false
+      budget_period_from:
+        type: "Date"
+        nullable: false
+      budget_period_to:
+        type: "Date"
+        nullable: false
+      # Budget amounts
+      original_budget_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Original approved budget"
+      revised_budget_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Current budget after revisions"
+      budget_type:
+        type: "Enum8('REVENUE' = 1, 'EXPENSE' = 2, 'CAPEX' = 3)"
+        nullable: false
+      # Monthly breakdown
+      jan_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      feb_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      mar_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      apr_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      may_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      jun_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      jul_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      aug_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      sep_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      oct_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      nov_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      dec_budget_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Status and control
+      budget_status:
+        type: "Enum8('DRAFT' = 1, 'APPROVED' = 2, 'LOCKED' = 3)"
+        default: "'DRAFT'"
+      approved_by:
+        type: "String"
+        nullable: true
+      approval_date:
+        type: "Date"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  fixed_assets:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "asset_id"
+    order_by: "asset_id"
+    columns:
+      asset_id:
+        type: "String"
+        nullable: false
+        comment: "FA_2024_000001"
+      asset_tag:
+        type: "String"
+        nullable: true
+        comment: "Physical asset tag"
+      asset_name:
+        type: "String"
+        nullable: false
+      asset_description:
+        type: "String"
+        nullable: true
+      # Classification
+      asset_category:
+        type: "String"
+        nullable: false
+        comment: "FURNITURE, IT_EQUIPMENT, VEHICLE, BUILDING"
+      asset_class:
+        type: "String"
+        nullable: true
+        comment: "More specific classification"
+      # Financial information
+      entity_id:
+        type: "String"
+        nullable: false
+      cost_center_id:
+        type: "String"
+        nullable: true
+      gl_asset_account:
+        type: "String"
+        nullable: false
+        comment: "Balance sheet asset account"
+      gl_depreciation_account:
+        type: "String"
+        nullable: false
+        comment: "Accumulated depreciation account"
+      gl_expense_account:
+        type: "String"
+        nullable: false
+        comment: "Depreciation expense account"
+      # Purchase information
+      purchase_date:
+        type: "Date"
+        nullable: false
+      purchase_price_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      vendor:
+        type: "String"
+        nullable: true
+      purchase_order_number:
+        type: "String"
+        nullable: true
+      # Depreciation
+      depreciation_method:
+        type: "Enum8('STRAIGHT_LINE' = 1, 'DECLINING_BALANCE' = 2, 'UNITS_OF_PRODUCTION' = 3)"
+        nullable: false
+        default: "'STRAIGHT_LINE'"
+      useful_life_years:
+        type: "UInt8"
+        nullable: false
+      salvage_value_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      # Current status
+      current_book_value_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      accumulated_depreciation_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      last_depreciation_date:
+        type: "Date"
+        nullable: true
+      # Physical information
+      location:
+        type: "String"
+        nullable: true
+      serial_number:
+        type: "String"
+        nullable: true
+      condition:
+        type: "Enum8('EXCELLENT' = 1, 'GOOD' = 2, 'FAIR' = 3, 'POOR' = 4)"
+        nullable: true
+      # Lifecycle
+      asset_status:
+        type: "Enum8('IN_SERVICE' = 1, 'OUT_OF_SERVICE' = 2, 'DISPOSED' = 3, 'SOLD' = 4)"
+        default: "'IN_SERVICE'"
+      disposal_date:
+        type: "Date"
+        nullable: true
+      disposal_proceeds_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  currency_exchange_rates:
+    engine: "ReplacingMergeTree(rate_date, base_currency, target_currency)"
+    primary_key: "rate_date, base_currency, target_currency"
+    order_by: "rate_date, base_currency, target_currency"
+    columns:
+      rate_date:
+        type: "Date"
+        nullable: false
+      base_currency:
+        type: "String"
+        nullable: false
+        comment: "Always EUR for this system"
+      target_currency:
+        type: "String"
+        nullable: false
+        comment: "USD, GBP, CHF, etc."
+      exchange_rate:
+        type: "Decimal64(6)"
+        nullable: false
+        comment: "Rate from base to target (EUR to USD = 1.0850)"
+      rate_source:
+        type: "String"
+        nullable: false
+        comment: "ECB, REUTERS, MANUAL"
+      is_month_end_rate:
+        type: "Bool"
+        default: "false"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  reporting_periods:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "period_id"
+    order_by: "period_id"
+    columns:
+      period_id:
+        type: "String"
+        nullable: false
+        comment: "2024_01, 2024_Q1, 2024"
+      entity_id:
+        type: "String"
+        nullable: false
+      period_type:
+        type: "Enum8('MONTH' = 1, 'QUARTER' = 2, 'YEAR' = 3)"
+        nullable: false
+      period_year:
+        type: "UInt16"
+        nullable: false
+      period_number:
+        type: "UInt8"
+        nullable: true
+        comment: "Month (1-12) or Quarter (1-4), null for year"
+      period_start_date:
+        type: "Date"
+        nullable: false
+      period_end_date:
+        type: "Date"
+        nullable: false
+      period_status:
+        type: "Enum8('OPEN' = 1, 'CLOSED' = 2, 'LOCKED' = 3)"
+        default: "'OPEN'"
+      closed_date:
+        type: "Date"
+        nullable: true
+      closed_by:
+        type: "String"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"

@@ -1,0 +1,726 @@
+# EuroStyle HR Database Schema Configuration
+# ==========================================
+# Configuration-driven schema definition following WARP.md Rule 5
+# WARP.md: "All database schemas must be defined in YAML configuration files"
+
+database: "eurostyle_hr"
+description: "Human Resources management, employee lifecycle, performance, training, compliance"
+
+tables:
+  employees:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "employee_id"
+    order_by: "employee_id"
+    columns:
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "EMP_EU_000001, EMP_EU_000002"
+      # Personal information
+      first_name:
+        type: "String"
+        nullable: false
+      last_name:
+        type: "String"
+        nullable: false
+      full_name:
+        type: "String"
+        nullable: false
+        comment: "Generated from first_name + last_name"
+      date_of_birth:
+        type: "Date"
+        nullable: false
+      gender:
+        type: "Enum8('M' = 1, 'F' = 2, 'O' = 3, 'X' = 4)"
+        nullable: true
+        comment: "M=Male, F=Female, O=Other, X=Not specified"
+      nationality:
+        type: "String"
+        nullable: false
+        comment: "ISO country code: NL, DE, FR, BE"
+      # Contact information
+      email:
+        type: "String"
+        nullable: false
+        comment: "Business email address"
+      personal_email:
+        type: "String"
+        nullable: true
+        comment: "Personal email (emergency contact)"
+      phone_business:
+        type: "String"
+        nullable: true
+      phone_personal:
+        type: "String"
+        nullable: true
+      # Address information
+      street_address:
+        type: "String"
+        nullable: false
+      city:
+        type: "String"
+        nullable: false
+      postal_code:
+        type: "String"
+        nullable: false
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "Country of residence: NL, DE, FR, BE"
+      # Employment status
+      entity_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_finance.legal_entities"
+      hire_date:
+        type: "Date"
+        nullable: false
+      employment_status:
+        type: "Enum8('ACTIVE' = 1, 'ON_LEAVE' = 2, 'INACTIVE' = 3, 'TERMINATED' = 4)"
+        default: "'ACTIVE'"
+      termination_date:
+        type: "Date"
+        nullable: true
+      termination_reason:
+        type: "String"
+        nullable: true
+      # Immigration status (EU compliance)
+      visa_status:
+        type: "Enum8('EU_CITIZEN' = 1, 'WORK_PERMIT' = 2, 'STUDENT_VISA' = 3, 'OTHER' = 4)"
+        default: "'EU_CITIZEN'"
+      work_permit_expiry:
+        type: "Date"
+        nullable: true
+        comment: "Required for non-EU citizens"
+      # Emergency contact
+      emergency_contact_name:
+        type: "String"
+        nullable: true
+      emergency_contact_phone:
+        type: "String"
+        nullable: true
+      emergency_contact_relationship:
+        type: "String"
+        nullable: true
+      # System fields
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  departments:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "department_id"
+    order_by: "department_id"
+    columns:
+      department_id:
+        type: "String"
+        nullable: false
+        comment: "DEPT_SALES_NL, DEPT_FINANCE_HQ"
+      department_code:
+        type: "String"
+        nullable: false
+        comment: "SALES_NL, FINANCE_HQ"
+      department_name:
+        type: "String"
+        nullable: false
+      department_name_local:
+        type: "Map(String, String)"
+        nullable: true
+        comment: "Local language translations"
+      # Hierarchy
+      parent_department_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to parent department"
+      department_level:
+        type: "UInt8"
+        nullable: false
+        default: "1"
+        comment: "Organizational hierarchy level"
+      # Classification
+      department_type:
+        type: "Enum8('EXECUTIVE' = 1, 'REVENUE_GENERATING' = 2, 'SUPPORT' = 3, 'REGIONAL' = 4)"
+        nullable: false
+      functional_area:
+        type: "String"
+        nullable: false
+        comment: "SALES, MARKETING, FINANCE, HR, IT, OPERATIONS"
+      # Financial integration
+      entity_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_finance.legal_entities"
+      cost_center_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_finance.cost_centers"
+      # Management
+      manager_employee_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to employees.employee_id"
+      # Status
+      is_active:
+        type: "Bool"
+        default: "true"
+      effective_from_date:
+        type: "Date"
+        nullable: false
+      effective_to_date:
+        type: "Date"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  job_positions:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "position_id"
+    order_by: "position_id"
+    columns:
+      position_id:
+        type: "String"
+        nullable: false
+        comment: "POS_CEO_001, POS_SALES_MGR_001"
+      position_code:
+        type: "String"
+        nullable: false
+        comment: "CEO, CFO, SALES_MGR, SALES_REP"
+      position_title:
+        type: "String"
+        nullable: false
+      position_title_local:
+        type: "Map(String, String)"
+        nullable: true
+      # Classification
+      job_family:
+        type: "String"
+        nullable: false
+        comment: "EXECUTIVE, SALES, FINANCE, HR, IT"
+      job_level:
+        type: "String"
+        nullable: false
+        comment: "C_LEVEL, DIRECTOR, MANAGER, SPECIALIST, COORDINATOR"
+      seniority_level:
+        type: "UInt8"
+        nullable: false
+        comment: "1=Entry, 2=Junior, 3=Senior, 4=Lead, 5=Principal"
+      # Compensation
+      min_salary_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      max_salary_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      currency_code:
+        type: "String"
+        nullable: false
+        default: "'EUR'"
+      # Requirements
+      required_education_level:
+        type: "String"
+        nullable: true
+        comment: "HIGH_SCHOOL, BACHELOR, MASTER, PHD"
+      required_experience_years:
+        type: "UInt8"
+        nullable: true
+      required_languages:
+        type: "Array(String)"
+        nullable: true
+        comment: "['EN', 'NL', 'DE', 'FR']"
+      # Status
+      is_active:
+        type: "Bool"
+        default: "true"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  employment_contracts:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "contract_id"
+    order_by: "contract_id"
+    columns:
+      contract_id:
+        type: "String"
+        nullable: false
+        comment: "CONTRACT_2024_000001"
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to employees.employee_id"
+      # Contract details
+      contract_type:
+        type: "Enum8('PERMANENT' = 1, 'TEMPORARY' = 2, 'CONTRACTOR' = 3, 'INTERN' = 4)"
+        nullable: false
+      contract_status:
+        type: "Enum8('ACTIVE' = 1, 'EXPIRED' = 2, 'TERMINATED' = 3, 'SUSPENDED' = 4)"
+        default: "'ACTIVE'"
+      start_date:
+        type: "Date"
+        nullable: false
+      end_date:
+        type: "Date"
+        nullable: true
+        comment: "Null for permanent contracts"
+      # Position information
+      position_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to job_positions.position_id"
+      department_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to departments.department_id"
+      manager_employee_id:
+        type: "String"
+        nullable: true
+      # Location
+      work_location_type:
+        type: "Enum8('OFFICE' = 1, 'REMOTE' = 2, 'HYBRID' = 3, 'FIELD' = 4)"
+        nullable: false
+      primary_work_location:
+        type: "String"
+        nullable: true
+        comment: "Office address or 'REMOTE'"
+      store_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.stores.store_id"
+      # Work schedule
+      work_week_hours:
+        type: "Decimal32(1)"
+        nullable: false
+        comment: "40.0 for full-time, 20.0 for part-time"
+      work_pattern:
+        type: "String"
+        nullable: true
+        comment: "MONDAY_TO_FRIDAY, SHIFT_WORK, FLEXIBLE"
+      # Compensation
+      base_salary_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      salary_frequency:
+        type: "Enum8('ANNUAL' = 1, 'MONTHLY' = 2, 'HOURLY' = 3)"
+        default: "'ANNUAL'"
+      bonus_eligible:
+        type: "Bool"
+        default: "false"
+      bonus_target_percentage:
+        type: "Decimal32(2)"
+        nullable: true
+        comment: "0.15 = 15% of base salary"
+      # European labor law compliance
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "Employment law jurisdiction: NL, DE, FR, BE"
+      probation_period_months:
+        type: "UInt8"
+        nullable: true
+      notice_period_months:
+        type: "UInt8"
+        nullable: false
+      annual_leave_days:
+        type: "UInt8"
+        nullable: false
+        comment: "EU minimum 20 days, typically 25+"
+      sick_leave_days:
+        type: "UInt16"
+        nullable: false
+        comment: "730 for NL (2 years), varies by country"
+      # System fields
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  performance_cycles:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "cycle_id"
+    order_by: "cycle_id"
+    columns:
+      cycle_id:
+        type: "String"
+        nullable: false
+        comment: "CYCLE_2024_ANNUAL, CYCLE_2024_H1"
+      cycle_name:
+        type: "String"
+        nullable: false
+      cycle_type:
+        type: "Enum8('ANNUAL_REVIEW' = 1, 'MID_YEAR_REVIEW' = 2, 'QUARTERLY_REVIEW' = 3, 'PROJECT_REVIEW' = 4, 'PROBATION_REVIEW' = 5)"
+        nullable: false
+      # Timeline
+      cycle_year:
+        type: "UInt16"
+        nullable: false
+      start_date:
+        type: "Date"
+        nullable: false
+      end_date:
+        type: "Date"
+        nullable: false
+      review_deadline:
+        type: "Date"
+        nullable: false
+      # Scope
+      entity_id:
+        type: "String"
+        nullable: false
+      applicable_to:
+        type: "String"
+        nullable: false
+        comment: "ALL_EMPLOYEES, MANAGEMENT_PLUS, PROBATION_EMPLOYEES"
+      mandatory:
+        type: "Bool"
+        default: "true"
+      # Status
+      cycle_status:
+        type: "Enum8('PLANNED' = 1, 'ACTIVE' = 2, 'COMPLETED' = 3, 'CANCELLED' = 4)"
+        default: "'PLANNED'"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  performance_reviews:
+    engine: "MergeTree()"
+    primary_key: "review_id"
+    order_by: "review_id"
+    columns:
+      review_id:
+        type: "String"
+        nullable: false
+        comment: "REVIEW_2024_000001"
+      cycle_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to performance_cycles.cycle_id"
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to employees.employee_id"
+      reviewer_employee_id:
+        type: "String"
+        nullable: false
+        comment: "Usually direct manager"
+      # Review scores
+      overall_rating:
+        type: "UInt8"
+        nullable: false
+        comment: "1-5 scale rating"
+      goal_achievement_rating:
+        type: "UInt8"
+        nullable: true
+      competencies_rating:
+        type: "UInt8"
+        nullable: true
+      collaboration_rating:
+        type: "UInt8"
+        nullable: true
+      innovation_rating:
+        type: "UInt8"
+        nullable: true
+      # Weighted scores
+      goal_achievement_weight:
+        type: "Decimal32(2)"
+        default: "0.40"
+      competencies_weight:
+        type: "Decimal32(2)"
+        default: "0.30"
+      collaboration_weight:
+        type: "Decimal32(2)"
+        default: "0.20"
+      innovation_weight:
+        type: "Decimal32(2)"
+        default: "0.10"
+      # Comments
+      strengths_comments:
+        type: "String"
+        nullable: true
+      development_areas_comments:
+        type: "String"
+        nullable: true
+      manager_comments:
+        type: "String"
+        nullable: true
+      employee_self_assessment:
+        type: "String"
+        nullable: true
+      # Review process
+      review_date:
+        type: "Date"
+        nullable: false
+      review_status:
+        type: "Enum8('DRAFT' = 1, 'SUBMITTED' = 2, 'ACKNOWLEDGED' = 3, 'FINALIZED' = 4)"
+        default: "'DRAFT'"
+      employee_acknowledgment_date:
+        type: "Date"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  training_programs:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "program_id"
+    order_by: "program_id"
+    columns:
+      program_id:
+        type: "String"
+        nullable: false
+        comment: "PROG_GDPR_2024, PROG_LEADERSHIP_2024"
+      program_name:
+        type: "String"
+        nullable: false
+      program_name_local:
+        type: "Map(String, String)"
+        nullable: true
+      program_description:
+        type: "String"
+        nullable: true
+      # Classification
+      program_category:
+        type: "Enum8('COMPLIANCE' = 1, 'TECHNICAL' = 2, 'LEADERSHIP' = 3, 'PROFESSIONAL' = 4)"
+        nullable: false
+      program_type:
+        type: "Enum8('MANDATORY' = 1, 'OPTIONAL' = 2, 'ROLE_SPECIFIC' = 3)"
+        nullable: false
+      # Program details
+      duration_hours:
+        type: "UInt16"
+        nullable: false
+      delivery_method:
+        type: "String"
+        nullable: false
+        comment: "ONLINE, IN_PERSON, HYBRID, SELF_PACED"
+      provider:
+        type: "String"
+        nullable: false
+        comment: "INTERNAL, EXTERNAL, VENDOR_NAME"
+      # Validity
+      certificate_validity_months:
+        type: "UInt16"
+        nullable: true
+        comment: "12 for annual compliance training"
+      # Cost
+      cost_per_participant_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Status
+      is_active:
+        type: "Bool"
+        default: "true"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  training_assignments:
+    engine: "MergeTree()"
+    primary_key: "assignment_id"
+    order_by: "assignment_id"
+    columns:
+      assignment_id:
+        type: "String"
+        nullable: false
+        comment: "ASSIGN_2024_000001"
+      employee_id:
+        type: "String"
+        nullable: false
+      program_id:
+        type: "String"
+        nullable: false
+      # Assignment details
+      assigned_date:
+        type: "Date"
+        nullable: false
+      due_date:
+        type: "Date"
+        nullable: false
+      assigned_by_employee_id:
+        type: "String"
+        nullable: false
+      assignment_reason:
+        type: "String"
+        nullable: true
+        comment: "NEW_HIRE, ROLE_CHANGE, COMPLIANCE_RENEWAL, PERFORMANCE_IMPROVEMENT"
+      # Completion tracking
+      started_date:
+        type: "Date"
+        nullable: true
+      completed_date:
+        type: "Date"
+        nullable: true
+      completion_status:
+        type: "Enum8('NOT_STARTED' = 1, 'IN_PROGRESS' = 2, 'COMPLETED' = 3, 'OVERDUE' = 4, 'EXEMPT' = 5)"
+        default: "'NOT_STARTED'"
+      # Results
+      final_score:
+        type: "UInt8"
+        nullable: true
+        comment: "Percentage score 0-100"
+      passed:
+        type: "Bool"
+        nullable: true
+      certificate_issued_date:
+        type: "Date"
+        nullable: true
+      certificate_expiry_date:
+        type: "Date"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  leave_balances:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "balance_id"
+    order_by: "balance_id"
+    columns:
+      balance_id:
+        type: "String"
+        nullable: false
+        comment: "BAL_2024_EMP_000001_ANNUAL"
+      employee_id:
+        type: "String"
+        nullable: false
+      balance_year:
+        type: "UInt16"
+        nullable: false
+      # Leave type
+      leave_type:
+        type: "Enum8('ANNUAL_LEAVE' = 1, 'SICK_LEAVE' = 2, 'PERSONAL_LEAVE' = 3, 'PARENTAL_LEAVE' = 4, 'COMPASSIONATE_LEAVE' = 5)"
+        nullable: false
+      # Balance calculations
+      entitlement_days:
+        type: "Decimal32(1)"
+        nullable: false
+        comment: "Annual entitlement in days"
+      carried_forward_days:
+        type: "Decimal32(1)"
+        nullable: false
+        default: "0.0"
+      accrued_days:
+        type: "Decimal32(1)"
+        nullable: false
+        default: "0.0"
+      taken_days:
+        type: "Decimal32(1)"
+        nullable: false
+        default: "0.0"
+      pending_days:
+        type: "Decimal32(1)"
+        nullable: false
+        default: "0.0"
+        comment: "Days in requested/approved leave"
+      available_days:
+        type: "Decimal32(1)"
+        nullable: false
+        comment: "Calculated: entitlement + carried_forward + accrued - taken - pending"
+      # Policy rules
+      max_carryover_days:
+        type: "Decimal32(1)"
+        nullable: true
+      carryover_expiry_date:
+        type: "Date"
+        nullable: true
+      # Country-specific rules
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "Employment jurisdiction: NL, DE, FR, BE"
+      last_updated_date:
+        type: "Date"
+        nullable: false
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  leave_requests:
+    engine: "MergeTree()"
+    primary_key: "request_id"
+    order_by: "request_id"
+    columns:
+      request_id:
+        type: "String"
+        nullable: false
+        comment: "REQ_2024_000001"
+      employee_id:
+        type: "String"
+        nullable: false
+      # Leave details
+      leave_type:
+        type: "Enum8('ANNUAL_LEAVE' = 1, 'SICK_LEAVE' = 2, 'PERSONAL_LEAVE' = 3, 'PARENTAL_LEAVE' = 4, 'COMPASSIONATE_LEAVE' = 5)"
+        nullable: false
+      start_date:
+        type: "Date"
+        nullable: false
+      end_date:
+        type: "Date"
+        nullable: false
+      total_days:
+        type: "Decimal32(1)"
+        nullable: false
+        comment: "Working days requested"
+      half_day_am:
+        type: "Bool"
+        default: "false"
+      half_day_pm:
+        type: "Bool"
+        default: "false"
+      # Request process
+      request_date:
+        type: "Date"
+        nullable: false
+      requested_by_employee_id:
+        type: "String"
+        nullable: false
+        comment: "Usually same as employee_id, could be manager/HR"
+      reason:
+        type: "String"
+        nullable: true
+      comments:
+        type: "String"
+        nullable: true
+      # Approval workflow
+      approval_status:
+        type: "Enum8('PENDING' = 1, 'APPROVED' = 2, 'REJECTED' = 3, 'CANCELLED' = 4)"
+        default: "'PENDING'"
+      approver_employee_id:
+        type: "String"
+        nullable: true
+      approval_date:
+        type: "Date"
+        nullable: true
+      approval_comments:
+        type: "String"
+        nullable: true
+      # Supporting documentation
+      medical_certificate_required:
+        type: "Bool"
+        default: "false"
+      medical_certificate_provided:
+        type: "Bool"
+        default: "false"
+      created_at:
+        type: "DateTime"
+        default: "now()"

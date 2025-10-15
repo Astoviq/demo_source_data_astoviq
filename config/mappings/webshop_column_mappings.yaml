@@ -1,0 +1,235 @@
+# EuroStyle Webshop Database Column Mappings
+# ===========================================
+# Configuration-driven column mappings following WARP.md Rule 7
+# WARP.md: "CSV-to-database column mappings must be in configuration files"
+
+database: "eurostyle_webshop"
+description: "Column mappings for CSV data loading into webshop analytics database"
+
+tables:
+  sessions:
+    csv_file_pattern: "eurostyle_webshop.sessions.csv.gz"
+    column_mappings:
+      session_id: "session_id"
+      customer_id: "customer_id"
+      start_timestamp: "start_timestamp"
+      end_timestamp: "end_timestamp"
+      session_duration_minutes: "session_duration_minutes"
+      device_type: "device_type"
+      device_brand: "device_brand"
+      device_model: "device_model"
+      browser: "browser"
+      browser_version: "browser_version"
+      operating_system: "operating_system"
+      os_version: "os_version"
+      country_code: "country_code"
+      city: "city"
+      ip_address: "ip_address"
+      referrer_url: "referrer_url"
+      traffic_source: "traffic_source"
+      utm_campaign: "utm_campaign"
+      utm_medium: "utm_medium"
+      utm_source: "utm_source"
+      page_views: "page_views"
+      bounce_session: "bounce_session"
+      converted: "converted"
+    auto_generated_columns:
+      created_at: "now()"
+    transformations:
+      start_timestamp:
+        type: "datetime_conversion"
+        input_format: "YYYY-MM-DD HH:MI:SS"
+
+  page_views:
+    csv_file_pattern: "eurostyle_webshop.page_views.csv.gz"
+    column_mappings:
+      page_view_id: "page_view_id"
+      session_id: "session_id"
+      page_url: "page_url"
+      page_title: "page_title"
+      page_type: "page_type"
+      page_category: "page_category"
+      timestamp: "timestamp"
+      time_on_page_seconds: "time_on_page_seconds"
+      page_load_time_ms: "page_load_time_ms"
+      scroll_depth_percentage: "scroll_depth_percentage"
+      clicks_on_page: "clicks_on_page"
+      product_id: "product_id"
+      product_category: "product_category"
+      order_id: "order_id"
+      exit_page: "exit_page"
+      next_page_url: "next_page_url"
+
+  ecommerce_events:
+    csv_file_pattern: "eurostyle_webshop.ecommerce_events.csv.gz"
+    column_mappings:
+      event_id: "event_id"
+      session_id: "session_id"
+      customer_id: "customer_id"
+      event_type: "event_type"
+      event_category: "event_category"
+      timestamp: "timestamp"
+      product_id: "product_id"
+      product_name: "product_name"
+      product_category: "product_category"
+      product_price_eur: "product_price_eur"
+      quantity: "quantity"
+      product_variant: "product_variant"
+      search_term: "search_term"
+      filter_applied: "filter_applied"
+      coupon_code: "coupon_code"
+      event_value_eur: "event_value_eur"
+    transformations:
+      product_price_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      event_value_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+
+  search_queries:
+    csv_file_pattern: "eurostyle_webshop.search_queries.csv.gz"
+    column_mappings:
+      search_id: "search_id"
+      session_id: "session_id"
+      customer_id: "customer_id"
+      search_term: "search_term"
+      search_term_normalized: "search_term_normalized"
+      search_category: "search_category"
+      search_filters: "search_filters"
+      results_count: "results_count"
+      results_clicked: "results_clicked"
+      first_result_position_clicked: "first_result_position_clicked"
+      search_timestamp: "search_timestamp"
+      response_time_ms: "response_time_ms"
+      search_abandoned: "search_abandoned"
+      search_refined: "search_refined"
+
+  marketing_campaigns:
+    csv_file_pattern: "eurostyle_webshop.marketing_campaigns.csv.gz"
+    column_mappings:
+      campaign_id: "campaign_id"
+      campaign_name: "campaign_name"
+      campaign_type: "campaign_type"
+      campaign_description: "campaign_description"
+      campaign_objective: "campaign_objective"
+      start_date: "start_date"
+      end_date: "end_date"
+      campaign_status: "campaign_status"
+      target_audience: "target_audience"
+      budget_eur: "budget_eur"
+      spent_eur: "spent_eur"
+      cost_per_click_eur: "cost_per_click_eur"
+      cost_per_acquisition_eur: "cost_per_acquisition_eur"
+      utm_campaign: "utm_campaign"
+      utm_medium: "utm_medium"
+      utm_source: "utm_source"
+    transformations:
+      start_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+
+  campaign_performance:
+    csv_file_pattern: "eurostyle_webshop.campaign_performance.csv.gz"
+    column_mappings:
+      performance_id: "performance_id"
+      campaign_id: "campaign_id"
+      performance_date: "performance_date"
+      impressions: "impressions"
+      clicks: "clicks"
+      click_through_rate: "click_through_rate"
+      sessions_generated: "sessions_generated"
+      bounce_rate: "bounce_rate"
+      avg_session_duration_minutes: "avg_session_duration_minutes"
+      conversions: "conversions"
+      conversion_rate: "conversion_rate"
+      revenue_eur: "revenue_eur"
+      return_on_ad_spend: "return_on_ad_spend"
+      daily_spend_eur: "daily_spend_eur"
+      cost_per_click_eur: "cost_per_click_eur"
+      cost_per_acquisition_eur: "cost_per_acquisition_eur"
+    transformations:
+      revenue_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  newsletter_subscriptions:
+    csv_file_pattern: "eurostyle_webshop.newsletter_subscriptions.csv.gz"
+    column_mappings:
+      subscription_id: "subscription_id"
+      customer_id: "customer_id"
+      email: "email"
+      subscription_date: "subscription_date"
+      subscription_source: "subscription_source"
+      subscription_status: "subscription_status"
+      unsubscribe_date: "unsubscribe_date"
+      frequency_preference: "frequency_preference"
+      language_preference: "language_preference"
+      emails_sent: "emails_sent"
+      emails_opened: "emails_opened"
+      emails_clicked: "emails_clicked"
+      last_engagement_date: "last_engagement_date"
+      engagement_score: "engagement_score"
+
+  product_recommendations:
+    csv_file_pattern: "eurostyle_webshop.product_recommendations.csv.gz"
+    column_mappings:
+      recommendation_id: "recommendation_id"
+      session_id: "session_id"
+      customer_id: "customer_id"
+      timestamp: "timestamp"
+      page_type: "page_type"
+      trigger_product_id: "trigger_product_id"
+      algorithm_type: "algorithm_type"
+      algorithm_version: "algorithm_version"
+      recommendation_position: "recommendation_position"
+      recommended_product_id: "recommended_product_id"
+      recommendation_score: "recommendation_score"
+      viewed: "viewed"
+      clicked: "clicked"
+      added_to_cart: "added_to_cart"
+      purchased: "purchased"
+      click_timestamp: "click_timestamp"
+
+  cart_analytics:
+    csv_file_pattern: "eurostyle_webshop.cart_analytics.csv.gz"
+    column_mappings:
+      cart_event_id: "cart_event_id"
+      session_id: "session_id"
+      customer_id: "customer_id"
+      timestamp: "timestamp"
+      cart_action: "cart_action"
+      product_id: "product_id"
+      quantity_before: "quantity_before"
+      quantity_after: "quantity_after"
+      cart_total_items: "cart_total_items"
+      cart_total_value_eur: "cart_total_value_eur"
+      coupon_code: "coupon_code"
+      discount_amount_eur: "discount_amount_eur"
+      abandonment_stage: "abandonment_stage"
+      abandonment_reason: "abandonment_reason"
+      recovery_email_sent: "recovery_email_sent"
+      recovered_via_email: "recovered_via_email"
+      recovery_timestamp: "recovery_timestamp"
+    transformations:
+      cart_total_value_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+loading_config:
+  batch_size: 8000
+  error_handling: "continue_on_error"
+  compression: "gzip"
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:MI:SS"
+
+validation_rules:
+  required_fields_check: true
+  foreign_key_check: false  # Allow anonymous sessions
+  data_type_validation: true

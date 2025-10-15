@@ -1,0 +1,128 @@
+# EuroStyle Operational Database Configuration
+# ==========================================
+# WARP.md Rule 1: All database schemas, data generation, and loading must be driven by YAML configuration files
+# Following rule: "dont hard code, always use guidelines and framework principles"
+
+database: eurostyle_operational
+
+# Core Business Entities Configuration
+entities:
+  customers:
+    generation_rules:
+      count_by_mode:
+        demo: 200
+        fast: 1000
+        full: 50000
+      countries: [NL, DE, FR, BE, LU]
+      customer_types:
+        INDIVIDUAL: 0.80
+        BUSINESS: 0.20
+      
+    data_patterns:
+      demographics:
+        age_distribution:
+          "18-25": 0.15
+          "26-35": 0.25
+          "36-45": 0.25
+          "46-55": 0.20
+          "56-65": 0.10
+          "65+": 0.05
+        
+      loyalty_distribution:
+        BRONZE: 0.60
+        SILVER: 0.25
+        GOLD: 0.12
+        PLATINUM: 0.03
+
+  products:
+    generation_rules:
+      count_by_mode:
+        demo: 100
+        fast: 500
+        full: 2500
+      categories: [CLOTHING, SHOES, ACCESSORIES, SPORTS, ELECTRONICS]
+      
+    data_patterns:
+      pricing:
+        price_ranges_eur:
+          CLOTHING: [15.99, 299.99]
+          SHOES: [29.99, 249.99]
+          ACCESSORIES: [9.99, 149.99]
+          SPORTS: [19.99, 399.99]
+          ELECTRONICS: [49.99, 899.99]
+      
+      seasonal_patterns:
+        SPRING: [0.20, 0.25, 0.30, 0.25]  # Q1, Q2, Q3, Q4 distribution
+        SUMMER: [0.15, 0.35, 0.35, 0.15]
+        AUTUMN: [0.10, 0.20, 0.30, 0.40]
+        WINTER: [0.35, 0.15, 0.20, 0.30]
+
+  stores:
+    generation_rules:
+      count_by_mode:
+        demo: 14
+        fast: 25
+        full: 47
+      
+    data_patterns:
+      store_formats:
+        FLAGSHIP: 0.10
+        STANDARD: 0.60
+        OUTLET: 0.20
+        POP_UP: 0.10
+        
+      size_distribution:
+        SMALL: 0.30    # < 100 sqm
+        MEDIUM: 0.50   # 100-300 sqm
+        LARGE: 0.20    # > 300 sqm
+
+  orders:
+    generation_rules:
+      count_by_mode:
+        demo: 100
+        fast: 1000
+        full: 50000
+      
+    data_patterns:
+      order_patterns:
+        avg_items_per_order: 2.5
+        seasonal_volume_multiplier:
+          Q1: 0.8
+          Q2: 1.0
+          Q3: 0.9
+          Q4: 1.6  # Holiday season
+          
+      payment_methods:
+        DEBIT_CARD: 0.45
+        CREDIT_CARD: 0.30
+        PAYPAL: 0.15
+        BANK_TRANSFER: 0.08
+        CASH: 0.02
+
+# Cross-Database Relationships
+relationships:
+  to_finance:
+    - orders.entity_id -> eurostyle_finance.legal_entities.entity_id
+    - stores.entity_id -> eurostyle_finance.legal_entities.entity_id
+    
+  to_hr:
+    - stores.store_id -> eurostyle_hr.employment_contracts.store_id
+    
+  to_webshop:
+    - customers.customer_id -> eurostyle_webshop.web_sessions.customer_id
+    - orders.order_id -> eurostyle_webshop.web_sessions.converted_order_id
+
+# Data Validation Rules
+validation:
+  customers:
+    required_fields: [customer_id, email, country_code]
+    business_rules:
+      - email_format: "valid_email"
+      - country_code: "ISO_3166_alpha_2"
+      
+  orders:
+    required_fields: [order_id, customer_id, order_date, total_eur]
+    business_rules:
+      - total_eur: ">= 0"
+      - order_date: "within_business_period"
+      - customer_exists: "eurostyle_operational.customers.customer_id"

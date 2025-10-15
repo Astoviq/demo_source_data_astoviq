@@ -1,0 +1,637 @@
+# EuroStyle POS Database Schema Configuration
+# ===========================================
+# Configuration-driven schema definition following WARP.md Rule 5
+# WARP.md: "All database schemas must be defined in YAML configuration files"
+# Status: Following WARP.md POS Integration achievement with 37K+ transactions and perfect VAT compliance
+
+database: "eurostyle_pos"
+description: "Point of Sale system, transactions, payments, VAT management, store operations"
+
+tables:
+  transactions:
+    engine: "MergeTree()"
+    primary_key: "transaction_id"
+    order_by: "transaction_id, transaction_timestamp"
+    columns:
+      transaction_id:
+        type: "String"
+        nullable: false
+        comment: "TXN_POS_2024_000001, unique transaction identifier"
+      # Store and employee information
+      store_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.stores.store_id"
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_hr.employees.employee_id"
+      register_number:
+        type: "UInt8"
+        nullable: false
+        comment: "Physical register/terminal number (1-20)"
+      # Customer information
+      customer_id:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_operational.customers.customer_id, null for walk-in"
+      customer_type:
+        type: "Enum8('MEMBER' = 1, 'WALK_IN' = 2, 'STAFF' = 3, 'VIP' = 4)"
+        default: "'WALK_IN'"
+      # Transaction classification
+      transaction_type:
+        type: "Enum8('SALE' = 1, 'RETURN' = 2, 'EXCHANGE' = 3, 'VOID' = 4, 'TRAINING' = 5)"
+        nullable: false
+        default: "'SALE'"
+      transaction_status:
+        type: "Enum8('COMPLETED' = 1, 'PENDING' = 2, 'CANCELLED' = 3, 'REFUNDED' = 4)"
+        default: "'COMPLETED'"
+      # Timing
+      transaction_timestamp:
+        type: "DateTime"
+        nullable: false
+      transaction_date:
+        type: "Date"
+        nullable: false
+        comment: "Date component for reporting"
+      transaction_hour:
+        type: "UInt8"
+        nullable: false
+        comment: "Hour of day (0-23) for analytics"
+      # Financial totals (all in EUR)
+      subtotal_excl_vat_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Subtotal excluding VAT"
+      vat_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Total VAT amount"
+      total_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Total including VAT"
+      discount_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        default: "0.00"
+      # Payment information
+      payment_method:
+        type: "Enum8('DEBIT_CARD' = 1, 'CREDIT_CARD' = 2, 'CASH' = 3, 'MOBILE_PAYMENT' = 4, 'GIFT_CARD' = 5)"
+        nullable: false
+      payment_reference:
+        type: "String"
+        nullable: true
+        comment: "Card transaction reference or cash drawer ID"
+      # Customer service
+      loyalty_points_earned:
+        type: "UInt32"
+        default: "0"
+      loyalty_points_redeemed:
+        type: "UInt32"
+        default: "0"
+      # Promotions
+      promotion_code:
+        type: "String"
+        nullable: true
+      promotion_discount_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Return/exchange reference
+      original_transaction_id:
+        type: "String"
+        nullable: true
+        comment: "For returns/exchanges, reference to original transaction"
+      # Financial integration
+      gl_revenue_account:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id"
+      batch_number:
+        type: "String"
+        nullable: true
+        comment: "End-of-day batch reference"
+      # System metadata
+      pos_system_version:
+        type: "String"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  transaction_items:
+    engine: "MergeTree()"
+    primary_key: "item_id"
+    order_by: "transaction_id, item_id"
+    columns:
+      item_id:
+        type: "String"
+        nullable: false
+        comment: "ITM_POS_2024_000001, unique line item identifier"
+      transaction_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to transactions.transaction_id"
+      line_number:
+        type: "UInt8"
+        nullable: false
+        comment: "Line number within transaction (1, 2, 3...)"
+      # Product information
+      product_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.products.product_id"
+      product_sku:
+        type: "String"
+        nullable: false
+      product_name:
+        type: "String"
+        nullable: false
+      product_category:
+        type: "String"
+        nullable: true
+      # Product variant details
+      size:
+        type: "String"
+        nullable: true
+      color:
+        type: "String"
+        nullable: true
+      variant_description:
+        type: "String"
+        nullable: true
+      # Quantity and pricing
+      quantity:
+        type: "UInt32"
+        nullable: false
+        default: "1"
+      unit_price_excl_vat_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Unit price excluding VAT"
+      unit_price_incl_vat_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Unit price including VAT"
+      # Line totals
+      line_total_excl_vat_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "quantity * unit_price_excl_vat_eur"
+      line_vat_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      line_total_incl_vat_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # VAT information
+      vat_rate:
+        type: "Decimal32(3)"
+        nullable: false
+        comment: "0.210 for 21% VAT, 0.190 for 19% VAT"
+      vat_classification:
+        type: "Enum8('STANDARD' = 1, 'REDUCED' = 2, 'ZERO' = 3)"
+        nullable: false
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "VAT jurisdiction: NL, DE, FR, BE"
+      # Discounts
+      item_discount_percentage:
+        type: "Decimal32(2)"
+        nullable: true
+      item_discount_amount_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Return/exchange information
+      return_reason:
+        type: "String"
+        nullable: true
+      return_condition:
+        type: "String"
+        nullable: true
+      original_purchase_date:
+        type: "Date"
+        nullable: true
+      # Inventory impact
+      inventory_adjustment:
+        type: "Int32"
+        nullable: false
+        comment: "-1 for sale, +1 for return, 0 for exchange"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  payment_processing:
+    engine: "MergeTree()"
+    primary_key: "payment_id"
+    order_by: "transaction_id, payment_timestamp"
+    columns:
+      payment_id:
+        type: "String"
+        nullable: false
+        comment: "PAY_POS_2024_000001"
+      transaction_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to transactions.transaction_id"
+      # Payment details
+      payment_method:
+        type: "Enum8('DEBIT_CARD' = 1, 'CREDIT_CARD' = 2, 'CASH' = 3, 'MOBILE_PAYMENT' = 4, 'GIFT_CARD' = 5, 'STORE_CREDIT' = 6)"
+        nullable: false
+      payment_timestamp:
+        type: "DateTime"
+        nullable: false
+      amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # Card payment information
+      card_type:
+        type: "String"
+        nullable: true
+        comment: "VISA, MASTERCARD, MAESTRO, AMEX"
+      card_last_four_digits:
+        type: "String"
+        nullable: true
+        comment: "Last 4 digits of card (for reference)"
+      authorization_code:
+        type: "String"
+        nullable: true
+      terminal_id:
+        type: "String"
+        nullable: true
+      # Processing information
+      processor_reference:
+        type: "String"
+        nullable: true
+        comment: "Payment processor transaction ID"
+      processing_fee_eur:
+        type: "Decimal64(4)"
+        nullable: true
+        comment: "Fee charged by payment processor"
+      processing_fee_percentage:
+        type: "Decimal32(4)"
+        nullable: true
+      # Transaction status
+      payment_status:
+        type: "Enum8('AUTHORIZED' = 1, 'CAPTURED' = 2, 'DECLINED' = 3, 'CANCELLED' = 4, 'REFUNDED' = 5)"
+        default: "'CAPTURED'"
+      decline_reason:
+        type: "String"
+        nullable: true
+      # Cash handling (for cash payments)
+      cash_tendered_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      change_given_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Contactless payment
+      contactless_payment:
+        type: "Bool"
+        default: "false"
+      pin_verified:
+        type: "Bool"
+        default: "false"
+      # Financial integration
+      gl_cash_account:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id for cash"
+      gl_card_account:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id for card payments"
+      gl_processing_fee_account:
+        type: "String"
+        nullable: true
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id for processing fees"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  vat_transactions:
+    engine: "MergeTree()"
+    primary_key: "vat_transaction_id"
+    order_by: "transaction_id, vat_rate"
+    columns:
+      vat_transaction_id:
+        type: "String"
+        nullable: false
+        comment: "VAT_POS_2024_000001"
+      transaction_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to transactions.transaction_id"
+      # VAT jurisdiction
+      country_code:
+        type: "String"
+        nullable: false
+        comment: "VAT country: NL, DE, FR, BE"
+      vat_rate:
+        type: "Decimal32(3)"
+        nullable: false
+        comment: "0.210 for NL 21%, 0.190 for DE 19%, etc."
+      vat_classification:
+        type: "Enum8('STANDARD' = 1, 'REDUCED' = 2, 'SUPER_REDUCED' = 3, 'ZERO' = 4)"
+        nullable: false
+      # Amounts
+      net_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "Total net amount for this VAT rate"
+      vat_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "VAT amount calculated: net_amount * vat_rate"
+      gross_amount_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "net_amount + vat_amount"
+      # EU VAT compliance
+      vat_directive_reference:
+        type: "String"
+        nullable: false
+        default: "'EU_DIRECTIVE_2006_112_EC'"
+      reverse_charge_applicable:
+        type: "Bool"
+        default: "false"
+        comment: "For B2B transactions"
+      # Financial integration
+      gl_vat_account:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_finance.chart_of_accounts.account_id VAT payable"
+      # VAT reporting
+      vat_period_year:
+        type: "UInt16"
+        nullable: false
+      vat_period_month:
+        type: "UInt8"
+        nullable: false
+      # Audit information
+      calculation_timestamp:
+        type: "DateTime"
+        nullable: false
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  employee_assignments:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "assignment_id"
+    order_by: "assignment_id"
+    columns:
+      assignment_id:
+        type: "String"
+        nullable: false
+        comment: "ASSIGN_POS_2024_000001"
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_hr.employees.employee_id"
+      store_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.stores.store_id"
+      # Assignment details
+      assignment_type:
+        type: "Enum8('PERMANENT' = 1, 'TEMPORARY' = 2, 'SEASONAL' = 3, 'COVER' = 4)"
+        nullable: false
+      start_date:
+        type: "Date"
+        nullable: false
+      end_date:
+        type: "Date"
+        nullable: true
+        comment: "Null for permanent assignments"
+      # Role at store
+      store_role:
+        type: "Enum8('STORE_MANAGER' = 1, 'ASSISTANT_MANAGER' = 2, 'SALES_ASSOCIATE' = 3, 'CASHIER' = 4, 'SEASONAL_TEMP' = 5)"
+        nullable: false
+      # Permissions
+      pos_access_level:
+        type: "Enum8('BASIC' = 1, 'ADVANCED' = 2, 'SUPERVISOR' = 3, 'MANAGER' = 4)"
+        nullable: false
+      can_process_returns:
+        type: "Bool"
+        default: "false"
+      can_apply_discounts:
+        type: "Bool"
+        default: "false"
+      can_void_transactions:
+        type: "Bool"
+        default: "false"
+      # Training status
+      pos_training_completed:
+        type: "Bool"
+        default: "false"
+      training_completion_date:
+        type: "Date"
+        nullable: true
+      # Performance tracking
+      sales_target_eur:
+        type: "Decimal64(2)"
+        nullable: true
+        comment: "Monthly sales target"
+      # Status
+      assignment_status:
+        type: "Enum8('ACTIVE' = 1, 'INACTIVE' = 2, 'SUSPENDED' = 3, 'TERMINATED' = 4)"
+        default: "'ACTIVE'"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"
+
+  shift_schedules:
+    engine: "MergeTree()"
+    primary_key: "shift_id"
+    order_by: "employee_id, shift_date"
+    columns:
+      shift_id:
+        type: "String"
+        nullable: false
+        comment: "SHIFT_POS_2024_000001"
+      employee_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_hr.employees.employee_id"
+      store_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.stores.store_id"
+      # Schedule information
+      shift_date:
+        type: "Date"
+        nullable: false
+      shift_start_time:
+        type: "DateTime"
+        nullable: false
+      shift_end_time:
+        type: "DateTime"
+        nullable: false
+      scheduled_hours:
+        type: "Decimal32(1)"
+        nullable: false
+        comment: "Scheduled hours (e.g., 8.0, 4.5)"
+      # Actual worked time
+      actual_start_time:
+        type: "DateTime"
+        nullable: true
+      actual_end_time:
+        type: "DateTime"
+        nullable: true
+      actual_hours_worked:
+        type: "Decimal32(1)"
+        nullable: true
+      # Shift type
+      shift_type:
+        type: "Enum8('OPENING' = 1, 'CLOSING' = 2, 'MID_SHIFT' = 3, 'FULL_DAY' = 4, 'SPLIT' = 5)"
+        nullable: false
+      # Break information
+      break_duration_minutes:
+        type: "UInt16"
+        default: "30"
+        comment: "Scheduled break time"
+      actual_break_time_minutes:
+        type: "UInt16"
+        nullable: true
+      # Performance metrics
+      transactions_processed:
+        type: "UInt32"
+        default: "0"
+      total_sales_eur:
+        type: "Decimal64(2)"
+        default: "0.00"
+      # Attendance
+      attendance_status:
+        type: "Enum8('SCHEDULED' = 1, 'PRESENT' = 2, 'ABSENT' = 3, 'LATE' = 4, 'EARLY_LEAVE' = 5)"
+        default: "'SCHEDULED'"
+      absence_reason:
+        type: "String"
+        nullable: true
+      # Register assignment
+      assigned_register:
+        type: "UInt8"
+        nullable: true
+        comment: "Register number assigned for shift"
+      created_at:
+        type: "DateTime"
+        default: "now()"
+
+  daily_reconciliation:
+    engine: "ReplacingMergeTree(updated_at)"
+    primary_key: "reconciliation_id"
+    order_by: "store_id, reconciliation_date"
+    columns:
+      reconciliation_id:
+        type: "String"
+        nullable: false
+        comment: "RECON_POS_2024_000001"
+      store_id:
+        type: "String"
+        nullable: false
+        comment: "Reference to eurostyle_operational.stores.store_id"
+      reconciliation_date:
+        type: "Date"
+        nullable: false
+      # Transaction summary
+      total_transactions:
+        type: "UInt32"
+        nullable: false
+      total_sales_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      total_returns_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      total_voids_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      net_sales_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # VAT summary
+      total_vat_collected_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      vat_by_rate:
+        type: "String"
+        nullable: true
+        comment: "JSON breakdown by VAT rate"
+      # Payment method breakdown
+      cash_sales_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      card_sales_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      mobile_payment_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      other_payments_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # Cash reconciliation
+      opening_cash_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      cash_sales_total_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      cash_returns_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      expected_closing_cash_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      actual_closing_cash_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      cash_variance_eur:
+        type: "Decimal64(2)"
+        nullable: false
+        comment: "actual_closing_cash - expected_closing_cash"
+      # Card payment reconciliation
+      card_terminal_total_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      card_processing_fees_eur:
+        type: "Decimal64(2)"
+        nullable: false
+      # Status and approval
+      reconciliation_status:
+        type: "Enum8('PENDING' = 1, 'APPROVED' = 2, 'REJECTED' = 3, 'ADJUSTED' = 4)"
+        default: "'PENDING'"
+      reconciled_by_employee_id:
+        type: "String"
+        nullable: false
+      approved_by_employee_id:
+        type: "String"
+        nullable: true
+      approval_timestamp:
+        type: "DateTime"
+        nullable: true
+      # Discrepancy handling
+      variance_explanation:
+        type: "String"
+        nullable: true
+      adjustment_amount_eur:
+        type: "Decimal64(2)"
+        nullable: true
+      # Financial integration
+      gl_posting_reference:
+        type: "String"
+        nullable: true
+        comment: "Reference to GL posting batch"
+      bank_deposit_reference:
+        type: "String"
+        nullable: true
+      created_at:
+        type: "DateTime"
+        default: "now()"
+      updated_at:
+        type: "DateTime"
+        default: "now()"

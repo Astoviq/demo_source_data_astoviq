@@ -16,6 +16,8 @@
 #   status        - Show system status
 #   clean         - Clean up generated data
 #   logs          - Show container logs
+#   schema        - Schema inspection commands
+#   docs          - Generate documentation from live database
 #
 # Usage Examples:
 #   ./eurostyle.sh start
@@ -57,6 +59,8 @@ FORCE_FLAG=false
 VERBOSE_FLAG=false
 INCREMENTAL_DAYS=1
 INCREMENTAL_TYPES=""
+SCHEMA_SUBCOMMAND=""
+SCHEMA_ARGS=()
 
 # Print banner
 print_banner() {
@@ -83,6 +87,8 @@ ${CYAN}Commands:${NC}
   ${GREEN}status${NC}        Show system status
   ${GREEN}clean${NC}         Clean up generated data
   ${GREEN}logs${NC}          Show container logs
+  ${GREEN}schema${NC}        Schema inspection commands
+  ${GREEN}docs${NC}          Generate documentation from live database
 
 ${CYAN}Options:${NC}
   ${YELLOW}--force${NC}       Force operations (e.g., recreate containers)
@@ -138,6 +144,10 @@ ${CYAN}Examples:${NC}
   ${GREEN}./eurostyle.sh demo-fast${NC}
   ${GREEN}./eurostyle.sh increment --days 7${NC}
   ${GREEN}./eurostyle.sh increment --type "orders,customers" --days 1${NC}
+  ${GREEN}./eurostyle.sh schema system:overview${NC}
+  ${GREEN}./eurostyle.sh schema db:counts eurostyle_operational${NC}
+  ${GREEN}./eurostyle.sh schema csv:columns data/csv/file.csv.gz${NC}
+  ${GREEN}./eurostyle.sh docs${NC}
   ${GREEN}./eurostyle.sh clean --force${NC}
 EOF
 }
@@ -315,11 +325,12 @@ cmd_demo_fast() {
     fi
     
     echo -e "${YELLOW}⚡ Generating fast demo data with Complete Data Generator (~2-5 minutes)...${NC}"
-    echo -e "${BLUE}📊 Fast volumes: ALL tables populated with scaled data across all 4 databases${NC}"
+    echo -e "${BLUE}📊 Fast volumes: ALL tables populated with scaled data across all 5 databases${NC}"
     echo -e "${BLUE}   • Operational: 5K customers, 500 products, 2.5K orders${NC}"
     echo -e "${BLUE}   • Webshop: 8K sessions, 25K page views, all analytics tables${NC}"
     echo -e "${BLUE}   • Finance: Complete GL, budgets, assets with IFRS compliance${NC}"
     echo -e "${BLUE}   • HR: Full workforce management with European compliance${NC}"
+    echo -e "${BLUE}   • POS: Point of sales with perfect revenue reconciliation${NC}"
     echo -e "${BLUE}🎯 GUARANTEED: Complete table coverage with referential integrity${NC}"
     echo ""
     
@@ -359,11 +370,12 @@ cmd_demo_full() {
     fi
     
     echo -e "${YELLOW}🏗️ Generating full demo data with Complete Data Generator (~15-30 minutes)...${NC}"
-    echo -e "${BLUE}📊 Full volumes: ALL tables populated with production-like data across all 4 databases${NC}"
+    echo -e "${BLUE}📊 Full volumes: ALL tables populated with production-like data across all 5 databases${NC}"
     echo -e "${BLUE}   • Operational: 50K customers, 5K products, 25K orders${NC}"
     echo -e "${BLUE}   • Webshop: 80K sessions, 250K page views, all analytics tables${NC}"
     echo -e "${BLUE}   • Finance: Complete multi-year GL, budgets, assets with IFRS compliance${NC}"
     echo -e "${BLUE}   • HR: Full workforce management with European compliance${NC}"
+    echo -e "${BLUE}   • POS: Point of sales with perfect revenue reconciliation${NC}"
     echo -e "${BLUE}🎯 GUARANTEED: Complete table coverage with referential integrity${NC}"
     echo -e "${BLUE}💼 Complete: HR payroll, finance GL, operations, webshop - all integrated${NC}"
     echo ""
@@ -403,96 +415,43 @@ cmd_increment() {
     
     echo -e "${YELLOW}📈 Generating incremental data for $INCREMENTAL_DAYS day(s)...${NC}"
     
-    # Determine data types to generate
-    local types_array=()
+    # Determine data types to generate  
+    local types_param=""
     if [ -n "$INCREMENTAL_TYPES" ]; then
-        IFS=',' read -ra types_array <<< "$INCREMENTAL_TYPES"
+        types_param="--types $INCREMENTAL_TYPES"
+        echo -e "${BLUE}📊 Incremental types: $INCREMENTAL_TYPES${NC}"
     else
-        types_array=("orders" "customers" "sessions" "carts" "searches" "calendar")
+        echo -e "${BLUE}📊 Incremental types: All business operations (orders, customers, sessions)${NC}"
     fi
     
-    echo -e "${BLUE}📊 Incremental types: ${types_array[*]}${NC}"
     echo -e "${BLUE}📅 Time period: $INCREMENTAL_DAYS day(s) from latest data${NC}"
+    echo -e "${BLUE}🎯 Using Universal Incremental Generator V2 (WARP.md compliant)${NC}"
     echo ""
     
-    # Generate incremental data script
-    local increment_script="$PROJECT_ROOT/data-generator/generate_incremental.py"
+    # Use Universal Incremental Generator V2 (WARP.md compliant)
+    local universal_generator="$PROJECT_ROOT/scripts/data-generation/universal_incremental_generator.py"
     
-    # Create incremental generation script if it doesn't exist
-    if [ ! -f "$increment_script" ]; then
-        echo -e "${YELLOW}📋 Creating incremental data generator...${NC}"
-        cat > "$increment_script" << 'EOF'
-#!/usr/bin/env python3
-"""
-Incremental Data Generator for EuroStyle Fashion
-==============================================
-Generates additional data for testing incremental ETL and data lake scenarios
-"""
-
-import sys
-import argparse
-from datetime import datetime, timedelta
-import yaml
-
-def generate_incremental_data(data_types, days, config_path="config/fast_generation_config.yaml"):
-    """Generate incremental data based on existing data patterns."""
-    print(f"🔄 Generating incremental data for {days} days")
-    print(f"📊 Data types: {', '.join(data_types)}")
-    
-    # Load existing configuration
-    with open(config_path, 'r') as f:
-        config = yaml.safe_load(f)
-    
-    # Calculate incremental volumes (proportional to days)
-    daily_factor = days / 30  # Assume monthly baseline
-    
-    incremental_volumes = {
-        'orders': int(config['data_volumes']['orders'] * daily_factor * 0.1),
-        'customers': int(config['data_volumes']['customers'] * daily_factor * 0.05),
-        'sessions': int(config['data_volumes']['web_sessions'] * daily_factor * 0.2),
-        'carts': int(config['data_volumes']['cart_activities'] * daily_factor * 0.15),
-        'searches': int(config['data_volumes']['search_queries'] * daily_factor * 0.3),
-        'reviews': int(config['data_volumes']['product_reviews'] * daily_factor * 0.1),
-        'calendar': int(5 * daily_factor),  # Few calendar events
-        'employees': int(2 * daily_factor),  # Minimal employee changes
-        'finance': int(config['data_volumes']['gl_journal_entries'] * daily_factor * 0.1)
-    }
-    
-    print("\n📈 Incremental volumes:")
-    for data_type in data_types:
-        if data_type in incremental_volumes:
-            volume = incremental_volumes[data_type]
-            print(f"  • {data_type}: {volume:,} records")
-    
-    # For now, simulate the generation
-    # In a real implementation, this would call the actual generators
-    print(f"\n✅ Incremental data generation completed!")
-    print(f"💡 Note: This is a simulation. Actual implementation would generate real data.")
-    
-    return True
-
-def main():
-    parser = argparse.ArgumentParser(description="Generate incremental data for EuroStyle Fashion")
-    parser.add_argument('--types', required=True, help='Comma-separated data types')
-    parser.add_argument('--days', type=int, default=1, help='Number of days of incremental data')
-    parser.add_argument('--config', default='config/fast_generation_config.yaml', help='Configuration file')
-    
-    args = parser.parse_args()
-    
-    data_types = [t.strip() for t in args.types.split(',')]
-    
-    return 0 if generate_incremental_data(data_types, args.days, args.config) else 1
-
-if __name__ == "__main__":
-    sys.exit(main())
-EOF
-        chmod +x "$increment_script"
+    if [ ! -f "$universal_generator" ]; then
+        echo -e "${RED}❌ Universal Incremental Generator not found at: $universal_generator${NC}"
+        echo -e "${YELLOW}💡 Please ensure the Universal Data Generator V2 system is properly set up${NC}"
+        exit 1
     fi
     
-    # Run incremental generation
-    cd "$PROJECT_ROOT/data-generator"
-    if python3 generate_incremental.py --types "${types_array[*]// /,}" --days "$INCREMENTAL_DAYS"; then
-        echo -e "${GREEN}🎉 Incremental data generated successfully!${NC}"
+    # Run Universal Incremental Generator V2
+    cd "$PROJECT_ROOT"
+    echo -e "${YELLOW}🚀 Running Universal Incremental Generator V2...${NC}"
+    
+    if python3 "$universal_generator" --days "$INCREMENTAL_DAYS" $types_param; then
+        echo -e "${GREEN}✅ Incremental data generation completed successfully!${NC}"
+        
+        # Load incremental data into ClickHouse
+        echo -e "${YELLOW}📥 Loading incremental data into ClickHouse...${NC}"
+        if bash scripts/data-loading/load_incremental_data.sh; then
+            echo -e "${GREEN}✅ Incremental data loaded successfully!${NC}"
+        else
+            echo -e "${YELLOW}⚠️ Incremental data generation succeeded but loading failed${NC}"
+            echo -e "${BLUE}💡 You can manually load using: bash scripts/data-loading/load_incremental_data.sh${NC}"
+        fi
     else
         echo -e "${RED}❌ Failed to generate incremental data${NC}"
         exit 1
@@ -622,6 +581,56 @@ cmd_clean() {
     echo -e "${GREEN}🎉 Cleanup completed successfully!${NC}"
 }
 
+# Schema inspection command dispatcher
+cmd_schema() {
+    if [ -z "$SCHEMA_SUBCOMMAND" ]; then
+        print_section "Schema Inspector"
+        echo -e "${YELLOW}Available schema inspection commands:${NC}"
+        echo -e "${BLUE}  csv:columns <file>          ${NC}- Show CSV column headers"
+        echo -e "${BLUE}  db:tables <database>        ${NC}- List tables in database"
+        echo -e "${BLUE}  db:columns <database>       ${NC}- Show all columns in database"
+        echo -e "${BLUE}  db:counts <database>        ${NC}- Show row counts for all tables"
+        echo -e "${BLUE}  table:describe <db> <table> ${NC}- Describe table structure"
+        echo -e "${BLUE}  table:count <db> <table>    ${NC}- Show row count for specific table"
+        echo -e "${BLUE}  system:overview             ${NC}- Complete system overview"
+        echo -e "${BLUE}  system:counts               ${NC}- Row counts across all databases"
+        echo ""
+        echo -e "${CYAN}Examples:${NC}"
+        echo -e "${GREEN}  ./eurostyle.sh schema system:overview${NC}"
+        echo -e "${GREEN}  ./eurostyle.sh schema db:counts eurostyle_operational${NC}"
+        echo -e "${GREEN}  ./eurostyle.sh schema csv:columns data/csv/eurostyle_hr.employees.csv.gz${NC}"
+        echo -e "${GREEN}  ./eurostyle.sh schema table:describe eurostyle_operational orders${NC}"
+        return 0
+    fi
+    
+    # Execute schema inspector with stored arguments
+    ./scripts/utilities/schema_inspect.sh "$SCHEMA_SUBCOMMAND" "${SCHEMA_ARGS[@]}"
+}
+
+# Generate documentation from live database
+cmd_docs() {
+    print_section "Generating Documentation"
+    
+    echo -e "${YELLOW}📋 Generating schema and CSV mapping documentation...${NC}"
+    echo -e "${BLUE}This creates always-current documentation from the live database${NC}"
+    echo ""
+    
+    if ! check_container_status >/dev/null; then
+        echo -e "${YELLOW}⚠️ Container not running. Starting containers first...${NC}"
+        cmd_start
+    fi
+    
+    # Run documentation generator
+    ./scripts/utilities/generate_schema_docs.sh
+    
+    echo -e "${GREEN}📚 Documentation generated:${NC}"
+    echo -e "${GREEN}  ✅ docs/SCHEMA.md - Complete database schemas${NC}"
+    echo -e "${GREEN}  ✅ docs/CSV_MAPPINGS.md - CSV column mappings${NC}"
+    echo ""
+    echo -e "${CYAN}💡 These files are auto-generated and should not be edited manually.${NC}"
+    echo -e "${CYAN}   Regenerate them anytime with: ./eurostyle.sh docs${NC}"
+}
+
 # Show container logs
 cmd_logs() {
     print_section "Container Logs"
@@ -648,6 +657,14 @@ parse_args() {
     
     COMMAND="$1"
     shift
+    
+    # Handle schema subcommands specially
+    if [ "$COMMAND" = "schema" ] && [ $# -gt 0 ]; then
+        SCHEMA_SUBCOMMAND="$1"
+        shift
+        SCHEMA_ARGS=("$@")
+        return
+    fi
     
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -715,6 +732,12 @@ main() {
             ;;
         logs)
             cmd_logs
+            ;;
+        schema)
+            cmd_schema
+            ;;
+        docs)
+            cmd_docs
             ;;
         *)
             echo -e "${RED}❌ Unknown command: $COMMAND${NC}"

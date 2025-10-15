@@ -39,12 +39,12 @@ echo ""
 
 cd "$PROJECT_DIR"
 
-echo -e "${PURPLE}🎯 Calling Universal Data Generator V2 with 'demo' mode (fast configuration)...${NC}"
+echo -e "${PURPLE}🎯 Calling Universal Data Generator V2 with 'fast' mode (1-year configuration)...${NC}"
 echo ""
 
-# Call Universal Data Generator V2 with demo mode (which is the fast configuration)
-# This ensures all databases are generated with perfect consistency
-if python3 scripts/data-generation/universal_data_generator_v2.py --all --mode demo "$@"; then
+# Call Universal Data Generator V2 with fast mode (1-year time period)
+# This ensures all databases are generated with perfect consistency for 1 year of data
+if python3 scripts/data-generation/universal_data_generator_v2.py --all --mode fast "$@"; then
     echo ""
     echo -e "${GREEN}🎉 Universal Data Generator V2 completed successfully!${NC}"
     echo -e "${GREEN}✅ All 5 databases generated with perfect cross-database consistency${NC}"

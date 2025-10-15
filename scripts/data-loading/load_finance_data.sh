@@ -51,12 +51,16 @@ check_database() {
 create_tables() {
     echo -e "${YELLOW}🏗️ Creating finance tables...${NC}"
     
-    if [ -f "init-scripts/03_create_finance_database.sql" ]; then
+    if [ -f "init-scripts/databases/03_finance_tables.sql" ]; then
         # Execute the DDL script with multi-query support
-        docker exec -i $CONTAINER_NAME clickhouse-client --multiquery < init-scripts/03_create_finance_database.sql
+        docker exec -i $CONTAINER_NAME clickhouse-client --multiquery < init-scripts/databases/03_finance_tables.sql
+        echo -e "${GREEN}✅ Finance tables created successfully${NC}"
+    elif [ -f "init-scripts/archive/03_create_finance_database.sql" ]; then
+        # Fallback to archive location
+        docker exec -i $CONTAINER_NAME clickhouse-client --multiquery < init-scripts/archive/03_create_finance_database.sql
         echo -e "${GREEN}✅ Finance tables created successfully${NC}"
     else
-        echo -e "${RED}❌ DDL script not found: init-scripts/03_create_finance_database.sql${NC}"
+        echo -e "${RED}❌ DDL script not found: init-scripts/databases/03_finance_tables.sql${NC}"
         exit 1
     fi
 }

@@ -113,8 +113,7 @@ SELECT 'Next: Execute individual database table creation scripts' as next_steps 
 -- Show database summary
 SELECT 
     name as database_name,
-    engine as database_engine,
-    formatReadableSize(bytes_on_disk) as disk_usage
+    engine as database_engine
 FROM system.databases 
 WHERE name LIKE 'eurostyle_%'
 ORDER BY name

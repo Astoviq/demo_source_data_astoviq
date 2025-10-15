@@ -1,0 +1,292 @@
+# EuroStyle HR Database Column Mappings
+# =====================================
+# Configuration-driven column mappings following WARP.md Rule 7
+# WARP.md: "CSV-to-database column mappings must be in configuration files"
+
+database: "eurostyle_hr"
+description: "Column mappings for CSV data loading into HR database"
+
+tables:
+  employees:
+    csv_file_pattern: "eurostyle_hr.employees.csv.gz"
+    column_mappings:
+      employee_id: "employee_id"
+      first_name: "first_name"
+      last_name: "last_name"
+      full_name: "full_name"
+      date_of_birth: "date_of_birth"
+      gender: "gender"
+      nationality: "nationality"
+      email: "email"
+      personal_email: "personal_email"
+      phone_business: "phone_business"
+      phone_personal: "phone_personal"
+      street_address: "street_address"
+      city: "city"
+      postal_code: "postal_code"
+      country_code: "country_code"
+      entity_id: "entity_id"
+      hire_date: "hire_date"
+      employment_status: "employment_status"
+      termination_date: "termination_date"
+      termination_reason: "termination_reason"
+      visa_status: "visa_status"
+      work_permit_expiry: "work_permit_expiry"
+      emergency_contact_name: "emergency_contact_name"
+      emergency_contact_phone: "emergency_contact_phone"
+      emergency_contact_relationship: "emergency_contact_relationship"
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+    transformations:
+      date_of_birth:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      hire_date:
+        type: "date_conversion" 
+        input_format: "YYYY-MM-DD"
+
+  departments:
+    csv_file_pattern: "eurostyle_hr.departments.csv.gz"
+    column_mappings:
+      department_id: "department_id"
+      department_code: "department_code"
+      department_name: "department_name"
+      parent_department_id: "parent_department_id"
+      department_level: "department_level"
+      department_type: "department_type"
+      functional_area: "functional_area"
+      entity_id: "entity_id"
+      cost_center_id: "cost_center_id"
+      manager_employee_id: "manager_employee_id"
+      is_active: "is_active"
+      effective_from_date: "effective_from_date"
+      effective_to_date: "effective_to_date"
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+
+  job_positions:
+    csv_file_pattern: "eurostyle_hr.job_positions.csv.gz"
+    column_mappings:
+      position_id: "position_id"
+      position_code: "position_code"
+      position_title: "position_title"
+      job_family: "job_family"
+      job_level: "job_level"
+      seniority_level: "seniority_level"
+      min_salary_eur: "min_salary_eur"
+      max_salary_eur: "max_salary_eur"
+      currency_code: "currency_code"
+      required_education_level: "required_education_level"
+      required_experience_years: "required_experience_years"
+      is_active: "is_active"
+    transformations:
+      min_salary_eur:
+        type: "decimal_conversion"
+        precision: 2
+      max_salary_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  employment_contracts:
+    csv_file_pattern: "eurostyle_hr.employment_contracts.csv.gz"
+    column_mappings:
+      contract_id: "contract_id"
+      employee_id: "employee_id"
+      contract_type: "contract_type"
+      contract_status: "contract_status"
+      start_date: "start_date"
+      end_date: "end_date"
+      position_id: "position_id"
+      department_id: "department_id"
+      manager_employee_id: "manager_employee_id"
+      work_location_type: "work_location_type"
+      primary_work_location: "primary_work_location"
+      store_id: "store_id"
+      work_week_hours: "work_week_hours"
+      work_pattern: "work_pattern"
+      base_salary_eur: "base_salary_eur"
+      salary_frequency: "salary_frequency"
+      bonus_eligible: "bonus_eligible"
+      bonus_target_percentage: "bonus_target_percentage"
+      country_code: "country_code"
+      probation_period_months: "probation_period_months"
+      notice_period_months: "notice_period_months"
+      annual_leave_days: "annual_leave_days"
+      sick_leave_days: "sick_leave_days"
+    transformations:
+      start_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      base_salary_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  performance_cycles:
+    csv_file_pattern: "eurostyle_hr.performance_cycles.csv.gz"
+    column_mappings:
+      cycle_id: "cycle_id"
+      cycle_name: "cycle_name"
+      cycle_type: "cycle_type"
+      cycle_year: "cycle_year"
+      start_date: "start_date"
+      end_date: "end_date"
+      review_deadline: "review_deadline"
+      entity_id: "entity_id"
+      applicable_to: "applicable_to"
+      mandatory: "mandatory"
+      cycle_status: "cycle_status"
+
+  performance_reviews:
+    csv_file_pattern: "eurostyle_hr.performance_reviews.csv.gz"
+    column_mappings:
+      review_id: "review_id"
+      cycle_id: "cycle_id"
+      employee_id: "employee_id"
+      reviewer_employee_id: "reviewer_employee_id"
+      overall_rating: "overall_rating"
+      goal_achievement_rating: "goal_achievement_rating"
+      competencies_rating: "competencies_rating"
+      collaboration_rating: "collaboration_rating"
+      innovation_rating: "innovation_rating"
+      review_date: "review_date"
+      review_status: "review_status"
+
+  training_programs:
+    csv_file_pattern: "eurostyle_hr.training_programs.csv.gz"
+    column_mappings:
+      program_id: "program_id"
+      program_name: "program_name"
+      program_category: "program_category"
+      program_type: "program_type"
+      duration_hours: "duration_hours"
+      delivery_method: "delivery_method"
+      provider: "provider"
+      certificate_validity_months: "certificate_validity_months"
+      cost_per_participant_eur: "cost_per_participant_eur"
+      is_active: "is_active"
+
+  training_assignments:
+    csv_file_pattern: "eurostyle_hr.training_assignments.csv.gz"
+    column_mappings:
+      assignment_id: "assignment_id"
+      employee_id: "employee_id"
+      program_id: "program_id"
+      assigned_date: "assigned_date"
+      due_date: "due_date"
+      assigned_by_employee_id: "assigned_by_employee_id"
+      completion_status: "completion_status"
+      completed_date: "completed_date"
+      final_score: "final_score"
+      passed: "passed"
+
+  leave_balances:
+    csv_file_pattern: "eurostyle_hr.leave_balances.csv.gz"
+    column_mappings:
+      balance_id: "balance_id"
+      employee_id: "employee_id"
+      balance_year: "balance_year"
+      leave_type: "leave_type"
+      entitlement_days: "entitlement_days"
+      carried_forward_days: "carried_forward_days"
+      accrued_days: "accrued_days"
+      taken_days: "taken_days"
+      pending_days: "pending_days"
+      available_days: "available_days"
+      country_code: "country_code"
+      last_updated_date: "last_updated_date"
+
+  leave_requests:
+    csv_file_pattern: "eurostyle_hr.leave_requests.csv.gz"
+    column_mappings:
+      request_id: "request_id"
+      employee_id: "employee_id"
+      leave_type: "leave_type"
+      start_date: "start_date"
+      end_date: "end_date"
+      total_days: "total_days"
+      request_date: "request_date"
+      requested_by_employee_id: "requested_by_employee_id"
+      reason: "reason"
+      approval_status: "approval_status"
+      approver_employee_id: "approver_employee_id"
+      approval_date: "approval_date"
+
+  compensation_history:
+    csv_file_pattern: "eurostyle_hr.compensation_history.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      compensation_id: "compensation_id"
+      employee_id: "employee_id"
+      effective_date: "effective_date"
+      change_reason: "change_reason"
+      previous_base_salary_eur: "previous_base_salary_eur"
+      new_base_salary_eur: "new_base_salary_eur"
+      salary_change_percentage: "salary_change_percentage"
+      currency: "currency"
+      bonus_amount_eur: "bonus_amount_eur"
+      commission_rate: "commission_rate"
+      equity_grant_value_eur: "equity_grant_value_eur"
+      health_insurance_contribution_eur: "health_insurance_contribution_eur"
+      pension_contribution_percentage: "pension_contribution_percentage"
+      other_benefits_eur: "other_benefits_eur"
+      approved_by: "approved_by"
+      hr_approved_by: "hr_approved_by"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      effective_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      previous_base_salary_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      new_base_salary_eur:
+        type: "decimal_conversion"
+        precision: 2
+      salary_change_percentage:
+        type: "decimal_conversion"
+        precision: 2
+      bonus_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      commission_rate:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      equity_grant_value_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      health_insurance_contribution_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      pension_contribution_percentage:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      other_benefits_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+
+loading_config:
+  batch_size: 5000
+  error_handling: "continue_on_error"
+  compression: "gzip"
+  date_format: "YYYY-MM-DD"
+
+validation_rules:
+  required_fields_check: true
+  foreign_key_check: true
+  data_type_validation: true

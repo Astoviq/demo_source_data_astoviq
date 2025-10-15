@@ -1,0 +1,536 @@
+# EuroStyle Finance Database Column Mappings
+# ==========================================
+# Configuration-driven column mappings following WARP.md Rule 7
+# WARP.md: "CSV-to-database column mappings must be in configuration files"
+
+database: "eurostyle_finance"
+description: "Column mappings for CSV data loading into finance database"
+
+tables:
+  legal_entities:
+    csv_file_pattern: "eurostyle_finance.legal_entities.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      entity_id: "entity_id"
+      entity_name: "entity_name"
+      entity_type: "entity_type"
+      parent_entity_id: "parent_entity_id"
+      country_of_incorporation: "country_of_incorporation"
+      legal_registration_number: "legal_registration_number"
+      tax_identification_number: "tax_identification_number"
+      registered_address: "registered_address"
+      city: "city"
+      postal_code: "postal_code"
+      country_code: "country_code"
+      base_currency: "base_currency"
+      fiscal_year_end_month: "fiscal_year_end_month"
+      incorporation_date: "incorporation_date"
+      entity_status: "entity_status"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      incorporation_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+
+  chart_of_accounts:
+    csv_file_pattern: "eurostyle_finance.chart_of_accounts.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      account_id: "account_id"
+      account_code: "account_code"
+      account_name: "account_name"
+      account_type: "account_type"
+      account_subtype: "account_subtype"
+      parent_account_id: "parent_account_id"
+      account_level: "account_level"
+      normal_balance_side: "normal_balance_side"
+      is_control_account: "is_control_account"
+      requires_cost_center: "requires_cost_center"
+      currency_code: "currency_code"
+      is_active: "is_active"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+
+  general_ledger:
+    csv_file_pattern: "eurostyle_finance.general_ledger.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      transaction_id: "transaction_id"
+      line_number: "line_number"
+      transaction_date: "transaction_date"
+      posting_date: "posting_date"
+      period_year: "period_year"
+      period_month: "period_month"
+      account_id: "account_id"
+      entity_id: "entity_id"
+      cost_center_id: "cost_center_id"
+      transaction_type: "transaction_type"
+      transaction_source: "transaction_source"
+      reference_number: "reference_number"
+      description: "description"
+      debit_amount_eur: "debit_amount_eur"
+      credit_amount_eur: "credit_amount_eur"
+      original_currency: "original_currency"
+      original_amount: "original_amount"
+      exchange_rate: "exchange_rate"
+      journal_entry_id: "journal_entry_id"
+      created_by: "created_by"
+      approved_by: "approved_by"
+      posting_status: "posting_status"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      
+    transformations:
+      transaction_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      posting_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      debit_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+      credit_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+      original_amount:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      exchange_rate:
+        type: "decimal_conversion"
+        precision: 4
+        nullable: true
+
+  cost_centers:
+    csv_file_pattern: "eurostyle_finance.cost_centers.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      cost_center_id: "cost_center_id"
+      cost_center_code: "cost_center_code"
+      cost_center_name: "cost_center_name"
+      parent_cost_center_id: "parent_cost_center_id"
+      cost_center_level: "cost_center_level"
+      cost_center_type: "cost_center_type"
+      functional_area: "functional_area"
+      entity_id: "entity_id"
+      budget_responsible_employee: "budget_responsible_employee"
+      is_active: "is_active"
+      effective_from_date: "effective_from_date"
+      effective_to_date: "effective_to_date"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      effective_from_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      effective_to_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  budget_data:
+    csv_file_pattern: "eurostyle_finance.budget_data.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      budget_line_id: "budget_line_id"
+      budget_version_id: "budget_version_id"
+      entity_id: "entity_id"
+      account_id: "account_id"
+      cost_center_id: "cost_center_id"
+      period_id: "period_id"
+      budget_amount: "budget_amount"
+      currency_code: "currency_code"
+      comments: "comments"
+      created_date: "created_date"
+      updated_date: "updated_date"
+      
+    transformations:
+      budget_amount:
+        type: "decimal_conversion"
+        precision: 2
+        
+  budgets:
+    csv_file_pattern: "eurostyle_finance.budgets.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      budget_id: "budget_id"
+      budget_name: "budget_name"
+      entity_id: "entity_id"
+      cost_center_id: "cost_center_id"
+      account_id: "account_id"
+      budget_year: "budget_year"
+      budget_period_from: "budget_period_from"
+      budget_period_to: "budget_period_to"
+      original_budget_eur: "original_budget_eur"
+      revised_budget_eur: "revised_budget_eur"
+      budget_type: "budget_type"
+      jan_budget_eur: "jan_budget_eur"
+      feb_budget_eur: "feb_budget_eur"
+      mar_budget_eur: "mar_budget_eur"
+      apr_budget_eur: "apr_budget_eur"
+      may_budget_eur: "may_budget_eur"
+      jun_budget_eur: "jun_budget_eur"
+      jul_budget_eur: "jul_budget_eur"
+      aug_budget_eur: "aug_budget_eur"
+      sep_budget_eur: "sep_budget_eur"
+      oct_budget_eur: "oct_budget_eur"
+      nov_budget_eur: "nov_budget_eur"
+      dec_budget_eur: "dec_budget_eur"
+      budget_status: "budget_status"
+      approved_by: "approved_by"
+      approval_date: "approval_date"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      budget_period_from:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      budget_period_to:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      original_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+      revised_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+      jan_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      feb_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      mar_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      apr_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      may_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      jun_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      jul_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      aug_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      sep_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      oct_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      nov_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      dec_budget_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+      approval_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  fixed_assets:
+    csv_file_pattern: "eurostyle_finance.fixed_assets.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      asset_id: "asset_id"
+      asset_code: "asset_code"
+      asset_name: "asset_name"
+      entity_id: "entity_id"
+      asset_category: "asset_category"
+      cost_center_id: "cost_center_id"
+      purchase_date: "purchase_date"
+      purchase_cost: "purchase_cost"
+      currency_code: "currency_code"
+      useful_life_years: "useful_life_years"
+      depreciation_method: "depreciation_method"
+      salvage_value: "salvage_value"
+      accumulated_depreciation: "accumulated_depreciation"
+      book_value: "book_value"
+      asset_location: "asset_location"
+      serial_number: "serial_number"
+      supplier_name: "supplier_name"
+      warranty_expiry: "warranty_expiry"
+      asset_status: "asset_status"
+      disposal_date: "disposal_date"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+      
+    transformations:
+      purchase_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      purchase_cost:
+        type: "decimal_conversion"
+        precision: 2
+      salvage_value:
+        type: "decimal_conversion"
+        precision: 2
+      book_value:
+        type: "decimal_conversion"
+        precision: 2
+      accumulated_depreciation:
+        type: "decimal_conversion"
+        precision: 2
+      warranty_expiry:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      disposal_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  depreciation_schedule:
+    csv_file_pattern: "eurostyle_finance.depreciation_schedule.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      depreciation_id: "depreciation_id"
+      asset_id: "asset_id"
+      period_id: "period_id"
+      depreciation_date: "depreciation_date"
+      depreciation_amount: "depreciation_amount"
+      accumulated_depreciation: "accumulated_depreciation"
+      book_value: "book_value"
+      is_posted: "is_posted"
+      journal_header_id: "journal_header_id"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      depreciation_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      depreciation_amount:
+        type: "decimal_conversion"
+        precision: 2
+      accumulated_depreciation:
+        type: "decimal_conversion"
+        precision: 2
+      book_value:
+        type: "decimal_conversion"
+        precision: 2
+      journal_header_id:
+        nullable: true
+
+  budget_versions:
+    csv_file_pattern: "eurostyle_finance.budget_versions.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      budget_version_id: "budget_version_id"
+      version_name: "version_name"
+      fiscal_year: "fiscal_year"
+      entity_id: "entity_id"
+      version_type: "version_type"
+      status: "status"
+      created_by: "created_by"
+      approved_by: "approved_by"
+      approval_date: "approval_date"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      approval_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+      approved_by:
+        nullable: true
+
+  entity_accounts:
+    csv_file_pattern: "eurostyle_finance.entity_accounts.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      entity_account_id: "entity_account_id"
+      entity_id: "entity_id"
+      account_id: "account_id"
+      local_account_code: "local_account_code"
+      is_active: "is_active"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      local_account_code:
+        nullable: true
+
+  entity_relationships:
+    csv_file_pattern: "eurostyle_finance.entity_relationships.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      relationship_id: "relationship_id"
+      parent_entity_id: "parent_entity_id"
+      child_entity_id: "child_entity_id"
+      ownership_percentage: "ownership_percentage"
+      relationship_type: "relationship_type"
+      effective_date: "effective_date"
+      end_date: "end_date"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      ownership_percentage:
+        type: "decimal_conversion"
+        precision: 2
+      effective_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      end_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+        nullable: true
+
+  reporting_periods:
+    csv_file_pattern: "eurostyle_finance.reporting_periods.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      period_id: "period_id"
+      period_type: "period_type" 
+      period_name: "period_name"
+      start_date: "start_date"
+      end_date: "end_date"
+      fiscal_year: "fiscal_year"
+      is_closed: "is_closed"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      start_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      end_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      is_closed:
+        type: "boolean_conversion"
+        true_values: ["CLOSED", "true", "1"]
+        false_values: ["OPEN", "false", "0"]
+      fiscal_year:
+        type: "integer_conversion"
+
+  currency_exchange_rates:
+    csv_file_pattern: "eurostyle_finance.currency_exchange_rates.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      rate_date: "rate_date"
+      base_currency: "base_currency"
+      target_currency: "target_currency"
+      exchange_rate: "exchange_rate"
+      rate_source: "rate_source"
+      is_month_end_rate: "is_month_end_rate"
+      
+    auto_generated_columns:
+      created_at: "now()"
+      
+    transformations:
+      rate_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      exchange_rate:
+        type: "decimal_conversion"
+        precision: 6
+
+# Global loading configuration
+loading_config:
+  batch_size: 5000
+  error_handling: "continue_on_error"
+  max_errors: 50
+  compression: "gzip"
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:MI:SS"
+  decimal_separator: "."
+  
+# Validation rules
+validation_rules:
+  required_fields_check: true
+  foreign_key_check: true   # Enable for finance data integrity
+  data_type_validation: true
+  duplicate_check: true     # Prevent duplicate GL entries
+  
+# Finance-specific validation
+finance_validation:
+  gl_balance_check: true    # Validate debit/credit balance
+  account_type_validation: true
+  period_validation: true   # Ensure posting dates are within open periods

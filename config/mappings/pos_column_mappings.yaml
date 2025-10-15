@@ -1,0 +1,288 @@
+# EuroStyle POS Database Column Mappings
+# =======================================
+# Configuration-driven column mappings following WARP.md Rule 7
+# WARP.md: "CSV-to-database column mappings must be in configuration files"
+# Status: Following WARP.md POS Integration achievement with 37K+ transactions and perfect VAT compliance
+
+database: "eurostyle_pos"
+description: "Column mappings for CSV data loading into POS database"
+
+tables:
+  transactions:
+    csv_file_pattern: "eurostyle_pos.transactions.csv.gz"
+    column_mappings:
+      transaction_id: "transaction_id"
+      store_id: "store_id"
+      employee_id: "employee_id"
+      register_number: "register_number"
+      customer_id: "customer_id"
+      customer_type: "customer_type"
+      transaction_type: "transaction_type"
+      transaction_status: "transaction_status"
+      transaction_timestamp: "transaction_timestamp"
+      transaction_date: "transaction_date"
+      transaction_hour: "transaction_hour"
+      subtotal_excl_vat_eur: "subtotal_excl_vat_eur"
+      vat_amount_eur: "vat_amount_eur"
+      total_amount_eur: "total_amount_eur"
+      discount_amount_eur: "discount_amount_eur"
+      payment_method: "payment_method"
+      payment_reference: "payment_reference"
+      loyalty_points_earned: "loyalty_points_earned"
+      loyalty_points_redeemed: "loyalty_points_redeemed"
+      promotion_code: "promotion_code"
+      promotion_discount_eur: "promotion_discount_eur"
+      original_transaction_id: "original_transaction_id"
+      gl_revenue_account: "gl_revenue_account"
+      batch_number: "batch_number"
+      pos_system_version: "pos_system_version"
+    auto_generated_columns:
+      created_at: "now()"
+    transformations:
+      transaction_timestamp:
+        type: "datetime_conversion"
+        input_format: "YYYY-MM-DD HH:MI:SS"
+      transaction_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      subtotal_excl_vat_eur:
+        type: "decimal_conversion"
+        precision: 2
+      total_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  transaction_items:
+    csv_file_pattern: "eurostyle_pos.transaction_items.csv.gz"
+    column_mappings:
+      item_id: "item_id"
+      transaction_id: "transaction_id"
+      line_number: "line_number"
+      product_id: "product_id"
+      product_sku: "product_sku"
+      product_name: "product_name"
+      product_category: "product_category"
+      size: "size"
+      color: "color"
+      variant_description: "variant_description"
+      quantity: "quantity"
+      unit_price_excl_vat_eur: "unit_price_excl_vat_eur"
+      unit_price_incl_vat_eur: "unit_price_incl_vat_eur"
+      line_total_excl_vat_eur: "line_total_excl_vat_eur"
+      line_vat_amount_eur: "line_vat_amount_eur"
+      line_total_incl_vat_eur: "line_total_incl_vat_eur"
+      vat_rate: "vat_rate"
+      vat_classification: "vat_classification"
+      country_code: "country_code"
+      item_discount_percentage: "item_discount_percentage"
+      item_discount_amount_eur: "item_discount_amount_eur"
+      return_reason: "return_reason"
+      return_condition: "return_condition"
+      original_purchase_date: "original_purchase_date"
+      inventory_adjustment: "inventory_adjustment"
+    auto_generated_columns:
+      created_at: "now()"
+    transformations:
+      unit_price_excl_vat_eur:
+        type: "decimal_conversion"
+        precision: 2
+      line_total_excl_vat_eur:
+        type: "decimal_conversion"
+        precision: 2
+      vat_rate:
+        type: "decimal_conversion"
+        precision: 3
+
+  payment_processing:
+    csv_file_pattern: "eurostyle_pos.payment_processing.csv.gz"
+    column_mappings:
+      payment_id: "payment_id"
+      transaction_id: "transaction_id"
+      payment_method: "payment_method"
+      payment_timestamp: "payment_timestamp"
+      amount_eur: "amount_eur"
+      card_type: "card_type"
+      card_last_four_digits: "card_last_four_digits"
+      authorization_code: "authorization_code"
+      terminal_id: "terminal_id"
+      processor_reference: "processor_reference"
+      processing_fee_eur: "processing_fee_eur"
+      processing_fee_percentage: "processing_fee_percentage"
+      payment_status: "payment_status"
+      decline_reason: "decline_reason"
+      cash_tendered_eur: "cash_tendered_eur"
+      change_given_eur: "change_given_eur"
+      contactless_payment: "contactless_payment"
+      pin_verified: "pin_verified"
+      gl_cash_account: "gl_cash_account"
+      gl_card_account: "gl_card_account"
+      gl_processing_fee_account: "gl_processing_fee_account"
+    transformations:
+      amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+      processing_fee_eur:
+        type: "decimal_conversion"
+        precision: 4
+        nullable: true
+
+  vat_transactions:
+    csv_file_pattern: "eurostyle_pos.vat_transactions.csv.gz"
+    column_mappings:
+      vat_transaction_id: "vat_transaction_id"
+      transaction_id: "transaction_id"
+      country_code: "country_code"
+      vat_rate: "vat_rate"
+      vat_classification: "vat_classification"
+      net_amount_eur: "net_amount_eur"
+      vat_amount_eur: "vat_amount_eur"
+      gross_amount_eur: "gross_amount_eur"
+      vat_directive_reference: "vat_directive_reference"
+      reverse_charge_applicable: "reverse_charge_applicable"
+      gl_vat_account: "gl_vat_account"
+      vat_period_year: "vat_period_year"
+      vat_period_month: "vat_period_month"
+      calculation_timestamp: "calculation_timestamp"
+    auto_generated_columns:
+      created_at: "now()"
+    transformations:
+      vat_rate:
+        type: "decimal_conversion"
+        precision: 3
+      net_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+      vat_amount_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  employee_assignments:
+    csv_file_pattern: "eurostyle_pos.employee_assignments.csv.gz"
+    column_mappings:
+      assignment_id: "assignment_id"
+      employee_id: "employee_id"
+      store_id: "store_id"
+      assignment_type: "assignment_type"
+      start_date: "start_date"
+      end_date: "end_date"
+      store_role: "store_role"
+      pos_access_level: "pos_access_level"
+      can_process_returns: "can_process_returns"
+      can_apply_discounts: "can_apply_discounts"
+      can_void_transactions: "can_void_transactions"
+      pos_training_completed: "pos_training_completed"
+      training_completion_date: "training_completion_date"
+      sales_target_eur: "sales_target_eur"
+      assignment_status: "assignment_status"
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+    transformations:
+      start_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      sales_target_eur:
+        type: "decimal_conversion"
+        precision: 2
+        nullable: true
+
+  shift_schedules:
+    csv_file_pattern: "eurostyle_pos.shift_schedules.csv.gz"
+    column_mappings:
+      shift_id: "shift_id"
+      employee_id: "employee_id"
+      store_id: "store_id"
+      shift_date: "shift_date"
+      shift_start_time: "shift_start_time"
+      shift_end_time: "shift_end_time"
+      scheduled_hours: "scheduled_hours"
+      actual_start_time: "actual_start_time"
+      actual_end_time: "actual_end_time"
+      actual_hours_worked: "actual_hours_worked"
+      shift_type: "shift_type"
+      break_duration_minutes: "break_duration_minutes"
+      actual_break_time_minutes: "actual_break_time_minutes"
+      transactions_processed: "transactions_processed"
+      total_sales_eur: "total_sales_eur"
+      attendance_status: "attendance_status"
+      absence_reason: "absence_reason"
+      assigned_register: "assigned_register"
+    auto_generated_columns:
+      created_at: "now()"
+    transformations:
+      shift_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      total_sales_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+  daily_reconciliation:
+    csv_file_pattern: "eurostyle_pos.daily_reconciliation.csv.gz"
+    column_mappings:
+      reconciliation_id: "reconciliation_id"
+      store_id: "store_id"
+      reconciliation_date: "reconciliation_date"
+      total_transactions: "total_transactions"
+      total_sales_eur: "total_sales_eur"
+      total_returns_eur: "total_returns_eur"
+      total_voids_eur: "total_voids_eur"
+      net_sales_eur: "net_sales_eur"
+      total_vat_collected_eur: "total_vat_collected_eur"
+      vat_by_rate: "vat_by_rate"
+      cash_sales_eur: "cash_sales_eur"
+      card_sales_eur: "card_sales_eur"
+      mobile_payment_eur: "mobile_payment_eur"
+      other_payments_eur: "other_payments_eur"
+      opening_cash_eur: "opening_cash_eur"
+      cash_sales_total_eur: "cash_sales_total_eur"
+      cash_returns_eur: "cash_returns_eur"
+      expected_closing_cash_eur: "expected_closing_cash_eur"
+      actual_closing_cash_eur: "actual_closing_cash_eur"
+      cash_variance_eur: "cash_variance_eur"
+      card_terminal_total_eur: "card_terminal_total_eur"
+      card_processing_fees_eur: "card_processing_fees_eur"
+      reconciliation_status: "reconciliation_status"
+      reconciled_by_employee_id: "reconciled_by_employee_id"
+      approved_by_employee_id: "approved_by_employee_id"
+      approval_timestamp: "approval_timestamp"
+      variance_explanation: "variance_explanation"
+      adjustment_amount_eur: "adjustment_amount_eur"
+      gl_posting_reference: "gl_posting_reference"
+      bank_deposit_reference: "bank_deposit_reference"
+    auto_generated_columns:
+      created_at: "now()"
+      updated_at: "now()"
+    transformations:
+      reconciliation_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+      total_sales_eur:
+        type: "decimal_conversion"
+        precision: 2
+      net_sales_eur:
+        type: "decimal_conversion"
+        precision: 2
+      cash_variance_eur:
+        type: "decimal_conversion"
+        precision: 2
+
+loading_config:
+  batch_size: 5000
+  error_handling: "continue_on_error"
+  compression: "gzip"
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:MI:SS"
+
+validation_rules:
+  required_fields_check: true
+  foreign_key_check: true
+  data_type_validation: true
+  duplicate_check: true
+
+# POS-specific validation per WARP.md
+pos_validation:
+  vat_calculation_validation: true
+  transaction_balance_check: true  # Ensure transaction totals are correct
+  payment_method_consistency: true
+  eu_vat_compliance: true         # Validate EU VAT rates and rules

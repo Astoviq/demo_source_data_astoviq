@@ -14,9 +14,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import gzip
 import csv
+import time
 
 # Add the parent directory to Python path for imports
 sys.path.append(str(Path(__file__).parent.parent.parent))
+
+# Add utils directory to path for logging
+sys.path.append(str(Path(__file__).parent.parent.parent / "utils"))
+from logging_config import setup_incremental_logging
 
 class UniversalIncrementalGenerator:
     def __init__(self, base_data_path="data/csv"):
@@ -24,8 +29,12 @@ class UniversalIncrementalGenerator:
         self.output_path = self.base_data_path
         self.current_date = datetime.now().date()
         
-        print(f"🔄 Universal Incremental Data Generator initialized")
-        print(f"📁 Base data path: {self.base_data_path}")
+        # Setup logging
+        self.logger_setup = setup_incremental_logging()
+        self.logger = self.logger_setup.get_logger()
+        
+        self.logger.info("🔄 Universal Incremental Data Generator initialized")
+        self.logger.info(f"📁 Base data path: {self.base_data_path}")
         
     def get_latest_order_id(self):
         """Get the latest order ID from existing data to continue sequence"""
@@ -38,7 +47,7 @@ class UniversalIncrementalGenerator:
                     last_id = max(order_ids)
                     return int(last_id.split('_')[-1])
         except Exception as e:
-            print(f"⚠️ Could not determine latest order ID: {e}")
+            self.logger.warning(f"⚠️ Could not determine latest order ID: {e}")
         return 5000  # Default fallback
     
     def get_latest_customer_id(self):
@@ -52,7 +61,7 @@ class UniversalIncrementalGenerator:
                     last_id = max(customer_ids)
                     return int(last_id.split('_')[-1])
         except Exception as e:
-            print(f"⚠️ Could not determine latest customer ID: {e}")
+            self.logger.warning(f"⚠️ Could not determine latest customer ID: {e}")
         return 50000  # Default fallback
         
     def get_existing_customers(self, limit=1000):
@@ -105,7 +114,7 @@ class UniversalIncrementalGenerator:
     
     def generate_incremental_orders(self, num_orders, days=1):
         """Generate incremental orders with matching GL entries"""
-        print(f"📦 Generating {num_orders} incremental orders for {days} day(s)")
+        self.logger.info(f"📦 Generating {num_orders} incremental orders for {days} day(s)")
         
         # Get existing data for referential integrity
         customers = self.get_existing_customers()
@@ -113,7 +122,7 @@ class UniversalIncrementalGenerator:
         stores = self.get_existing_stores()
         
         if not customers or not products:
-            print("❌ Cannot generate orders without existing customers and products")
+            self.logger.error("❌ Cannot generate orders without existing customers and products")
             return False
             
         start_order_id = self.get_latest_order_id() + 1
@@ -372,6 +381,237 @@ class UniversalIncrementalGenerator:
         print("✅ Department shuffle simulation completed")
         return True
     
+    def generate_customer_updates(self, num_updates):
+        """Generate updates to existing customers (address changes, loyalty updates, etc.)"""
+        print(f"👥 Generating {num_updates} customer updates")
+        
+        try:
+            # Get sample of existing customers to update
+            existing_customers = []
+            with gzip.open(self.base_data_path / "eurostyle_operational.customers.csv.gz", 'rt') as f:
+                reader = csv.DictReader(f)
+                customers_list = list(reader)
+                existing_customers = random.sample(customers_list, min(num_updates, len(customers_list)))
+            
+            if not existing_customers:
+                print("❌ No existing customers found to update")
+                return False
+            
+            updates = []
+            countries = ['NL', 'DE', 'FR', 'BE']
+            
+            for customer in existing_customers:
+                # Generate realistic updates
+                updated_customer = customer.copy()
+                
+                # Update some fields realistically
+                if random.random() < 0.3:  # 30% chance of address update
+                    updated_customer['street_address'] = f'New Street {random.randint(1, 999)}'
+                    updated_customer['city'] = f'NewCity{random.randint(1, 100)}'
+                    updated_customer['postal_code'] = f'{random.randint(1000, 9999)}XX'
+                
+                if random.random() < 0.4:  # 40% chance of loyalty updates
+                    current_points = int(updated_customer.get('loyalty_points', 0))
+                    updated_customer['loyalty_points'] = current_points + random.randint(10, 500)
+                    
+                    # Tier upgrades based on points
+                    if updated_customer['loyalty_points'] > 2000:
+                        updated_customer['loyalty_tier'] = 'Platinum'
+                    elif updated_customer['loyalty_points'] > 1000:
+                        updated_customer['loyalty_tier'] = 'Gold'
+                    elif updated_customer['loyalty_points'] > 500:
+                        updated_customer['loyalty_tier'] = 'Silver'
+                
+                if random.random() < 0.2:  # 20% chance of preference updates
+                    updated_customer['marketing_opt_in'] = random.choice([True, False])
+                    updated_customer['newsletter_subscription'] = random.choice([True, False])
+                
+                # Always update the timestamp
+                updated_customer['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                updates.append(updated_customer)
+            
+            self.save_incremental_csv('eurostyle_operational.customers_updates', updates)
+            print(f"✅ Generated {len(updates)} customer updates")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Failed to generate customer updates: {e}")
+            return False
+    
+    def generate_employee_updates(self, num_updates):
+        """Generate updates to existing employees (status changes, visa updates, etc.)"""
+        print(f"👨‍💼 Generating {num_updates} employee updates")
+        
+        try:
+            # Get sample of existing employees to update
+            existing_employees = []
+            with gzip.open(self.base_data_path / "eurostyle_hr.employees.csv.gz", 'rt') as f:
+                reader = csv.DictReader(f)
+                employees_list = list(reader)
+                existing_employees = random.sample(employees_list, min(num_updates, len(employees_list)))
+            
+            if not existing_employees:
+                print("❌ No existing employees found to update")
+                return False
+            
+            updates = []
+            
+            for employee in existing_employees:
+                updated_employee = employee.copy()
+                
+                # Generate realistic updates using only fields that exist in employees table
+                if random.random() < 0.05:  # 5% chance of employee status change
+                    statuses = ['ACTIVE', 'ON_LEAVE', 'TERMINATED']
+                    updated_employee['employee_status'] = random.choice(statuses)
+                
+                if random.random() < 0.02:  # 2% chance of visa status update
+                    visa_statuses = ['EU_CITIZEN', 'WORK_PERMIT', 'STUDENT_VISA', 'OTHER']
+                    updated_employee['visa_status'] = random.choice(visa_statuses)
+                
+                if random.random() < 0.10:  # 10% chance of contact info update
+                    updated_employee['phone_mobile'] = f"+31{random.randint(600000000, 699999999)}"
+                    updated_employee['personal_email'] = f"{updated_employee['first_name'].lower()}.{updated_employee['last_name'].lower()}@example.com"
+                
+                if random.random() < 0.05:  # 5% chance of address update
+                    updated_employee['address_street'] = f'Updated Street {random.randint(1, 999)}'
+                    updated_employee['address_city'] = f'NewCity{random.randint(1, 100)}'
+                    updated_employee['address_postal_code'] = f'{random.randint(1000, 9999)}XX'
+                
+                # Always update the timestamp
+                updated_employee['updated_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                updates.append(updated_employee)
+            
+            self.save_incremental_csv('eurostyle_hr.employees_updates', updates)
+            print(f"✅ Generated {len(updates)} employee updates")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Failed to generate employee updates: {e}")
+            return False
+    
+    def generate_product_updates(self, num_updates):
+        """Generate updates to existing products (price changes, inventory updates, descriptions)"""
+        print(f"🛍️ Generating {num_updates} product updates")
+        
+        try:
+            # Get sample of existing products to update
+            existing_products = []
+            with gzip.open(self.base_data_path / "eurostyle_operational.products.csv.gz", 'rt') as f:
+                reader = csv.DictReader(f)
+                products_list = list(reader)
+                existing_products = random.sample(products_list, min(num_updates, len(products_list)))
+            
+            if not existing_products:
+                print("❌ No existing products found to update")
+                return False
+            
+            updates = []
+            
+            for product in existing_products:
+                updated_product = product.copy()
+                
+                # Generate realistic updates (only modify existing fields)
+                if random.random() < 0.4:  # 40% chance of price adjustment
+                    current_price = float(updated_product.get('price_eur', 50.0))
+                    # Price adjustments between -20% to +30%
+                    price_multiplier = random.uniform(0.8, 1.3)
+                    updated_product['price_eur'] = round(current_price * price_multiplier, 2)
+                
+                if random.random() < 0.6:  # 60% chance of stock level update
+                    # Update current_stock_total (this field exists in the schema)
+                    updated_product['current_stock_total'] = random.randint(0, 1000)
+                    
+                    # Update availability based on stock
+                    if int(updated_product['current_stock_total']) == 0:
+                        updated_product['is_active'] = False
+                        updated_product['online_availability'] = False
+                    else:
+                        updated_product['is_active'] = True
+                        updated_product['online_availability'] = True
+                
+                if random.random() < 0.2:  # 20% chance of seasonal updates
+                    seasons = ['spring', 'summer', 'autumn', 'winter']
+                    updated_product['season'] = random.choice(seasons)
+                
+                if random.random() < 0.3:  # 30% chance of cost price adjustment
+                    current_cost = float(updated_product.get('cost_price_eur', 25.0))
+                    cost_multiplier = random.uniform(0.9, 1.1)  # Small cost adjustments
+                    updated_product['cost_price_eur'] = round(current_cost * cost_multiplier, 2)
+                    
+                    # Recalculate margin
+                    price = float(updated_product['price_eur'])
+                    cost = float(updated_product['cost_price_eur'])
+                    if price > 0:
+                        margin = ((price - cost) / price) * 100
+                        updated_product['margin_percentage'] = round(margin, 2)
+                
+                # Always update the timestamp
+                updated_product['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                updates.append(updated_product)
+            
+            self.save_incremental_csv('eurostyle_operational.products_updates', updates)
+            print(f"✅ Generated {len(updates)} product updates")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Failed to generate product updates: {e}")
+            return False
+    
+    def generate_cost_center_updates(self, num_updates):
+        """Generate updates to existing cost centers (budget adjustments, status changes)"""
+        print(f"💰 Generating {num_updates} cost center updates")
+        
+        # Check if cost centers file exists
+        cost_centers_file = self.base_data_path / "eurostyle_finance.cost_centers.csv.gz"
+        if not cost_centers_file.exists():
+            print("⚠️ Cost centers file not found - skipping cost center updates")
+            print(f"💡 Expected file: {cost_centers_file}")
+            return True  # Return True to not fail the overall process
+        
+        try:
+            # Get sample of existing cost centers to update
+            existing_cost_centers = []
+            with gzip.open(cost_centers_file, 'rt') as f:
+                reader = csv.DictReader(f)
+                cost_centers_list = list(reader)
+                existing_cost_centers = random.sample(cost_centers_list, min(num_updates, len(cost_centers_list)))
+            
+            if not existing_cost_centers:
+                print("❌ No existing cost centers found to update")
+                return True
+            
+            updates = []
+            
+            for cost_center in existing_cost_centers:
+                updated_cost_center = cost_center.copy()
+                
+                # Generate realistic updates
+                if random.random() < 0.3:  # 30% chance of name change
+                    name_suffixes = ['Operations', 'Management', 'Support', 'Analytics', 'Strategy']
+                    base_name = updated_cost_center.get('cost_center_name', 'Cost Center')
+                    # Remove existing suffix and add new one
+                    base = base_name.split()[0] if base_name else 'Cost Center'
+                    updated_cost_center['cost_center_name'] = f"{base} {random.choice(name_suffixes)}"
+                
+                if random.random() < 0.2:  # 20% chance of type change
+                    cost_center_types = ['PROFIT_CENTER', 'COST_CENTER', 'INVESTMENT_CENTER']
+                    updated_cost_center['cost_center_type'] = random.choice(cost_center_types)
+                
+                if random.random() < 0.1:  # 10% chance of status change
+                    updated_cost_center['is_active'] = random.choice([True, False])
+                
+                # Always update the timestamp
+                updated_cost_center['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                updates.append(updated_cost_center)
+            
+            self.save_incremental_csv('eurostyle_finance.cost_centers_updates', updates)
+            print(f"✅ Generated {len(updates)} cost center updates")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Failed to generate cost center updates: {e}")
+            return False
+    
     def save_incremental_csv(self, table_name, data):
         """Save incremental data to compressed CSV"""
         if not data:
@@ -385,7 +625,7 @@ class UniversalIncrementalGenerator:
                 writer.writeheader()
                 writer.writerows(data)
         
-        print(f"💾 Saved {len(data)} records to {filename}")
+        self.logger.info(f"💾 Saved {len(data)} records to {filename}")
     
     def generate_business_day(self, intensity='normal'):
         """Generate a complete business day of activity"""
@@ -399,12 +639,28 @@ class UniversalIncrementalGenerator:
         new_customers = int(20 * multiplier)          # ~20 new registrations
         webshop_sessions = int(500 * multiplier)      # ~500 sessions per day
         
-        print(f"📊 Daily volumes: {daily_orders} orders, {new_customers} customers, {webshop_sessions} sessions")
+        # Daily update volumes (smaller numbers for updates)
+        customer_updates = int(50 * multiplier)       # ~50 customer updates per day
+        product_updates = int(30 * multiplier)        # ~30 product updates per day
+        employee_updates = int(5 * multiplier)        # ~5 employee updates per day
+        cost_center_updates = int(3 * multiplier)     # ~3 cost center updates per day
+        
+        print(f"📊 Daily volumes:")
+        print(f"  • New: {daily_orders} orders, {new_customers} customers, {webshop_sessions} sessions")
+        print(f"  • Updates: {customer_updates} customers, {product_updates} products, {employee_updates} employees, {cost_center_updates} cost centers")
         
         success = True
+        
+        # Generate new records
         success &= self.generate_incremental_orders(daily_orders, days=1)
         success &= self.generate_incremental_customers(new_customers) 
         success &= self.generate_incremental_webshop_sessions(webshop_sessions)
+        
+        # Generate updates to existing records
+        success &= self.generate_customer_updates(customer_updates)
+        success &= self.generate_product_updates(product_updates)
+        success &= self.generate_employee_updates(employee_updates)
+        success &= self.generate_cost_center_updates(cost_center_updates)
         
         # Simulate HR activities occasionally
         if random.random() < 0.2:  # 20% chance of HR activities
@@ -414,35 +670,58 @@ class UniversalIncrementalGenerator:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate incremental business data")
+    parser = argparse.ArgumentParser(description="Generate incremental business data with inserts and updates")
     parser.add_argument('--days', type=int, default=1, help='Number of business days to simulate')
     parser.add_argument('--intensity', choices=['light', 'normal', 'heavy'], default='normal',
                        help='Business activity intensity')
-    parser.add_argument('--types', help='Specific data types to generate (comma-separated)')
+    parser.add_argument('--types', help='Specific data types to generate (comma-separated). '
+                                       'Available: orders, customers, sessions, departments, '
+                                       'customer_updates, employee_updates, product_updates, cost_center_updates')
+    parser.add_argument('--update-only', action='store_true', 
+                       help='Generate only updates to existing records (no new inserts)')
     
     args = parser.parse_args()
     
     generator = UniversalIncrementalGenerator()
     
-    print(f"🚀 Starting incremental data generation")
-    print(f"📅 Days: {args.days}, Intensity: {args.intensity}")
+    # Use the generator's logger for main function logging
+    logger = generator.logger
+    
+    logger.info(f"🚀 Starting incremental data generation")
+    logger.info(f"📅 Days: {args.days}, Intensity: {args.intensity}")
+    
+    if args.update_only:
+        logger.info(f"🔄 Mode: Update existing records only")
+    else:
+        logger.info(f"🆕 Mode: Generate new records and updates")
     
     success = True
     
     if args.types:
         # Generate specific data types
         types = [t.strip() for t in args.types.split(',')]
+        print(f"🎯 Generating specific types: {', '.join(types)}")
+        
         for data_type in types:
-            if data_type == 'orders':
+            if data_type == 'orders' and not args.update_only:
                 success &= generator.generate_incremental_orders(50 * args.days, args.days)
-            elif data_type == 'customers':
+            elif data_type == 'customers' and not args.update_only:
                 success &= generator.generate_incremental_customers(20 * args.days)
-            elif data_type == 'sessions':
+            elif data_type == 'sessions' and not args.update_only:
                 success &= generator.generate_incremental_webshop_sessions(200 * args.days)
             elif data_type == 'departments':
                 success &= generator.simulate_department_shuffle()
+            elif data_type == 'customer_updates':
+                success &= generator.generate_customer_updates(50 * args.days)
+            elif data_type == 'employee_updates':
+                success &= generator.generate_employee_updates(10 * args.days)
+            elif data_type == 'product_updates':
+                success &= generator.generate_product_updates(30 * args.days)
+            elif data_type == 'cost_center_updates':
+                success &= generator.generate_cost_center_updates(5 * args.days)
             else:
                 print(f"⚠️ Unknown data type: {data_type}")
+                print(f"💡 Available types: orders, customers, sessions, departments, customer_updates, employee_updates, product_updates, cost_center_updates")
     else:
         # Generate complete business days
         for day in range(args.days):

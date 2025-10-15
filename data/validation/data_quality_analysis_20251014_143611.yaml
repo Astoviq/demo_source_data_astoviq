@@ -1,0 +1,1248 @@
+empty_tables:
+- database: eurostyle_finance
+  table: budget_data
+  engine: MergeTree
+- database: eurostyle_finance
+  table: budget_versions
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: chart_of_accounts
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: cost_centers
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: currencies
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: depreciation_schedule
+  engine: MergeTree
+- database: eurostyle_finance
+  table: entity_accounts
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: entity_relationships
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: exchange_rates
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: fixed_assets
+  engine: ReplacingMergeTree
+- database: eurostyle_finance
+  table: reporting_periods
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: compensation_history
+  engine: MergeTree
+- database: eurostyle_hr
+  table: departments
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: employee_surveys
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: employee_training
+  engine: MergeTree
+- database: eurostyle_hr
+  table: employment_contracts
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: job_positions
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: leave_balances
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: leave_requests
+  engine: MergeTree
+- database: eurostyle_hr
+  table: performance_cycles
+  engine: ReplacingMergeTree
+- database: eurostyle_hr
+  table: performance_reviews
+  engine: MergeTree
+- database: eurostyle_hr
+  table: survey_responses
+  engine: MergeTree
+- database: eurostyle_hr
+  table: training_programs
+  engine: ReplacingMergeTree
+- database: eurostyle_webshop
+  table: ab_test_results
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: cart_activities
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: email_marketing
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: product_recommendations
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: product_reviews
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: search_queries
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: web_analytics_events
+  engine: MergeTree
+- database: eurostyle_webshop
+  table: wishlist_items
+  engine: MergeTree
+empty_columns:
+- database: eurostyle_operational
+  table: order_lines
+  column: return_reason
+  null_percentage: 92.77
+  total_rows: 3390
+- database: eurostyle_operational
+  table: order_lines
+  column: exchange_product_id
+  null_percentage: 100.0
+  total_rows: 3390
+- database: eurostyle_operational
+  table: orders
+  column: fulfillment_center
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: shipping_method
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: tracking_number
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: traffic_source
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: campaign_code
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: customer_service_notes
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: orders
+  column: return_reason
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_operational
+  table: products
+  column: color_secondary
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_operational
+  table: products
+  column: material_composition
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_operational
+  table: products
+  column: product_url
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_operational
+  table: stores
+  column: operating_hours
+  null_percentage: 100.0
+  total_rows: 14
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: journal_number
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: entity_id
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: period_id
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: journal_source
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: journal_status
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: approved_by
+  null_percentage: 100.0
+  total_rows: 400
+- database: eurostyle_finance
+  table: gl_journal_lines
+  column: cost_center_id
+  null_percentage: 100.0
+  total_rows: 4621
+- database: eurostyle_finance
+  table: gl_journal_lines
+  column: reference_2
+  null_percentage: 100.0
+  total_rows: 4621
+- database: eurostyle_finance
+  table: legal_entities
+  column: registration_number
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_finance
+  table: legal_entities
+  column: tax_id
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_finance
+  table: legal_entities
+  column: functional_currency
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_finance
+  table: legal_entities
+  column: parent_entity_id
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_finance
+  table: legal_entities
+  column: fiscal_year_end
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_finance
+  table: legal_entities
+  column: legal_address
+  null_percentage: 100.0
+  total_rows: 5
+- database: eurostyle_hr
+  table: employees
+  column: personal_email
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: work_email
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: title
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: middle_name
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: preferred_name
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: country_of_birth
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: phone_mobile
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: phone_home
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: emergency_contact_name
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: emergency_contact_phone
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: emergency_contact_relationship
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: address_street
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: address_city
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: address_state
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: address_postal_code
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: address_country
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: social_security_number
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: tax_id
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: passport_number
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_hr
+  table: employees
+  column: termination_reason
+  null_percentage: 100.0
+  total_rows: 100
+- database: eurostyle_webshop
+  table: web_sessions
+  column: referrer_url
+  null_percentage: 100.0
+  total_rows: 2500
+- database: eurostyle_pos
+  table: discounts
+  column: item_id
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: discount_name
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: discount_code
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: promotion_id
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: authorized_by
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: authorization_code
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: discounts
+  column: discount_reason
+  null_percentage: 100.0
+  total_rows: 105
+- database: eurostyle_pos
+  table: employee_assignments
+  column: assignment_type
+  null_percentage: 100.0
+  total_rows: 28
+- database: eurostyle_pos
+  table: employee_assignments
+  column: role
+  null_percentage: 100.0
+  total_rows: 28
+- database: eurostyle_pos
+  table: employee_shifts
+  column: register_id
+  null_percentage: 100.0
+  total_rows: 658
+- database: eurostyle_pos
+  table: employee_shifts
+  column: shift_status
+  null_percentage: 100.0
+  total_rows: 658
+- database: eurostyle_pos
+  table: employee_shifts
+  column: notes
+  null_percentage: 100.0
+  total_rows: 658
+- database: eurostyle_pos
+  table: payments
+  column: payment_type
+  null_percentage: 100.0
+  total_rows: 723
+- database: eurostyle_pos
+  table: payments
+  column: card_type
+  null_percentage: 100.0
+  total_rows: 723
+- database: eurostyle_pos
+  table: payments
+  column: transaction_ref
+  null_percentage: 100.0
+  total_rows: 723
+- database: eurostyle_pos
+  table: payments
+  column: processor_response
+  null_percentage: 100.0
+  total_rows: 723
+- database: eurostyle_pos
+  table: promotions
+  column: start_time
+  null_percentage: 100.0
+  total_rows: 8
+- database: eurostyle_pos
+  table: promotions
+  column: end_time
+  null_percentage: 100.0
+  total_rows: 8
+- database: eurostyle_pos
+  table: promotions
+  column: authorized_by
+  null_percentage: 100.0
+  total_rows: 8
+- database: eurostyle_pos
+  table: transaction_items
+  column: product_sku
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: product_name
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: size
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: color
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: discount_reason
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: promotion_id
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: return_reason
+  null_percentage: 97.14
+  total_rows: 700
+- database: eurostyle_pos
+  table: transaction_items
+  column: original_item_id
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: register_id
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: customer_phone
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: customer_email
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: transaction_status
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: original_transaction_id
+  null_percentage: 100.0
+  total_rows: 700
+- database: eurostyle_pos
+  table: transactions
+  column: return_reason
+  null_percentage: 100.0
+  total_rows: 700
+poor_distribution:
+- database: eurostyle_operational
+  table: customers
+  column: language_preference
+  uniqueness_ratio: 0.018
+  distinct_values: 4
+  total_non_null: 220
+  common_values:
+  - value: de
+    count: 60
+  - value: nl
+    count: 55
+  - value: fr
+    count: 55
+- database: eurostyle_operational
+  table: customers
+  column: country_code
+  uniqueness_ratio: 0.018
+  distinct_values: 4
+  total_non_null: 220
+  common_values:
+  - value: DE
+    count: 60
+  - value: FR
+    count: 55
+  - value: NL
+    count: 55
+- database: eurostyle_operational
+  table: customers
+  column: registration_channel
+  uniqueness_ratio: 0.023
+  distinct_values: 5
+  total_non_null: 220
+  common_values:
+  - value: online
+    count: 64
+  - value: in-store
+    count: 54
+  - value: referral
+    count: 49
+- database: eurostyle_operational
+  table: customers
+  column: loyalty_tier
+  uniqueness_ratio: 0.018
+  distinct_values: 4
+  total_non_null: 220
+  common_values:
+  - value: Platinum
+    count: 66
+  - value: Silver
+    count: 56
+  - value: Gold
+    count: 54
+- database: eurostyle_operational
+  table: european_geography
+  column: country_code
+  uniqueness_ratio: 0.063
+  distinct_values: 5
+  total_non_null: 79
+  common_values:
+  - value: NL
+    count: 22
+  - value: DE
+    count: 21
+  - value: BE
+    count: 15
+- database: eurostyle_operational
+  table: european_geography
+  column: country_name
+  uniqueness_ratio: 0.063
+  distinct_values: 5
+  total_non_null: 79
+  common_values:
+  - value: Netherlands
+    count: 22
+  - value: Germany
+    count: 21
+  - value: France
+    count: 15
+- database: eurostyle_operational
+  table: european_geography
+  column: timezone
+  uniqueness_ratio: 0.063
+  distinct_values: 5
+  total_non_null: 79
+  common_values:
+  - value: Europe/Amsterdam
+    count: 22
+  - value: Europe/Berlin
+    count: 21
+  - value: Europe/Brussels
+    count: 15
+- database: eurostyle_operational
+  table: european_geography
+  column: competition_density
+  uniqueness_ratio: 0.038
+  distinct_values: 3
+  total_non_null: 79
+  common_values:
+  - value: low
+    count: 36
+  - value: medium
+    count: 25
+  - value: high
+    count: 18
+- database: eurostyle_operational
+  table: fashion_calendar
+  column: country_code
+  uniqueness_ratio: 0.044
+  distinct_values: 5
+  total_non_null: 114
+  common_values:
+  - value: DE
+    count: 24
+  - value: FR
+    count: 24
+  - value: BE
+    count: 23
+- database: eurostyle_operational
+  table: fashion_calendar
+  column: event_type
+  uniqueness_ratio: 0.026
+  distinct_values: 3
+  total_non_null: 114
+  common_values:
+  - value: shopping-holiday
+    count: 75
+  - value: fashion-event
+    count: 20
+  - value: cultural-holiday
+    count: 19
+- database: eurostyle_operational
+  table: fashion_calendar
+  column: impact_level
+  uniqueness_ratio: 0.026
+  distinct_values: 3
+  total_non_null: 114
+  common_values:
+  - value: high
+    count: 68
+  - value: medium
+    count: 33
+  - value: low
+    count: 13
+- database: eurostyle_operational
+  table: fashion_calendar
+  column: fashion_season
+  uniqueness_ratio: 0.035
+  distinct_values: 4
+  total_non_null: 114
+  common_values:
+  - value: Fall/Winter 2025
+    count: 40
+  - value: Fall/Winter 2024
+    count: 35
+  - value: Spring/Summer 2025
+    count: 31
+- database: eurostyle_operational
+  table: fashion_calendar
+  column: collection_phase
+  uniqueness_ratio: 0.035
+  distinct_values: 4
+  total_non_null: 114
+  common_values:
+  - value: launch
+    count: 43
+  - value: peak
+    count: 42
+  - value: clearance
+    count: 15
+- database: eurostyle_operational
+  table: inventory
+  column: store_id
+  uniqueness_ratio: 0.003
+  distinct_values: 3
+  total_non_null: 1200
+  common_values:
+  - value: STORE_BE_013
+    count: 447
+  - value: STORE_DE_004
+    count: 440
+  - value: STORE_BE_014
+    count: 313
+- database: eurostyle_operational
+  table: inventory
+  column: location_type
+  uniqueness_ratio: 0.002
+  distinct_values: 2
+  total_non_null: 1200
+  common_values:
+  - value: store
+    count: 1141
+  - value: warehouse
+    count: 59
+- database: eurostyle_operational
+  table: inventory
+  column: last_movement_type
+  uniqueness_ratio: 0.004
+  distinct_values: 5
+  total_non_null: 1200
+  common_values:
+  - value: receipt
+    count: 260
+  - value: adjustment
+    count: 246
+  - value: transfer
+    count: 238
+- database: eurostyle_operational
+  table: inventory
+  column: season
+  uniqueness_ratio: 0.003
+  distinct_values: 4
+  total_non_null: 1200
+  common_values:
+  - value: Fall/Winter 2025
+    count: 323
+  - value: Spring/Summer 2024
+    count: 311
+  - value: Fall/Winter 2024
+    count: 296
+- database: eurostyle_operational
+  table: order_lines
+  column: fulfillment_status
+  uniqueness_ratio: 0.001
+  distinct_values: 2
+  total_non_null: 3390
+  common_values:
+  - value: fulfilled
+    count: 3145
+  - value: returned
+    count: 245
+- database: eurostyle_operational
+  table: order_lines
+  column: return_reason
+  uniqueness_ratio: 0.02
+  distinct_values: 5
+  total_non_null: 245
+  common_values:
+  - value: changed_mind
+    count: 53
+  - value: wrong_color
+    count: 52
+  - value: not_as_expected
+    count: 52
+- database: eurostyle_operational
+  table: orders
+  column: currency_code
+  uniqueness_ratio: 0.003
+  distinct_values: 1
+  total_non_null: 400
+  common_values:
+  - value: EUR
+    count: 400
+- database: eurostyle_operational
+  table: orders
+  column: order_status
+  uniqueness_ratio: 0.01
+  distinct_values: 4
+  total_non_null: 400
+  common_values:
+  - value: delivered
+    count: 160
+  - value: shipped
+    count: 86
+  - value: processing
+    count: 82
+- database: eurostyle_operational
+  table: orders
+  column: order_channel
+  uniqueness_ratio: 0.005
+  distinct_values: 2
+  total_non_null: 400
+  common_values:
+  - value: in-store
+    count: 315
+  - value: online
+    count: 85
+- database: eurostyle_operational
+  table: orders
+  column: payment_method
+  uniqueness_ratio: 0.013
+  distinct_values: 5
+  total_non_null: 400
+  common_values:
+  - value: ideal
+    count: 104
+  - value: paypal
+    count: 99
+  - value: klarna
+    count: 97
+- database: eurostyle_operational
+  table: orders
+  column: payment_status
+  uniqueness_ratio: 0.003
+  distinct_values: 1
+  total_non_null: 400
+  common_values:
+  - value: completed
+    count: 400
+- database: eurostyle_operational
+  table: products
+  column: category_l1
+  uniqueness_ratio: 0.03
+  distinct_values: 3
+  total_non_null: 100
+  common_values:
+  - value: Kids
+    count: 39
+  - value: Women
+    count: 35
+  - value: Men
+    count: 26
+- database: eurostyle_operational
+  table: products
+  column: category_l2
+  uniqueness_ratio: 0.04
+  distinct_values: 4
+  total_non_null: 100
+  common_values:
+  - value: Tops
+    count: 40
+  - value: Bottoms
+    count: 26
+  - value: Dresses
+    count: 21
+- database: eurostyle_operational
+  table: products
+  column: brand
+  uniqueness_ratio: 0.01
+  distinct_values: 1
+  total_non_null: 100
+  common_values:
+  - value: EuroStyle
+    count: 100
+- database: eurostyle_operational
+  table: products
+  column: production_country
+  uniqueness_ratio: 0.05
+  distinct_values: 5
+  total_non_null: 100
+  common_values:
+  - value: IT
+    count: 25
+  - value: FR
+    count: 21
+  - value: PT
+    count: 20
+- database: eurostyle_operational
+  table: products
+  column: season
+  uniqueness_ratio: 0.07
+  distinct_values: 7
+  total_non_null: 100
+  common_values:
+  - value: Spring/Summer 2025
+    count: 31
+  - value: Fall/Winter 2024
+    count: 30
+  - value: Spring/Summer 2024
+    count: 29
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: journal_type
+  uniqueness_ratio: 0.003
+  distinct_values: 1
+  total_non_null: 400
+  common_values:
+  - value: SALES
+    count: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: currency_code
+  uniqueness_ratio: 0.003
+  distinct_values: 1
+  total_non_null: 400
+  common_values:
+  - value: EUR
+    count: 400
+- database: eurostyle_finance
+  table: gl_journal_headers
+  column: created_by
+  uniqueness_ratio: 0.003
+  distinct_values: 1
+  total_non_null: 400
+  common_values:
+  - value: SYSTEM
+    count: 400
+- database: eurostyle_finance
+  table: gl_journal_lines
+  column: account_id
+  uniqueness_ratio: 0.002
+  distinct_values: 9
+  total_non_null: 4621
+  common_values:
+  - value: '4000'
+    count: 1200
+  - value: '6100'
+    count: 1020
+  - value: '2201'
+    count: 700
+- database: eurostyle_finance
+  table: gl_journal_lines
+  column: currency_code
+  uniqueness_ratio: 0.0
+  distinct_values: 1
+  total_non_null: 4621
+  common_values:
+  - value: EUR
+    count: 4621
+- database: eurostyle_hr
+  table: employees
+  column: entity_id
+  uniqueness_ratio: 0.05
+  distinct_values: 5
+  total_non_null: 100
+  common_values:
+  - value: ENTITY_NL_RETAIL
+    count: 24
+  - value: ENTITY_FR_RETAIL
+    count: 23
+  - value: ENTITY_DE_RETAIL
+    count: 23
+- database: eurostyle_hr
+  table: employees
+  column: nationality
+  uniqueness_ratio: 0.04
+  distinct_values: 4
+  total_non_null: 100
+  common_values:
+  - value: NL
+    count: 31
+  - value: DE
+    count: 23
+  - value: BE
+    count: 23
+- database: eurostyle_webshop
+  table: page_views
+  column: country_code
+  uniqueness_ratio: 0.0
+  distinct_values: 5
+  total_non_null: 33253
+  common_values:
+  - value: DE
+    count: 11562
+  - value: NL
+    count: 7440
+  - value: FR
+    count: 7238
+- database: eurostyle_webshop
+  table: page_views
+  column: page_type
+  uniqueness_ratio: 0.0
+  distinct_values: 6
+  total_non_null: 33253
+  common_values:
+  - value: product
+    count: 15801
+  - value: category
+    count: 5874
+  - value: account
+    count: 4004
+- database: eurostyle_webshop
+  table: page_views
+  column: category_l1
+  uniqueness_ratio: 0.0
+  distinct_values: 4
+  total_non_null: 19758
+  common_values:
+  - value: Women
+    count: 7561
+  - value: Men
+    count: 6427
+  - value: Kids
+    count: 4269
+- database: eurostyle_webshop
+  table: page_views
+  column: category_l2
+  uniqueness_ratio: 0.0
+  distinct_values: 7
+  total_non_null: 15801
+  common_values:
+  - value: Tops
+    count: 4750
+  - value: Bottoms
+    count: 4474
+  - value: Outerwear
+    count: 3264
+- database: eurostyle_webshop
+  table: web_sessions
+  column: country_code
+  uniqueness_ratio: 0.002
+  distinct_values: 4
+  total_non_null: 2500
+  common_values:
+  - value: NL
+    count: 651
+  - value: FR
+    count: 647
+  - value: BE
+    count: 602
+- database: eurostyle_webshop
+  table: web_sessions
+  column: device_type
+  uniqueness_ratio: 0.001
+  distinct_values: 3
+  total_non_null: 2500
+  common_values:
+  - value: desktop
+    count: 914
+  - value: mobile
+    count: 884
+  - value: tablet
+    count: 702
+- database: eurostyle_webshop
+  table: web_sessions
+  column: browser
+  uniqueness_ratio: 0.002
+  distinct_values: 4
+  total_non_null: 2500
+  common_values:
+  - value: Edge
+    count: 649
+  - value: Safari
+    count: 643
+  - value: Firefox
+    count: 633
+- database: eurostyle_webshop
+  table: web_sessions
+  column: operating_system
+  uniqueness_ratio: 0.002
+  distinct_values: 4
+  total_non_null: 2000
+  common_values:
+  - value: iOS
+    count: 536
+  - value: Windows
+    count: 519
+  - value: Android
+    count: 473
+- database: eurostyle_webshop
+  table: web_sessions
+  column: utm_source
+  uniqueness_ratio: 0.003
+  distinct_values: 4
+  total_non_null: 1583
+  common_values:
+  - value: email
+    count: 427
+  - value: google
+    count: 408
+  - value: direct
+    count: 385
+- database: eurostyle_webshop
+  table: web_sessions
+  column: utm_medium
+  uniqueness_ratio: 0.003
+  distinct_values: 4
+  total_non_null: 1565
+  common_values:
+  - value: organic
+    count: 438
+  - value: cpc
+    count: 402
+  - value: email
+    count: 378
+- database: eurostyle_webshop
+  table: web_sessions
+  column: utm_campaign
+  uniqueness_ratio: 0.002
+  distinct_values: 3
+  total_non_null: 1518
+  common_values:
+  - value: retargeting
+    count: 536
+  - value: newsletter
+    count: 508
+  - value: spring-sale
+    count: 474
+- database: eurostyle_webshop
+  table: web_sessions
+  column: landing_page
+  uniqueness_ratio: 0.002
+  distinct_values: 4
+  total_non_null: 2000
+  common_values:
+  - value: /sale
+    count: 539
+  - value: /new-arrivals
+    count: 503
+  - value: /products
+    count: 487
+- database: eurostyle_webshop
+  table: web_sessions
+  column: exit_page
+  uniqueness_ratio: 0.002
+  distinct_values: 4
+  total_non_null: 2000
+  common_values:
+  - value: /checkout
+    count: 522
+  - value: /products
+    count: 511
+  - value: /cart
+    count: 488
+- database: eurostyle_webshop
+  table: web_sessions
+  column: user_agent
+  uniqueness_ratio: 0.001
+  distinct_values: 1
+  total_non_null: 2000
+  common_values:
+  - value: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+    count: 2000
+- database: eurostyle_pos
+  table: discounts
+  column: discount_type
+  uniqueness_ratio: 0.076
+  distinct_values: 8
+  total_non_null: 105
+  common_values:
+  - value: SENIOR_DISCOUNT
+    count: 20
+  - value: CLEARANCE_DISCOUNT
+    count: 20
+  - value: LOYALTY_DISCOUNT
+    count: 18
+- database: eurostyle_pos
+  table: employee_shifts
+  column: store_id
+  uniqueness_ratio: 0.005
+  distinct_values: 3
+  total_non_null: 658
+  common_values:
+  - value: STORE_NL_002
+    count: 346
+  - value: STORE_NL_003
+    count: 164
+  - value: STORE_NL_001
+    count: 148
+- database: eurostyle_pos
+  table: payments
+  column: payment_method
+  uniqueness_ratio: 0.006
+  distinct_values: 4
+  total_non_null: 723
+  common_values:
+  - value: DEBIT_CARD
+    count: 376
+  - value: CREDIT_CARD
+    count: 184
+  - value: CASH
+    count: 95
+- database: eurostyle_pos
+  table: payments
+  column: payment_status
+  uniqueness_ratio: 0.001
+  distinct_values: 1
+  total_non_null: 723
+  common_values:
+  - value: APPROVED
+    count: 723
+- database: eurostyle_pos
+  table: transactions
+  column: store_id
+  uniqueness_ratio: 0.004
+  distinct_values: 3
+  total_non_null: 700
+  common_values:
+  - value: STORE_NL_002
+    count: 364
+  - value: STORE_NL_003
+    count: 182
+  - value: STORE_NL_001
+    count: 154
+- database: eurostyle_pos
+  table: transactions
+  column: transaction_type
+  uniqueness_ratio: 0.006
+  distinct_values: 4
+  total_non_null: 700
+  common_values:
+  - value: sale
+    count: 647
+  - value: exchange
+    count: 23
+  - value: return
+    count: 23
+- database: eurostyle_pos
+  table: transactions
+  column: payment_method
+  uniqueness_ratio: 0.004
+  distinct_values: 3
+  total_non_null: 700
+  common_values:
+  - value: card_payment
+    count: 427
+  - value: mobile_payment
+    count: 164
+  - value: cash
+    count: 109
+- database: eurostyle_pos
+  table: transactions
+  column: payment_status
+  uniqueness_ratio: 0.004
+  distinct_values: 3
+  total_non_null: 700
+  common_values:
+  - value: completed
+    count: 658
+  - value: pending
+    count: 22
+  - value: failed
+    count: 20
+missing_data_patterns:
+- type: missing_column
+  database: eurostyle_operational
+  table: products
+  column: stock_quantity
+  description: Expected business column stock_quantity not found
+- type: missing_column
+  database: eurostyle_finance
+  table: gl_journal_headers
+  column: transaction_date
+  description: Expected business column transaction_date not found
+- type: missing_column
+  database: eurostyle_finance
+  table: gl_journal_headers
+  column: total_amount
+  description: Expected business column total_amount not found
+- type: missing_column
+  database: eurostyle_hr
+  table: employees
+  column: annual_salary_eur
+  description: Expected business column annual_salary_eur not found
+- type: missing_column
+  database: eurostyle_webshop
+  table: page_views
+  column: timestamp
+  description: Expected business column timestamp not found
+cross_database_issues: []
+summary_stats:
+  total_databases: 5
+  total_tables: 64
+  total_rows: 58568
+  empty_tables: 31
+  empty_columns: 81
+  poor_distribution_columns: 58
+  missing_business_patterns: 5

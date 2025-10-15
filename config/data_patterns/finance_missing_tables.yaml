@@ -1,0 +1,225 @@
+# Finance Missing Tables Data Patterns
+# ===================================
+# WARP.md-compliant configuration for populating critical missing finance tables
+# Following rule: "All database schemas must be defined in YAML configuration files"
+
+database: eurostyle_finance
+
+# Chart of Accounts - Complete GL Structure
+chart_of_accounts:
+  generation_rules:
+    pattern_type: "structured_financial"
+    total_records: 16
+  
+  data_patterns:
+    assets:
+      - account_id: "1000"
+        account_code: "1000" 
+        account_name: "Cash and Cash Equivalents"
+        account_type: "ASSET"
+        account_subtype: "CURRENT_ASSET"
+        normal_balance: "DEBIT"
+        account_category: "ASSETS"
+        ifrs_classification: "CASH_EQUIVALENTS"
+        
+      - account_id: "1100"
+        account_code: "1100"
+        account_name: "Accounts Receivable" 
+        account_type: "ASSET"
+        account_subtype: "CURRENT_ASSET"
+        normal_balance: "DEBIT"
+        account_category: "ASSETS"
+        ifrs_classification: "TRADE_RECEIVABLES"
+        
+      - account_id: "1200"
+        account_code: "1200"
+        account_name: "Inventory"
+        account_type: "ASSET"
+        account_subtype: "CURRENT_ASSET"
+        normal_balance: "DEBIT"
+        account_category: "ASSETS"
+        ifrs_classification: "INVENTORIES"
+        
+      - account_id: "1500"
+        account_code: "1500"
+        account_name: "Fixed Assets"
+        account_type: "ASSET"
+        account_subtype: "NON_CURRENT_ASSET"
+        normal_balance: "DEBIT"
+        account_category: "ASSETS"
+        ifrs_classification: "PROPERTY_EQUIPMENT"
+    
+    liabilities:
+      - account_id: "2000"
+        account_code: "2000"
+        account_name: "Accounts Payable"
+        account_type: "LIABILITY"
+        account_subtype: "CURRENT_LIABILITY"
+        normal_balance: "CREDIT"
+        account_category: "LIABILITIES"
+        ifrs_classification: "TRADE_PAYABLES"
+        
+      - account_id: "2100"
+        account_code: "2100"
+        account_name: "Tax Payable"
+        account_type: "LIABILITY"
+        account_subtype: "CURRENT_LIABILITY"
+        normal_balance: "CREDIT"
+        account_category: "LIABILITIES"
+        ifrs_classification: "TAX_LIABILITIES"
+        
+    equity:
+      - account_id: "3000"
+        account_code: "3000"
+        account_name: "Share Capital"
+        account_type: "EQUITY"
+        account_subtype: "EQUITY"
+        normal_balance: "CREDIT"
+        account_category: "EQUITY"
+        ifrs_classification: "SHARE_CAPITAL"
+        
+    revenue:
+      - account_id: "4000"
+        account_code: "4000"
+        account_name: "Sales Revenue"
+        account_type: "REVENUE"
+        account_subtype: "OPERATING_REVENUE"
+        normal_balance: "CREDIT"
+        account_category: "REVENUE"
+        ifrs_classification: "REVENUE"
+        
+    expenses:
+      - account_id: "5000"
+        account_code: "5000"
+        account_name: "Cost of Goods Sold"
+        account_type: "EXPENSE"
+        account_subtype: "OPERATING_EXPENSE"
+        normal_balance: "DEBIT"
+        account_category: "EXPENSES"
+        ifrs_classification: "COST_OF_SALES"
+        
+      - account_id: "5100"
+        account_code: "5100"
+        account_name: "Salaries and Wages"
+        account_type: "EXPENSE"
+        account_subtype: "OPERATING_EXPENSE"
+        normal_balance: "DEBIT"
+        account_category: "EXPENSES"
+        ifrs_classification: "EMPLOYEE_BENEFITS"
+
+# Currencies - European Focus
+currencies:
+  generation_rules:
+    pattern_type: "european_currencies"
+    total_records: 5
+    
+  data_patterns:
+    - currency_code: "EUR"
+      currency_name: "Euro"
+      currency_symbol: "€"
+      decimal_places: 2
+      is_base_currency: true
+      
+    - currency_code: "USD"
+      currency_name: "US Dollar"
+      currency_symbol: "$"
+      decimal_places: 2
+      is_base_currency: false
+      
+    - currency_code: "GBP"
+      currency_name: "British Pound"
+      currency_symbol: "£"
+      decimal_places: 2
+      is_base_currency: false
+      
+    - currency_code: "CHF"
+      currency_name: "Swiss Franc"
+      currency_symbol: "CHF"
+      decimal_places: 2
+      is_base_currency: false
+      
+    - currency_code: "SEK"
+      currency_name: "Swedish Krona"
+      currency_symbol: "SEK"
+      decimal_places: 2
+      is_base_currency: false
+
+# Exchange Rates - Realistic Historical Data
+exchange_rates:
+  generation_rules:
+    pattern_type: "historical_rates"
+    base_currency: "EUR"
+    date_range: 
+      start: "2024-01-01"
+      end: "2024-10-14"
+    frequency: "monthly"
+    
+  data_patterns:
+    USD_EUR:
+      base_currency: "USD"
+      target_currency: "EUR" 
+      rate_type: "SPOT"
+      data_source: "ECB"
+      historical_rates:
+        - date: "2024-01-01"
+          rate: 0.85
+        - date: "2024-10-01"
+          rate: 0.91
+          
+    GBP_EUR:
+      base_currency: "GBP"
+      target_currency: "EUR"
+      rate_type: "SPOT"
+      data_source: "ECB"
+      historical_rates:
+        - date: "2024-01-01"
+          rate: 1.15
+        - date: "2024-10-01"
+          rate: 1.19
+
+# Cost Centers - Department Structure
+cost_centers:
+  generation_rules:
+    pattern_type: "departmental_structure"
+    total_records: 8
+    assign_managers: true
+    entity_mapping: "auto_detect"
+    
+  data_patterns:
+    profit_centers:
+      - cost_center_id: "CC_SALES_NL"
+        cost_center_code: "CC_SALES_NL"
+        cost_center_name: "Sales Netherlands"
+        cost_center_type: "PROFIT_CENTER"
+        department: "Sales"
+        
+      - cost_center_id: "CC_SALES_DE"
+        cost_center_code: "CC_SALES_DE"
+        cost_center_name: "Sales Germany"
+        cost_center_type: "PROFIT_CENTER"
+        department: "Sales"
+        
+      - cost_center_id: "CC_SALES_FR"
+        cost_center_code: "CC_SALES_FR"
+        cost_center_name: "Sales France"
+        cost_center_type: "PROFIT_CENTER"
+        department: "Sales"
+        
+    cost_centers:
+      - cost_center_id: "CC_MARKETING"
+        cost_center_code: "CC_MARKETING"
+        cost_center_name: "Marketing Department"
+        cost_center_type: "COST_CENTER"
+        department: "Marketing"
+        
+      - cost_center_id: "CC_IT"
+        cost_center_code: "CC_IT"
+        cost_center_name: "Information Technology"
+        cost_center_type: "COST_CENTER"
+        department: "Technology"
+        
+      - cost_center_id: "CC_HR"
+        cost_center_code: "CC_HR"
+        cost_center_name: "Human Resources"
+        cost_center_type: "COST_CENTER"
+        department: "Human Resources"

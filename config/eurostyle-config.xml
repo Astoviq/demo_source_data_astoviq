@@ -11,7 +11,9 @@
     </logger>
 
     <!-- Memory and performance settings for demo environment -->
-    <max_server_memory_usage>4000000000</max_server_memory_usage>
+    <!-- Increased from 4GB to 8GB to handle larger datasets and prevent memory errors -->
+    <max_server_memory_usage>8000000000</max_server_memory_usage>
+    <!-- User-level memory settings moved to users.xml -->
     <max_concurrent_queries>50</max_concurrent_queries>
     
     <!-- Connection settings -->
