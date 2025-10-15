@@ -11,7 +11,7 @@ A comprehensive European fashion retail demo system built on ClickHouse with **p
 - **Geographic Coverage**: Netherlands 🇳🇱, Belgium 🇧🇪, Germany 🇩🇪, France 🇫🇷
 - **Business Model**: Fast-fashion with sustainability focus
 - **Multi-Database Architecture**: 5 integrated databases with guaranteed consistency
-- **Data Volume**: 50K customers, 2.5K products, 5K orders, 37K+ POS transactions with perfect GL matching
+- **Data Volume**: 78K+ total records across 5 databases with perfect GL matching and cross-system consistency
 - **Realistic Patterns**: Seasonal trends, geographic distribution, European market behavior, VAT compliance
 - **🎯 NEW**: Universal Data Generator with POS integration ensuring perfect revenue consistency
 
@@ -22,34 +22,42 @@ A comprehensive European fashion retail demo system built on ClickHouse with **p
 The system uses ClickHouse with **5 integrated databases** ensuring perfect consistency:
 
 ```yaml
-eurostyle_operational:  # Core ERP System
-  - customers      # 50K European customers with GDPR compliance
-  - products       # 2.5K fashion items with sustainability metrics
-  - stores         # 58 physical locations across 4 countries
-  - orders         # 5K orders with perfect GL revenue matching
-  - order_lines    # Generated order items with return tracking
-  - inventory      # Real-time stock levels across all locations
+eurostyle_operational:  # Core ERP System (26,764 records)
+  - customers      # 1,070+ European customers with GDPR compliance
+  - products       # 530+ fashion items with sustainability metrics
+  - stores         # 35 physical locations across 4 countries
+  - orders         # 600+ orders with perfect GL revenue matching
+  - order_lines    # 1,068+ order items with return tracking
+  - inventory      # 23,409+ real-time stock levels across all locations
 
-eurostyle_finance:      # Financial Management System  
+eurostyle_finance:      # Financial Management System (13,718 records)
   - legal_entities      # 5 European business entities
-  - gl_journal_headers  # 5K journal headers matching orders
-  - gl_journal_lines    # 25K+ GL entries with perfect revenue sync
-  - chart_of_accounts   # IFRS-compliant account structure
+  - gl_journal_headers  # 600+ journal headers matching orders
+  - gl_journal_lines    # 10,836+ GL entries with perfect revenue sync
+  - chart_of_accounts   # 26 IFRS-compliant account structure
+  - cost_centers        # 15 cost center management
+  - fixed_assets        # 100+ asset management with depreciation
 
-eurostyle_hr:           # Human Resources System
-  - employees      # 830 employees with payroll GL integration
-  - departments    # Organizational structure
-  - performance    # Reviews and development tracking
+eurostyle_hr:           # Human Resources System (11,163 records)
+  - employees      # 320+ employees with payroll GL integration
+  - departments    # 5 organizational departments
+  - performance_reviews # 1,828+ performance reviews and cycles
+  - training_programs   # 108+ training programs with 1,863+ records
+  - survey_responses    # 4,510+ employee engagement responses
 
-eurostyle_webshop:      # Digital Analytics System
-  - web_sessions   # 25K customer journey sessions
-  - page_views     # Behavioral tracking and analytics
-  - cart_activities # Shopping behavior analysis
+eurostyle_webshop:      # Digital Analytics System (20,279 records)
+  - web_sessions        # 3,000+ customer journey sessions
+  - web_analytics_events # 7,500+ behavioral tracking events
+  - product_reviews     # 500+ customer reviews and ratings
+  - search_queries      # 2,400+ search behavior analysis
+  - cart_activities     # 2,000+ shopping cart behavior
+  - product_recommendations # 3,000+ AI-powered recommendations
   
-eurostyle_pos:          # Point of Sales System
-  - transactions   # 37K+ POS transactions with VAT compliance
-  - transaction_items # Line-level transaction details
-  - employee_assignments # HR-POS staff integration
+eurostyle_pos:          # Point of Sales System (7,359 records)
+  - transactions   # 1,750+ POS transactions with VAT compliance
+  - transaction_items # 1,750+ line-level transaction details
+  - payments       # 1,833+ payment method tracking
+  - employee_shifts # 1,675+ HR-POS staff integration
 ```
 
 ### Container Configuration

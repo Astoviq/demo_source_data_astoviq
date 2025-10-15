@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     
     ports:
-      - "${CLICKHOUSE_HTTP_PORT:-8124}:8123"  # HTTP interface (isolated from production 8123)
-      - "${CLICKHOUSE_NATIVE_PORT:-9002}:9000"  # Native interface (isolated from production 9000/9001)
+      - "${CLICKHOUSE_HTTP_PORT:-8124}:8123"  # HTTP interface - EuroStyle Retail Demo
+      - "${CLICKHOUSE_NATIVE_PORT:-9002}:9000"  # Native interface - EuroStyle Retail Demo
     
     volumes:
       # Database initialization

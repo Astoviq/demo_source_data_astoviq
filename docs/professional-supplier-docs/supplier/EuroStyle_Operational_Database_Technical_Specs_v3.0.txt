@@ -1,0 +1,269 @@
+================================================================================
+                         EUROSTYLE OPERATIONAL SYSTEM v3.0
+                            TECHNICAL SPECIFICATIONS
+================================================================================
+
+SUPPLIER: TechFlow Analytics B.V.
+PRODUCT: EuroStyle Operational Management System
+VERSION: v3.0
+DATABASE: eurostyle_operational
+PUBLICATION DATE: October 15, 2024
+DOCUMENT CLASSIFICATION: Technical Specification - Customer Integration
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+The EuroStyle Operational Management System provides comprehensive enterprise
+resource planning for fashion retail operations across Europe. Built on modern
+ClickHouse columnar database technology, the system handles high-volume
+operational data with real-time analytics capabilities.
+
+CORE CAPABILITIES:
+- Customer lifecycle management (1070+ active customers)
+- Product catalog management (530+ fashion products)  
+- Order processing and fulfillment (600+ orders)
+- Multi-location inventory tracking (23,409+ inventory records)
+- Store operations management (35 store locations)
+- Campaign management and marketing automation
+- European geography and fashion calendar integration
+
+================================================================================
+                               DATABASE SCHEMA
+================================================================================
+
+DATABASE NAME: eurostyle_operational
+TABLES: 10 operational tables
+TOTAL RECORDS: 26,764 (as of October 15, 2024)
+ENGINE: ClickHouse MergeTree() with optimized sorting keys
+
+TABLE SPECIFICATIONS:
+
+1. CUSTOMERS (1,070 records)
+   Primary Key: customer_id
+   Engine: MergeTree() ORDER BY customer_id
+   Description: Complete customer master data with European GDPR compliance
+   Key Fields: customer_id, first_name, last_name, email, country, loyalty_tier
+
+2. PRODUCTS (530 records)
+   Primary Key: product_id
+   Engine: MergeTree() ORDER BY product_id  
+   Description: Fashion product catalog with seasonal and pricing information
+   Key Fields: product_id, name, category, brand, price_eur, season
+
+3. ORDERS (600 records)
+   Primary Key: order_id
+   Engine: MergeTree() ORDER BY order_id
+   Description: Customer orders with complete lifecycle tracking
+   Key Fields: order_id, customer_id, order_date, status, total_amount_eur
+
+4. ORDER_LINES (1,068 records)
+   Primary Key: order_line_id
+   Engine: MergeTree() ORDER BY order_line_id
+   Description: Individual line items for each order
+   Key Fields: order_line_id, order_id, product_id, quantity, unit_price_eur
+
+5. INVENTORY (23,409 records)
+   Primary Key: inventory_id
+   Engine: MergeTree() ORDER BY inventory_id
+   Description: Real-time inventory tracking across all store locations
+   Key Fields: inventory_id, product_id, store_id, quantity_available, last_updated
+
+6. STORES (35 records)
+   Primary Key: store_id
+   Engine: MergeTree() ORDER BY store_id
+   Description: Store location master data with operational information
+   Key Fields: store_id, store_name, country, city, store_type, opening_date
+
+7. CAMPAIGNS (4 records)
+   Primary Key: campaign_id
+   Engine: MergeTree() ORDER BY campaign_id
+   Description: Marketing campaigns and promotional activities
+   Key Fields: campaign_id, campaign_name, start_date, end_date, budget_eur
+
+8. EUROPEAN_GEOGRAPHY (23 records)
+   Primary Key: country_code
+   Engine: MergeTree() ORDER BY country_code
+   Description: European country and region reference data
+   Key Fields: country_code, country_name, currency_code, vat_rate
+
+9. FASHION_CALENDAR (25 records)
+   Primary Key: calendar_id
+   Engine: MergeTree() ORDER BY calendar_id
+   Description: Fashion industry calendar events and seasonal markers
+   Key Fields: calendar_id, event_name, event_date, season, importance
+
+10. CUSTOMER_360_VIEW (Materialized View)
+    Description: Real-time customer analytics view combining orders, preferences
+    Source: Joins customers, orders, order_lines tables
+    Refresh: Real-time via ClickHouse materialized view technology
+
+================================================================================
+                              DATA RELATIONSHIPS
+================================================================================
+
+FOREIGN KEY RELATIONSHIPS:
+- orders.customer_id → customers.customer_id
+- order_lines.order_id → orders.order_id  
+- order_lines.product_id → products.product_id
+- inventory.product_id → products.product_id
+- inventory.store_id → stores.store_id
+- customers.country → european_geography.country_code
+
+CROSS-DATABASE INTEGRATIONS:
+- orders integrate with eurostyle_finance.gl_journal_headers (perfect revenue match)
+- customers integrate with eurostyle_hr for employee customer relationships
+- inventory integrates with eurostyle_pos for real-time stock updates
+
+================================================================================
+                           TECHNICAL ARCHITECTURE
+================================================================================
+
+DATABASE TECHNOLOGY:
+- Engine: ClickHouse 23.12
+- Architecture: Columnar storage optimized for analytics
+- Deployment: Docker containerized with persistent storage
+- Performance: Sub-second query response for business intelligence
+
+CONNECTION DETAILS:
+- HTTP Interface: localhost:8124
+- Native Interface: localhost:9002  
+- Container: eurostyle_clickhouse_retail
+- Network: eurostyle_retail_network
+
+SCALING CHARACTERISTICS:
+- Current Load: 26,764 operational records
+- Query Performance: <100ms for standard reports
+- Storage: Compressed columnar format (~70% space savings)
+- Concurrent Users: Supports 100+ simultaneous connections
+
+================================================================================
+                              API CAPABILITIES
+================================================================================
+
+REST API ENDPOINTS:
+GET /api/v3/customers - Customer master data with filtering
+GET /api/v3/products - Product catalog with search capabilities
+GET /api/v3/orders - Order management and tracking
+POST /api/v3/orders - Create new customer orders
+GET /api/v3/inventory - Real-time inventory status
+GET /api/v3/stores - Store location and operational data
+
+AUTHENTICATION:
+- Method: OAuth 2.0 Bearer Token
+- Scopes: read:operations, write:operations, admin:operations
+- Rate Limiting: 1000 requests/hour per API key
+
+DATA FORMATS:
+- Primary: JSON (application/json)
+- Export: CSV (text/csv) for bulk operations
+- Legacy: XML (application/xml) for B2B integration
+
+================================================================================
+                              DATA QUALITY METRICS
+================================================================================
+
+DATA CONSISTENCY:
+- Order Revenue Match: 100% consistency with Finance GL
+- Foreign Key Integrity: 100% (all relationships validated)
+- Data Completeness: 99.8% (minimal null values in required fields)
+- Update Frequency: Real-time for orders, daily batch for inventory
+
+PERFORMANCE METRICS:
+- Average Query Time: 45ms
+- Peak Transaction Volume: 500 orders/hour
+- Data Growth Rate: ~200 records/day
+- System Availability: 99.95% uptime SLA
+
+================================================================================
+                           COMPLIANCE & SECURITY
+================================================================================
+
+GDPR COMPLIANCE:
+- Personal Data: Customer names, emails encrypted at rest
+- Data Retention: Configurable retention policies
+- Right to Erasure: Automated customer data deletion capability
+- Audit Trail: Complete access logging for personal data
+
+SECURITY FEATURES:
+- Encryption: AES-256 encryption at rest
+- Network Security: TLS 1.3 for all API communications
+- Access Control: Role-based permissions with audit logging
+- Backup: Daily automated backups with 30-day retention
+
+================================================================================
+                              INTEGRATION GUIDE
+================================================================================
+
+TYPICAL INTEGRATION PATTERNS:
+
+1. REAL-TIME ORDER PROCESSING:
+   - POST new orders via REST API
+   - Real-time inventory updates
+   - Automatic GL journal entry creation
+
+2. BATCH DATA SYNCHRONIZATION:
+   - Nightly product catalog updates
+   - Daily inventory reconciliation
+   - Weekly customer data enrichment
+
+3. REPORTING & ANALYTICS:
+   - Business intelligence queries via SQL
+   - Real-time dashboards via REST API
+   - Automated report generation
+
+SAMPLE INTEGRATION CODE:
+```bash
+# Customer lookup
+curl -H "Authorization: Bearer TOKEN" \
+     "http://localhost:8124/api/v3/customers?country=NL&limit=100"
+
+# Create order
+curl -X POST -H "Authorization: Bearer TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"customer_id": "CUST_EU_000001", "items": [...]}' \
+     "http://localhost:8124/api/v3/orders"
+```
+
+================================================================================
+                            SUPPORT INFORMATION
+================================================================================
+
+TECHNICAL SUPPORT:
+- Company: TechFlow Analytics B.V.
+- Email: support@techflow-analytics.nl
+- Phone: +31 20 555 1234
+- Hours: 24/7 for critical issues, 9-17 CET for standard support
+
+DOCUMENTATION:
+- API Documentation: Available via Swagger/OpenAPI
+- Integration Guides: Comprehensive developer documentation
+- Sample Code: Available in multiple programming languages
+- Sandbox Environment: Full testing environment available
+
+MAINTENANCE WINDOWS:
+- Scheduled: Saturday 02:00-04:00 CET (monthly)
+- Emergency: As needed with 2-hour advance notice
+- Backup Windows: Daily 01:00-01:30 CET
+
+================================================================================
+                              DOCUMENT CONTROL
+================================================================================
+
+Document Version: v3.0
+Publication Date: October 15, 2024
+Document Type: Technical Specification
+Classification: Confidential - Customer Use Only
+Intended Audience: System Integrators, IT Architects, Developers
+
+Copyright: © 2024 TechFlow Analytics B.V. All rights reserved.
+This document contains proprietary and confidential information.
+
+REVISION HISTORY:
+- v3.0 (Oct 2024): Updated with current production schema and record counts
+- v2.1 (Sep 2024): Added cross-database integration specifications  
+- v2.0 (Aug 2024): Initial production release
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================

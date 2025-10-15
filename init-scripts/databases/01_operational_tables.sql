@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS campaigns (
     -- Campaign details
     campaign_type String,            -- product-launch, seasonal, clearance, brand-awareness
     channel String,                  -- email, social-media, google-ads, display, influencer
-    target_countries Array(String),  -- ['NL', 'BE', 'DE']
+    target_countries String,         -- Semi-colon delimited: 'NL; BE; DE'
     
     -- Timing
     start_date Date,

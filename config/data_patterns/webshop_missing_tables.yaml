@@ -245,6 +245,46 @@ ab_test_results:
         description: "Price presentation and discount visualization"
         typical_metrics: ["conversion_rate", "perceived_value"]
 
+# Page Views - Website Navigation Tracking
+page_views:
+  generation_rules:
+    pattern_type: "page_navigation_tracking"
+    total_records: 25000
+    pages_per_session: [1, 8]  # 1-8 pages per session
+    conversion_funnel_tracking: true
+    
+  data_patterns:
+    page_categories:
+      HOMEPAGE: 0.25
+      PRODUCT_LISTING: 0.30
+      PRODUCT_DETAIL: 0.20
+      CART: 0.08
+      CHECKOUT: 0.05
+      ACCOUNT: 0.07
+      SEARCH: 0.05
+      
+    conversion_funnel:
+      HOMEPAGE:
+        next_pages: ["PRODUCT_LISTING", "SEARCH", "ACCOUNT"]
+        weights: [0.60, 0.25, 0.15]
+        
+      PRODUCT_LISTING:
+        next_pages: ["PRODUCT_DETAIL", "SEARCH", "HOMEPAGE"]
+        weights: [0.70, 0.20, 0.10]
+        
+      PRODUCT_DETAIL:
+        next_pages: ["CART", "PRODUCT_LISTING", "HOMEPAGE"]
+        weights: [0.35, 0.45, 0.20]
+        
+      CART:
+        next_pages: ["CHECKOUT", "PRODUCT_LISTING", "HOMEPAGE"]
+        weights: [0.60, 0.25, 0.15]
+        
+    page_performance:
+      page_load_time_ms: [800, 3500]  # Page load time range
+      scroll_depth_percent: [10, 100]  # How far users scroll
+      view_duration_seconds: [10, 300]  # Time spent on page
+
 # Web Analytics Events - Detailed behavioral tracking
 web_analytics_events:
   generation_rules:

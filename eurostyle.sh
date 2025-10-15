@@ -338,22 +338,14 @@ cmd_demo_fast() {
     
     # Use Complete Data Generation for all tables
     echo -e "${YELLOW}🏗️ Generating complete data for all systems...${NC}"
+    # Call Universal Data Generator V2 directly - no fallbacks needed
     if bash scripts/generate-fast-complete-data.sh $($FORCE_FLAG && echo "--force" || echo ""); then
-        echo -e "${GREEN}✅ Complete Data Generator finished successfully${NC}"
+        echo -e "${GREEN}✅ Universal Data Generator V2 completed successfully${NC}"
         echo -e "${GREEN}🎯 All tables populated with consistent data across all databases${NC}"
     else
-        echo -e "${RED}❌ Complete Data Generation failed${NC}"
-        echo -e "${YELLOW}💡 Falling back to legacy data generator...${NC}"
-        
-        # Fallback to old system if Complete Data Generator fails
-        cd "$PROJECT_ROOT/data-generator"
-        if python3 generate_data.py --config config/fast_generation_config.yaml --verbose; then
-            echo -e "${GREEN}✅ Legacy data generation completed${NC}"
-        else
-            echo -e "${RED}❌ Both complete and legacy data generation failed${NC}"
-            exit 1
-        fi
-        cd "$PROJECT_ROOT"
+        echo -e "${RED}❌ Universal Data Generator V2 failed${NC}"
+        echo -e "${YELLOW}💡 Check logs and ensure all dependencies are properly configured${NC}"
+        exit 1
     fi
     
     echo -e "${GREEN}🎉 Fast demo data generated successfully!${NC}"
@@ -384,20 +376,14 @@ cmd_demo_full() {
     
     # Use Complete Data Generation for all tables
     echo -e "${YELLOW}🏗️ Generating complete data for all systems...${NC}"
+    # Call Universal Data Generator V2 directly - no fallbacks needed  
     if bash scripts/generate-full-complete-data.sh $($FORCE_FLAG && echo "--force" || echo ""); then
-        echo -e "${GREEN}✅ Complete Data Generator finished successfully${NC}"
+        echo -e "${GREEN}✅ Universal Data Generator V2 completed successfully${NC}"
         echo -e "${GREEN}🎯 All tables populated with consistent data across all databases${NC}"
     else
-        echo -e "${RED}❌ Complete Data Generation failed${NC}"
-        echo -e "${YELLOW}💡 Falling back to existing comprehensive generation...${NC}"
-        
-        # Fallback to existing comprehensive generation script
-        if [ -f "scripts/generate-demo-data.sh" ]; then
-            bash scripts/generate-demo-data.sh --system all $($FORCE_FLAG && echo "--force" || echo "")
-        else
-            echo -e "${RED}❌ No fallback generation script found${NC}"
-            exit 1
-        fi
+        echo -e "${RED}❌ Universal Data Generator V2 failed${NC}"
+        echo -e "${YELLOW}💡 Check logs and ensure all dependencies are properly configured${NC}"
+        exit 1
     fi
     
     echo -e "${GREEN}🎉 Full demo data generated successfully!${NC}"

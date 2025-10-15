@@ -4,16 +4,16 @@
 
 This document describes the complete, organized folder structure of the EuroStyle Fashion source system - a comprehensive multi-system data platform for European fashion retail operations.
 
-**Last Updated**: October 10, 2024  
-**Version**: 2.1  
-**Status**: Production Ready, Fully Portable & Redundancy-Free
+**Last Updated**: October 15, 2024  
+**Version**: 3.0  
+**Status**: Production Ready with Complete Webshop Analytics & Enhanced Documentation
 
 ---
 
 ## 🗂️ Root Directory Structure
 
 ```
-eurostyle-source/
+eurostyle-retail-demo/
 ├── 📋 PROJECT FILES
 │   ├── docker-compose.yml           # Docker orchestration configuration
 │   ├── README.md                    # Project documentation
@@ -42,10 +42,10 @@ eurostyle-source/
 ├── 📊 DATA & CSV FILES
 │   └── data/
 │       └── csv/                     # Flat CSV structure with consistent naming
-│           ├── eurostyle_operational.customers.csv.gz       # 50K European customers
-│           ├── eurostyle_operational.products.csv.gz        # 2.5K fashion items
-│           ├── eurostyle_operational.stores.csv.gz          # 58 retail locations
-│           ├── eurostyle_operational.orders.csv.gz          # 5K+ customer orders
+│           ├── eurostyle_operational.customers.csv.gz       # 1,070+ European customers
+│           ├── eurostyle_operational.products.csv.gz        # 530+ fashion items
+│           ├── eurostyle_operational.stores.csv.gz          # 35 retail locations
+│           ├── eurostyle_operational.orders.csv.gz          # 600+ customer orders
 │           ├── eurostyle_operational.order_lines.csv.gz     # Order line items
 │           │
 │           ├── eurostyle_finance.legal_entities.csv.gz      # European BV structure
@@ -53,16 +53,19 @@ eurostyle-source/
 │           ├── eurostyle_finance.gl_journal_lines.csv.gz    # GL transactions
 │           ├── eurostyle_finance.chart_of_accounts.csv.gz   # IFRS accounts
 │           │
-│           ├── eurostyle_hr.employees.csv.gz                # 830+ workforce
+│           ├── eurostyle_hr.employees.csv.gz                # 320+ workforce
 │           ├── eurostyle_hr.departments.csv.gz              # Organizational units
 │           ├── eurostyle_hr.performance_reviews.csv.gz      # Performance data
 │           ├── eurostyle_hr.employee_training_records.csv.gz # Training records
 │           │
-│           ├── eurostyle_webshop.web_sessions.csv.gz        # 25K customer sessions
+│           ├── eurostyle_webshop.web_sessions.csv.gz        # 3,000+ customer sessions
+│           ├── eurostyle_webshop.web_analytics_events.csv.gz # 7,500+ behavioral events
+│           ├── eurostyle_webshop.product_reviews.csv.gz     # 500+ product reviews
+│           ├── eurostyle_webshop.search_queries.csv.gz      # 2,400+ search behaviors
 │           ├── eurostyle_webshop.page_views.csv.gz          # Behavioral tracking
 │           ├── eurostyle_webshop.cart_activities.csv.gz     # Shopping cart events
 │           │
-│           ├── eurostyle_pos.transactions.csv.gz            # 37K+ POS transactions
+│           ├── eurostyle_pos.transactions.csv.gz            # 1,750+ POS transactions
 │           ├── eurostyle_pos.transaction_items.csv.gz       # Line-level POS details
 │           ├── eurostyle_pos.employee_assignments.csv.gz    # Staff assignments
 │           ├── eurostyle_pos.payments.csv.gz                # Payment methods
@@ -219,14 +222,14 @@ python3 scripts/generate_supplier_docs.py
 
 ## 📊 Data Volumes Summary (Current Generated Data)
 
-|| System | Tables | CSV Files | Data Volume | Key Features |
-||--------|--------|-----------|-------------|--------------|
-|| **Operational** | 9 | 4 | 3.8MB | 50K customers, 2.5K products, 5K orders |
-|| **Finance** | 14 | 3 | 0.5MB | European legal entities, GL journals, perfect revenue matching |
-|| **HR** | 13 | 6 | 0.6MB | 830+ employees, European compliance, GDPR |
-|| **Webshop** | 10 | 1 | 0.5MB | 25K customer sessions, behavioral tracking |
-|| **POS** | 3+ | 8 | 1.1MB | 37K+ transactions, European VAT compliance |
-|| **TOTAL** | **47+** | **22** | **~6.5MB** | **Complete 5-database business operations** |
+|| System | Tables | Records | Data Volume | Key Features |
+||--------|--------|---------|-------------|--------------|
+|| **Operational** | 10 | 26,764 | Largest system | 1,070+ customers, 530+ products, 600+ orders, 23K+ inventory |
+|| **Finance** | 14 | 13,718 | GL-focused | Legal entities, 10,836+ GL journals, perfect revenue matching |
+|| **HR** | 13 | 11,163 | Comprehensive | 320+ employees, 1,828+ reviews, 4,510+ survey responses |
+|| **Webshop** | 12 | 20,279 | Complete analytics | 3K+ sessions, 7.5K+ events, 500+ reviews, 3K+ recommendations |
+|| **POS** | 8 | 7,359 | VAT compliant | 1,750+ transactions, European VAT, payment tracking |
+|| **TOTAL** | **57** | **79,283** | **Production-grade** | **Complete 5-database European retail operations** |
 
 ---
 

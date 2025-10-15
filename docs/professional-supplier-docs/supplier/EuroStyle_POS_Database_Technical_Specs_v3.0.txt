@@ -1,0 +1,370 @@
+================================================================================
+                          EUROSTYLE POINT OF SALES v3.0
+                            TECHNICAL SPECIFICATIONS
+================================================================================
+
+SUPPLIER: RetailTech Solutions GmbH
+PRODUCT: EuroStyle Point of Sales Management System
+VERSION: v3.0
+DATABASE: eurostyle_pos
+PUBLICATION DATE: October 15, 2024
+DOCUMENT CLASSIFICATION: Technical Specification - Customer Integration
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+The EuroStyle Point of Sales Management System provides comprehensive retail
+transaction processing with full European VAT compliance and multi-country
+operations support. Built on ClickHouse columnar database technology, the system
+processes high-volume retail transactions with real-time inventory integration
+and perfect cross-system revenue reconciliation.
+
+CORE CAPABILITIES:
+- Multi-store POS transaction processing (1,750+ transactions)
+- European VAT compliance with country-specific tax rates
+- Real-time inventory integration and stock management
+- Employee management and performance tracking (70+ assignments)
+- Multi-payment method support (1,833+ payment records)
+- Store operations analytics and daily reporting (11+ summaries)
+- Perfect revenue reconciliation with operational and finance systems
+- European payment preference integration (PIN, EC-Karte, Bancontact)
+
+================================================================================
+                               DATABASE SCHEMA
+================================================================================
+
+DATABASE NAME: eurostyle_pos
+TABLES: 8 POS management tables
+TOTAL RECORDS: 7,359 (as of October 15, 2024)
+ENGINE: ClickHouse MergeTree() with transaction processing optimization
+
+TABLE SPECIFICATIONS:
+
+1. TRANSACTIONS (1,750 records)
+   Primary Key: transaction_id
+   Engine: MergeTree() ORDER BY transaction_id
+   Description: Core POS transaction records with VAT compliance
+   Key Fields: transaction_id, store_id, employee_id, total_amount_eur, vat_amount
+
+2. TRANSACTION_ITEMS (1,750 records)
+   Primary Key: item_id
+   Engine: MergeTree() ORDER BY item_id
+   Description: Individual line items for each transaction
+   Key Fields: item_id, transaction_id, product_id, quantity, unit_price_eur
+
+3. PAYMENTS (1,833 records)
+   Primary Key: payment_id
+   Engine: MergeTree() ORDER BY payment_id
+   Description: Payment method tracking with European preferences
+   Key Fields: payment_id, transaction_id, payment_method, amount_eur, country
+
+4. EMPLOYEE_ASSIGNMENTS (70 records)
+   Primary Key: assignment_id
+   Engine: MergeTree() ORDER BY assignment_id
+   Description: Employee store assignments and POS access
+   Key Fields: assignment_id, employee_id, store_id, role, start_date
+
+5. EMPLOYEE_SHIFTS (1,675 records)
+   Primary Key: shift_id
+   Engine: MergeTree() ORDER BY shift_id
+   Description: Employee work shifts and performance tracking
+   Key Fields: shift_id, employee_id, store_id, shift_date, hours_worked
+
+6. DISCOUNTS (262 records)
+   Primary Key: discount_id
+   Engine: MergeTree() ORDER BY discount_id
+   Description: Applied discounts and promotional pricing
+   Key Fields: discount_id, transaction_id, discount_type, discount_amount_eur
+
+7. PROMOTIONS (8 records)
+   Primary Key: promotion_id
+   Engine: MergeTree() ORDER BY promotion_id
+   Description: Active promotional campaigns and rules
+   Key Fields: promotion_id, promotion_name, discount_percentage, start_date
+
+8. STORE_DAILY_SUMMARIES (11 records)
+   Primary Key: summary_id
+   Engine: MergeTree() ORDER BY summary_id
+   Description: Daily store performance and operations summaries
+   Key Fields: summary_id, store_id, summary_date, total_sales_eur, transaction_count
+
+================================================================================
+                              DATA RELATIONSHIPS
+================================================================================
+
+FOREIGN KEY RELATIONSHIPS:
+- transactions.store_id → eurostyle_operational.stores.store_id
+- transactions.employee_id → eurostyle_hr.employees.employee_id
+- transaction_items.transaction_id → transactions.transaction_id
+- transaction_items.product_id → eurostyle_operational.products.product_id
+- payments.transaction_id → transactions.transaction_id
+- employee_assignments.employee_id → eurostyle_hr.employees.employee_id
+- employee_shifts.employee_id → eurostyle_hr.employees.employee_id
+- discounts.transaction_id → transactions.transaction_id
+
+CROSS-DATABASE INTEGRATIONS:
+- transactions integrate with eurostyle_finance.gl_journal_headers (perfect revenue match)
+- employee_assignments integrate with eurostyle_hr.employees for staff management
+- transaction_items integrate with eurostyle_operational.inventory for stock updates
+
+================================================================================
+                           TECHNICAL ARCHITECTURE
+================================================================================
+
+DATABASE TECHNOLOGY:
+- Engine: ClickHouse 23.12
+- Architecture: Columnar storage optimized for transaction processing
+- Deployment: Docker containerized with real-time transaction processing
+- Compliance: PCI DSS compliant payment data handling
+
+CONNECTION DETAILS:
+- HTTP Interface: localhost:8124
+- Native Interface: localhost:9002
+- Container: eurostyle_clickhouse_retail
+- Network: eurostyle_retail_network
+
+POS PROCESSING FEATURES:
+- Real-time Processing: Sub-second transaction processing and authorization
+- Inventory Integration: Real-time stock level updates and validation
+- Revenue Reconciliation: Automatic GL posting with perfect accuracy
+- Multi-currency: EUR-based with exchange rate support for tourists
+
+================================================================================
+                              API CAPABILITIES
+================================================================================
+
+REST API ENDPOINTS:
+GET /api/v3/transactions - POS transaction data with filtering
+POST /api/v3/transactions - Create new POS transactions
+GET /api/v3/payments - Payment method analytics and processing
+GET /api/v3/employees - Employee performance and shift management
+GET /api/v3/discounts - Discount and promotion tracking
+GET /api/v3/reports - Store performance and daily summaries
+
+AUTHENTICATION:
+- Method: OAuth 2.0 Bearer Token with POS-specific scopes
+- Scopes: read:pos, write:pos, admin:pos, reports:pos
+- Rate Limiting: 5000 requests/hour per API key (high-volume transactions)
+
+DATA FORMATS:
+- Primary: JSON (application/json)
+- Export: CSV (text/csv) for reporting and analysis
+- Real-time: WebSocket for live transaction monitoring
+
+POS-SPECIFIC FEATURES:
+- Transaction Void: Secure transaction reversal and audit trail
+- Cash Management: Cash drawer tracking and reconciliation
+- Receipt Integration: Digital receipt generation and email delivery
+
+================================================================================
+                              DATA QUALITY METRICS
+================================================================================
+
+TRANSACTION ACCURACY:
+- Payment Processing: 99.99% successful transaction rate
+- Revenue Matching: 100% accuracy with finance GL posting
+- VAT Calculation: 100% compliant with country-specific rates
+- Inventory Updates: 99.95% real-time stock level accuracy
+
+PERFORMANCE METRICS:
+- Transaction Speed: <2 seconds average processing time
+- Peak Volume: 500 transactions/hour per store capacity
+- System Response: <100ms API response time
+- Uptime: 99.98% availability SLA
+
+COMPLIANCE METRICS:
+- PCI DSS: Full compliance for payment data security
+- VAT Compliance: 100% accurate country-specific VAT rates
+- Employee Tracking: Complete shift and performance audit trail
+- Financial Controls: Real-time GL posting and reconciliation
+
+================================================================================
+                           COMPLIANCE & SECURITY
+================================================================================
+
+PCI DSS COMPLIANCE:
+- Payment Data: Encrypted payment card data handling
+- Network Security: Segregated POS network with monitoring
+- Access Control: Role-based POS system access
+- Audit Logging: Complete payment transaction audit trail
+
+EUROPEAN VAT COMPLIANCE:
+- Netherlands (NL): 21% standard VAT rate with BTW compliance
+- Germany (DE): 19% standard VAT rate with USt compliance
+- France (FR): 20% standard VAT rate with TVA compliance
+- Belgium (BE): 21% standard VAT rate with BTW compliance
+- Luxembourg (LU): 17% standard VAT rate with TVA compliance
+
+SECURITY FEATURES:
+- Encryption: AES-256 encryption for transaction data
+- Network Security: TLS 1.3 with certificate pinning
+- Access Control: Multi-factor authentication for POS access
+- Fraud Detection: Real-time transaction monitoring and alerts
+
+================================================================================
+                              INTEGRATION GUIDE
+================================================================================
+
+TYPICAL INTEGRATION PATTERNS:
+
+1. REAL-TIME TRANSACTION PROCESSING:
+   - Point of sale transaction capture
+   - Real-time inventory updates
+   - Automatic finance GL posting
+
+2. EMPLOYEE MANAGEMENT:
+   - Employee shift tracking and performance
+   - POS access control and authorization
+   - Store assignment and role management
+
+3. BUSINESS INTELLIGENCE:
+   - Daily store performance reporting
+   - Transaction trend analysis
+   - Employee productivity metrics
+
+SAMPLE INTEGRATION CODE:
+```bash
+# Process POS transaction
+curl -X POST -H "Authorization: Bearer POS_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"store_id": "STORE_001", "items": [...], "payment": {...}}' \
+     "http://localhost:8124/api/v3/transactions"
+
+# Daily store summary
+curl -H "Authorization: Bearer POS_TOKEN" \
+     "http://localhost:8124/api/v3/reports/daily-summary?store_id=STORE_001"
+```
+
+PAYMENT INTEGRATION:
+```javascript
+// European payment processing
+const payment = {
+  method: 'DEBIT_CARD',
+  country: 'NL',
+  amount: 89.99,
+  vat_rate: 0.21,
+  processor: 'PIN'  // Netherlands preference
+};
+```
+
+================================================================================
+                          EUROPEAN PAYMENT PREFERENCES
+================================================================================
+
+COUNTRY-SPECIFIC PAYMENT METHODS:
+
+NETHERLANDS (NL):
+- Primary: PIN (Debit Card) - 70% of transactions
+- Secondary: Credit Card - 15% of transactions
+- Cash: 10% of transactions
+- Mobile: 5% of transactions
+
+GERMANY (DE):
+- Primary: EC-Karte (Electronic Cash) - 65% of transactions
+- Secondary: Cash - 20% of transactions
+- Credit Card: 10% of transactions
+- Mobile: 5% of transactions
+
+FRANCE (FR):
+- Primary: Carte Bancaire - 60% of transactions
+- Secondary: Cash - 25% of transactions
+- Credit Card: 10% of transactions
+- Mobile: 5% of transactions
+
+BELGIUM (BE):
+- Primary: Bancontact/Maestro - 75% of transactions
+- Secondary: Cash - 15% of transactions
+- Credit Card: 7% of transactions
+- Mobile: 3% of transactions
+
+LUXEMBOURG (LU):
+- Primary: Debit Card - 55% of transactions
+- Secondary: Cash - 30% of transactions
+- Credit Card: 12% of transactions
+- Mobile: 3% of transactions
+
+================================================================================
+                            SUPPORT INFORMATION
+================================================================================
+
+TECHNICAL SUPPORT:
+- Company: RetailTech Solutions GmbH
+- Email: support@retailtech-solutions.de
+- Phone: +49 30 1234 5678
+- Hours: 24/7 for POS systems, 8-20 CET for standard support
+
+POS CONSULTING:
+- Implementation: POS system deployment and configuration
+- VAT Compliance: Country-specific tax configuration
+- Payment Integration: European payment method integration
+- Training: Store manager and cashier training programs
+
+MAINTENANCE & SUPPORT:
+- Remote Monitoring: 24/7 POS system health monitoring
+- Emergency Response: <2 hours for critical POS issues
+- Software Updates: Monthly feature updates and security patches
+- Hardware Support: On-site hardware maintenance and replacement
+
+MAINTENANCE WINDOWS:
+- Scheduled: Sunday 03:00-05:00 CET (monthly)
+- Emergency: As needed with 4-hour advance notice for critical fixes
+- Payment Processing: Zero-downtime payment updates
+
+================================================================================
+                              VAT COMPLIANCE MATRIX
+================================================================================
+
+COUNTRY-SPECIFIC VAT RATES AND GL ACCOUNTS:
+
+NETHERLANDS:
+- Standard VAT Rate: 21%
+- GL Account: 2300_NL_BTW
+- Authority: Belastingdienst
+- Reporting: Monthly VAT returns
+
+GERMANY:
+- Standard VAT Rate: 19%
+- GL Account: 2300_DE_UST
+- Authority: Bundesfinanzministerium
+- Reporting: Monthly VAT returns
+
+FRANCE:
+- Standard VAT Rate: 20%
+- GL Account: 2300_FR_TVA
+- Authority: Direction Générale des Finances Publiques
+- Reporting: Monthly VAT returns
+
+BELGIUM:
+- Standard VAT Rate: 21%
+- GL Account: 2300_BE_BTW
+- Authority: FOD Financiën
+- Reporting: Monthly VAT returns
+
+LUXEMBOURG:
+- Standard VAT Rate: 17%
+- GL Account: 2300_LU_TVA
+- Authority: Administration des contributions directes
+- Reporting: Monthly VAT returns
+
+================================================================================
+                              DOCUMENT CONTROL
+================================================================================
+
+Document Version: v3.0
+Publication Date: October 15, 2024
+Document Type: Technical Specification
+Classification: Confidential - Customer Use Only
+Intended Audience: POS Integrators, Retail Operations, IT Architects
+
+Copyright: © 2024 RetailTech Solutions GmbH. All rights reserved.
+This document contains proprietary and confidential POS information.
+
+REVISION HISTORY:
+- v3.0 (Oct 2024): Updated with current production schema and record counts
+- v2.1 (Sep 2024): Enhanced VAT compliance and payment method features
+- v2.0 (Aug 2024): Initial production release with European retail compliance
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================

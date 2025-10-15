@@ -223,18 +223,100 @@ class UniversalDataGeneratorV2:
         output_path = self._get_output_path(database, table)
         fieldnames = list(data[0].keys())
         
-        self.logger.info(f"💾 Saving {len(data)} records to {output_path}")
+        # Fix boolean values for ClickHouse compatibility
+        fixed_data = self._fix_boolean_values(data)
         
+        self.logger.info(f"💾 Saving {len(fixed_data)} records to {output_path}")
+        
+        # Write CSV with proper ClickHouse NULL handling
         if self.env_config['compression']['enabled']:
-            with gzip.open(output_path, 'wt', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
-                writer.writeheader()
-                writer.writerows(data)
+            with gzip.open(output_path, 'wt', newline='', encoding='utf-8') as file:
+                self._write_clickhouse_csv(file, fieldnames, fixed_data)
         else:
-            with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
-                writer.writeheader()
-                writer.writerows(data)
+            with open(output_path, 'w', newline='', encoding='utf-8') as file:
+                self._write_clickhouse_csv(file, fieldnames, fixed_data)
+                
+    def _write_clickhouse_csv(self, file, fieldnames: List[str], data: List[Dict]) -> None:
+        """Write CSV with ClickHouse-compatible NULL handling."""
+        import re
+        
+        # Write header
+        header_line = ','.join(f'"{field}"' for field in fieldnames)
+        file.write(header_line + '\n')
+        
+        # Write data rows with proper NULL handling
+        for row in data:
+            row_values = []
+            for field in fieldnames:
+                value = row.get(field, None)
+                if value is None:
+                    # Unquoted \N for NULL values in ClickHouse
+                    row_values.append('\\N')
+                elif isinstance(value, str):
+                    # Fix DateTime format for ClickHouse compatibility
+                    if re.match(r'\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}', value):
+                        # Ensure HH:MM:SS format (pad single digit hours)
+                        datetime_parts = value.split(' ')
+                        if len(datetime_parts) == 2:
+                            date_part, time_part = datetime_parts
+                            time_components = time_part.split(':')
+                            if len(time_components) == 3:
+                                # Pad hour if single digit
+                                if len(time_components[0]) == 1:
+                                    time_components[0] = f"0{time_components[0]}"
+                                value = f"{date_part} {':'.join(time_components)}"
+                    
+                    # Escape quotes in strings and quote the value
+                    escaped_value = value.replace('"', '""')
+                    row_values.append(f'"{escaped_value}"')
+                elif isinstance(value, list):
+                    # Handle arrays as delimited strings for now
+                    # TODO: Fix proper Array(String) support
+                    delimited_string = '; '.join(str(item) for item in value)
+                    escaped_value = delimited_string.replace('"', '""')
+                    row_values.append(f'"{escaped_value}"')
+                elif isinstance(value, (int, float, bool)):
+                    # Numbers and booleans unquoted
+                    row_values.append(str(value))
+                else:
+                    # Everything else quoted as string with escaping
+                    escaped_value = str(value).replace('"', '""')
+                    row_values.append(f'"{escaped_value}"')
+            
+            file.write(','.join(row_values) + '\n')
+                
+    def _fix_boolean_values(self, data: List[Dict]) -> List[Dict]:
+        """Fix boolean and NULL values for ClickHouse compatibility.
+        
+        ClickHouse expects true/false (unquoted) and proper NULL handling.
+        Following WARP.md Rule: dont hard code, always use guidelines and framework principles.
+        """
+        fixed_data = []
+        for row in data:
+            fixed_row = {}
+            for key, value in row.items():
+                if isinstance(value, bool):
+                    # Convert to numeric format for QUOTE_NONNUMERIC compatibility
+                    # ClickHouse accepts 1/0 as true/false
+                    fixed_row[key] = 1 if value else 0
+                elif value is None or value == '':
+                    # For nullable fields, use ClickHouse \N format
+                    # This will be handled by CSV writer with restval
+                    pass  # Don't set the key, let CSV writer use restval
+                else:
+                    fixed_row[key] = value
+            fixed_data.append(fixed_row)
+        return fixed_data
+    
+    def _is_date_field(self, field_name: str) -> bool:
+        """Check if a field is a date field based on naming conventions."""
+        date_field_patterns = [
+            'date', 'expiry', 'effective', 'end_date', 'start_date',
+            'approval_date', 'warranty_expiry', 'visa_expiry_date',
+            'termination_date', 'disposal_date', 'work_permit_expiry_date'
+        ]
+        field_lower = field_name.lower()
+        return any(pattern in field_lower for pattern in date_field_patterns)
 
     def generate_legal_entities(self) -> List[Dict]:
         """Generate legal entities."""
@@ -308,7 +390,7 @@ class UniversalDataGeneratorV2:
         return entities
     
     def generate_stores(self, mode: str = 'full') -> List[Dict]:
-        """Generate stores with geographic distribution."""
+        """Generate stores with geographic distribution matching exact database schema."""
         self.logger.info("🏪 Generating stores...")
         
         store_counts = {
@@ -326,7 +408,6 @@ class UniversalDataGeneratorV2:
                 store_data = {
                     'store_id': f"STORE_{country}_{store_id:03d}",
                     'store_name': f"EuroStyle {self.faker.city()}",
-                    'entity_id': f"ENTITY_{country}_RETAIL",
                     'country_code': country,
                     'city': self.faker.city(),
                     'address': self.faker.street_address(),
@@ -338,8 +419,13 @@ class UniversalDataGeneratorV2:
                     'opening_date': self.faker.date_between(start_date='-5y', end_date='-1y').strftime('%Y-%m-%d'),
                     'manager_name': self.faker.name(),
                     'staff_count': random.randint(8, 25),
+                    'operating_hours': '09:00-21:00',
                     'performance_tier': random.choice(['A', 'B', 'C']),
                     'target_monthly_revenue': Decimal(str(random.randint(50000, 200000))),
+                    'has_fitting_rooms': True,
+                    'has_personal_styling': random.choice([True, False]),
+                    'has_click_and_collect': True,
+                    'wheelchair_accessible': True,
                     'is_active': True,
                     'created_at': '2024-01-01 10:00:00',
                     'updated_at': '2024-01-01 10:00:00'
@@ -817,6 +903,12 @@ class UniversalDataGeneratorV2:
         stores = self.generate_stores(mode) 
         products = self.generate_products(mode)
         customers = self.generate_customers(mode)
+        
+        # Store foundation data in memory for domain generators
+        self.generated_data['legal_entities'] = legal_entities
+        self.generated_data['stores'] = stores
+        self.generated_data['products'] = products
+        self.generated_data['customers'] = customers
         
         # Save foundation data
         self._save_csv_data(legal_entities, 'eurostyle_finance', 'legal_entities')
@@ -1812,6 +1904,8 @@ class UniversalDataGeneratorV2:
         if 'chart_of_accounts' in domain_config:
             chart_config = domain_config['chart_of_accounts']
             results['chart_of_accounts'] = self._generate_chart_of_accounts_from_finance_config(chart_config, mode)
+            # Make chart_of_accounts available for entity_accounts generation
+            self.generated_data['chart_of_accounts'] = results['chart_of_accounts']
             self.logger.info(f"Generated {len(results['chart_of_accounts'])} chart of accounts from Finance config")
         
         # Generate cost centers from finance configuration
@@ -2501,14 +2595,13 @@ class UniversalDataGeneratorV2:
             current_rate = base_rate * random.uniform(0.95, 1.05)
             
             exchange_rate = {
-                'rate_id': f"RATE_{rate_id:06d}",
-                'from_currency': currency_code,
-                'to_currency': base_currency,
-                'exchange_rate': round(current_rate, 4),
+                'exchange_rate_id': f"RATE_{rate_id:06d}",
+                'base_currency': base_currency,
+                'target_currency': currency_code,
+                'exchange_rate': round(current_rate, 6),
                 'rate_date': date.today().strftime('%Y-%m-%d'),
                 'rate_type': 'SPOT',
                 'data_source': 'ECB',  # European Central Bank
-                'is_active': True,
                 'created_date': self._generate_realistic_timestamp('rate'),
                 'updated_date': self._generate_realistic_timestamp('rate')
             }
@@ -3111,64 +3204,39 @@ class UniversalDataGeneratorV2:
         return []
     
     def generate_missing_webshop_tables(self, mode: str = 'full') -> Dict[str, List[Dict]]:
-        """Generate missing webshop tables from YAML configuration."""
-        self.logger.info("🛍️ Generating missing webshop tables from configuration...")
+        """Generate missing webshop tables using WARP.md compliant dedicated generator."""
+        self.logger.info("🛍️ Generating webshop entities with dedicated generator...")
         
-        patterns = self._load_missing_table_patterns("webshop_missing_tables.yaml")
-        if not patterns:
+        try:
+            from generators.webshop_generators import WebshopEntityGenerator
+            
+            # Initialize the dedicated generator
+            webshop_generator = WebshopEntityGenerator(str(self.config_path))
+            
+            # Prepare dependencies
+            dependencies = {
+                'customers': self.generated_data.get('customers', []),
+                'products': self.generated_data.get('products', []),
+                'orders': self.generated_data.get('orders', []),
+                'web_sessions': self.generated_data.get('web_sessions', [])
+            }
+            
+            # Generate all entities using the dedicated generator
+            results = webshop_generator.generate_all_entities(mode, dependencies)
+            
+            # Store results in generated_data for consistency
+            for entity_name, entity_data in results.items():
+                if entity_data:  # Only store non-empty data
+                    self.generated_data[entity_name] = entity_data
+            
+            return results
+            
+        except ImportError as e:
+            self.logger.error(f"❌ Failed to import WebshopEntityGenerator: {e}")
             return {}
-        
-        results = {}
-        
-        # Generate Product Reviews
-        if 'product_reviews' in patterns:
-            product_reviews = self._generate_product_reviews(patterns['product_reviews'])
-            results['product_reviews'] = product_reviews
-            self.generated_data['product_reviews'] = product_reviews
-        
-        # Generate Product Recommendations
-        if 'product_recommendations' in patterns:
-            product_recommendations = self._generate_product_recommendations(patterns['product_recommendations'])
-            results['product_recommendations'] = product_recommendations
-            self.generated_data['product_recommendations'] = product_recommendations
-        
-        # Generate Wishlist Items
-        if 'wishlist_items' in patterns:
-            wishlist_items = self._generate_wishlist_items(patterns['wishlist_items'])
-            results['wishlist_items'] = wishlist_items
-            self.generated_data['wishlist_items'] = wishlist_items
-        
-        # Generate Cart Activities
-        if 'cart_activities' in patterns:
-            cart_activities = self._generate_cart_activities(patterns['cart_activities'])
-            results['cart_activities'] = cart_activities
-            self.generated_data['cart_activities'] = cart_activities
-        
-        # Generate Search Queries
-        if 'search_queries' in patterns:
-            search_queries = self._generate_search_queries(patterns['search_queries'])
-            results['search_queries'] = search_queries
-            self.generated_data['search_queries'] = search_queries
-        
-        # Generate Email Marketing
-        if 'email_marketing' in patterns:
-            email_marketing = self._generate_email_marketing(patterns['email_marketing'])
-            results['email_marketing'] = email_marketing
-            self.generated_data['email_marketing'] = email_marketing
-        
-        # Generate A/B Test Results
-        if 'ab_test_results' in patterns:
-            ab_test_results = self._generate_ab_test_results(patterns['ab_test_results'])
-            results['ab_test_results'] = ab_test_results
-            self.generated_data['ab_test_results'] = ab_test_results
-        
-        # Generate Web Analytics Events
-        if 'web_analytics_events' in patterns:
-            web_analytics_events = self._generate_web_analytics_events(patterns['web_analytics_events'])
-            results['web_analytics_events'] = web_analytics_events
-            self.generated_data['web_analytics_events'] = web_analytics_events
-        
-        return results
+        except Exception as e:
+            self.logger.error(f"❌ Error generating webshop entities: {e}")
+            return {}
     
     def _generate_product_reviews(self, config: Dict[str, Any]) -> List[Dict]:
         """Generate product reviews from configuration."""
@@ -5090,33 +5158,32 @@ class UniversalDataGeneratorV2:
         goals = self._generate_performance_goals(employee, overall_rating)
         feedback = self._generate_performance_feedback(overall_rating)
         
+        # Match exact database schema columns
         return {
             'review_id': f"REV_{review_id:06d}",
             'cycle_id': cycle['cycle_id'],
             'employee_id': employee['employee_id'],
-            'manager_id': manager['employee_id'],
-            'review_date': f"{review_date} {random.randint(14, 17)}:{random.randint(10, 59)}:00",
-            'review_period_start': (start_date - timedelta(days=365)).strftime('%Y-%m-%d'),
-            'review_period_end': start_date.strftime('%Y-%m-%d'),
-            'overall_rating': overall_rating,
-            'overall_score': round(base_score, 1),
-            'job_knowledge_rating': round(job_knowledge, 1),
-            'communication_rating': round(communication, 1),
-            'teamwork_rating': round(teamwork, 1),
-            'initiative_rating': round(initiative, 1),
+            'reviewer_employee_id': manager['employee_id'],  # Match db schema
+            'overall_rating': round(base_score, 1),
+            'goal_achievement_rating': round(base_score + random.uniform(-0.3, 0.3), 1),
+            'competency_rating': round(base_score + random.uniform(-0.2, 0.2), 1),
             'leadership_rating': round(leadership, 1) if leadership else None,
-            'goal_achievement_percentage': self._calculate_goal_achievement(overall_rating),
-            'strengths': feedback['strengths'],
-            'areas_for_improvement': feedback['improvements'],
-            'development_goals': goals,
+            'goals_met': random.randint(2, 5),
+            'total_goals': random.randint(3, 6),
+            'development_needs': feedback['improvements'],  # Array field
+            'strengths': feedback['strengths'],  # Array field
+            'employee_self_assessment': feedback.get('employee_comments', ''),
             'manager_comments': feedback['manager_comments'],
-            'employee_comments': feedback.get('employee_comments', ''),
-            'promotion_ready': overall_rating == 'EXCEEDS_EXPECTATIONS' and random.random() < 0.4,
-            'development_plan_created': True,
-            'next_review_date': (end_date + timedelta(days=365)).strftime('%Y-%m-%d'),
-            'hr_reviewed': True,
-            'employee_acknowledged': True,
-            'acknowledged_date': f"{review_date + timedelta(days=random.randint(1, 7))} 10:00:00",
+            'development_plan': '; '.join(goals.split(';')[:2]),  # String field
+            'review_status': random.choice(['COMPLETED', 'APPROVED', 'SUBMITTED']),
+            'self_assessment_date': (review_date - timedelta(days=random.randint(3, 10))).strftime('%Y-%m-%d'),
+            'manager_review_date': review_date.strftime('%Y-%m-%d'),
+            'hr_approval_date': (review_date + timedelta(days=random.randint(1, 5))).strftime('%Y-%m-%d'),
+            'employee_acknowledgment_date': (review_date + timedelta(days=random.randint(1, 7))).strftime('%Y-%m-%d'),
+            'promotion_recommended': overall_rating == 'EXCEEDS_EXPECTATIONS' and random.random() < 0.4,
+            'salary_increase_recommended': base_score >= 3.5 and random.random() < 0.6,
+            'recommended_increase_percentage': round(random.uniform(3.0, 12.0), 1) if base_score >= 3.5 and random.random() < 0.6 else None,
+            'pip_recommended': base_score < 2.5 and random.random() < 0.3,
             'created_date': self._generate_realistic_timestamp('performance'),
             'updated_date': self._generate_realistic_timestamp('performance')
         }
@@ -5250,9 +5317,13 @@ class UniversalDataGeneratorV2:
         
         template = feedback_templates.get(rating, feedback_templates['MEETS_EXPECTATIONS'])
         
+        # Generate 2-3 strengths and 1-2 improvements as arrays for ClickHouse Array(String) fields
+        strengths_list = random.sample(template['strengths'], min(random.randint(2, 3), len(template['strengths'])))
+        improvements_list = random.sample(template['improvements'], min(random.randint(1, 2), len(template['improvements'])))
+        
         return {
-            'strengths': random.choice(template['strengths']),
-            'improvements': random.choice(template['improvements']),
+            'strengths': strengths_list,  # Return as list for JSON array formatting
+            'improvements': improvements_list,  # Return as list for JSON array formatting
             'manager_comments': random.choice(template['manager_comments']),
             'employee_comments': self._generate_employee_self_reflection(rating)
         }
@@ -6602,15 +6673,6 @@ class UniversalDataGeneratorV2:
             'campaigns': campaigns
         }
     
-    def generate_missing_webshop_tables(self, mode: str = 'full') -> Dict[str, List[Dict]]:
-        """Generate missing webshop tables using configuration patterns."""
-        self.logger.info("🌐 Generating missing webshop tables...")
-        
-        page_views = self.generate_page_views(mode)
-        
-        return {
-            'page_views': page_views
-        }
     
     def generate_missing_hr_tables(self, mode: str = 'full') -> Dict[str, List[Dict]]:
         """Generate missing HR tables using configuration patterns."""

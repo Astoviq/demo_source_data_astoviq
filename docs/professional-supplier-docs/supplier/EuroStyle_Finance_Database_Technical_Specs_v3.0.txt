@@ -1,0 +1,337 @@
+================================================================================
+                          EUROSTYLE FINANCE SYSTEM v3.0
+                            TECHNICAL SPECIFICATIONS
+================================================================================
+
+SUPPLIER: FinanceCore Solutions AG
+PRODUCT: EuroStyle Financial Management Platform
+VERSION: v3.0
+DATABASE: eurostyle_finance
+PUBLICATION DATE: October 15, 2024
+DOCUMENT CLASSIFICATION: Technical Specification - Customer Integration
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+The EuroStyle Financial Management Platform provides enterprise-grade financial
+management capabilities with full IFRS compliance and multi-entity consolidation.
+Built on ClickHouse columnar database technology, the system processes high-volume
+financial transactions with real-time analytics and perfect cross-system consistency.
+
+CORE CAPABILITIES:
+- Multi-entity financial consolidation (5 legal entities)
+- IFRS-compliant general ledger (10,836+ journal lines)
+- Automated depreciation and fixed asset management (100+ assets)
+- Multi-currency operations with real-time exchange rates
+- Advanced budgeting and forecasting (150+ budget records)
+- Cost center management and allocation (15 cost centers)
+- Perfect revenue reconciliation with operational systems
+
+================================================================================
+                               DATABASE SCHEMA
+================================================================================
+
+DATABASE NAME: eurostyle_finance
+TABLES: 14 financial tables
+TOTAL RECORDS: 13,718 (as of October 15, 2024)
+ENGINE: ClickHouse MergeTree() with financial audit trail optimization
+
+TABLE SPECIFICATIONS:
+
+1. LEGAL_ENTITIES (5 records)
+   Primary Key: entity_id
+   Engine: MergeTree() ORDER BY entity_id
+   Description: Legal entity master data for multi-entity consolidation
+   Key Fields: entity_id, entity_name, country_code, entity_type, tax_number
+
+2. GL_JOURNAL_HEADERS (600 records)
+   Primary Key: journal_header_id
+   Engine: MergeTree() ORDER BY journal_header_id
+   Description: General ledger journal header records
+   Key Fields: journal_header_id, posting_date, source_system, total_amount
+
+3. GL_JOURNAL_LINES (10,836 records)
+   Primary Key: journal_line_id
+   Engine: MergeTree() ORDER BY journal_line_id
+   Description: Detailed general ledger entries with full audit trail
+   Key Fields: journal_line_id, header_id, account_code, debit_amount, credit_amount
+
+4. CHART_OF_ACCOUNTS (26 records)
+   Primary Key: account_code
+   Engine: MergeTree() ORDER BY account_code
+   Description: IFRS-compliant chart of accounts structure
+   Key Fields: account_code, account_name, account_type, financial_statement_category
+
+5. COST_CENTERS (15 records)
+   Primary Key: cost_center_id
+   Engine: MergeTree() ORDER BY cost_center_id
+   Description: Cost center master data with budget allocation
+   Key Fields: cost_center_id, cost_center_name, manager_id, budget_eur, status
+
+6. FIXED_ASSETS (100 records)
+   Primary Key: asset_id
+   Engine: MergeTree() ORDER BY asset_id
+   Description: Fixed asset register with depreciation tracking
+   Key Fields: asset_id, asset_description, acquisition_cost, depreciation_method
+
+7. DEPRECIATION_SCHEDULE (1,945 records)
+   Primary Key: depreciation_id
+   Engine: MergeTree() ORDER BY depreciation_id
+   Description: Automated depreciation calculations and postings
+   Key Fields: depreciation_id, asset_id, period, depreciation_amount
+
+8. BUDGET_DATA (150 records)
+   Primary Key: budget_id
+   Engine: MergeTree() ORDER BY budget_id
+   Description: Annual and quarterly budget planning data
+   Key Fields: budget_id, cost_center_id, account_code, budget_amount, period
+
+9. BUDGET_VERSIONS (20 records)
+   Primary Key: version_id
+   Engine: MergeTree() ORDER BY version_id
+   Description: Budget version control and approval tracking
+   Key Fields: version_id, budget_name, version_number, approval_status
+
+10. ENTITY_RELATIONSHIPS (4 records)
+    Primary Key: relationship_id
+    Engine: MergeTree() ORDER BY relationship_id
+    Description: Inter-entity relationship definitions for consolidation
+    Key Fields: relationship_id, parent_entity_id, child_entity_id, ownership_percentage
+
+11. REPORTING_PERIODS (17 records)
+    Primary Key: period_id
+    Engine: MergeTree() ORDER BY period_id
+    Description: Financial reporting period calendar
+    Key Fields: period_id, period_name, start_date, end_date, period_status
+
+12. CURRENCIES (0 records - reference data loaded separately)
+    Primary Key: currency_code
+    Engine: MergeTree() ORDER BY currency_code
+    Description: Multi-currency support with ISO currency codes
+    Key Fields: currency_code, currency_name, decimal_places
+
+13. EXCHANGE_RATES (0 records - updated via external feed)
+    Primary Key: rate_id
+    Engine: MergeTree() ORDER BY rate_id
+    Description: Real-time currency exchange rates
+    Key Fields: rate_id, from_currency, to_currency, rate, effective_date
+
+14. ENTITY_ACCOUNTS (0 records - auto-generated)
+    Primary Key: entity_account_id
+    Engine: MergeTree() ORDER BY entity_account_id
+    Description: Entity-specific account mappings for consolidation
+    Key Fields: entity_account_id, entity_id, account_code, local_account_code
+
+================================================================================
+                              DATA RELATIONSHIPS
+================================================================================
+
+FOREIGN KEY RELATIONSHIPS:
+- gl_journal_lines.header_id → gl_journal_headers.journal_header_id
+- gl_journal_lines.account_code → chart_of_accounts.account_code
+- budget_data.cost_center_id → cost_centers.cost_center_id
+- depreciation_schedule.asset_id → fixed_assets.asset_id
+- entity_relationships.parent_entity_id → legal_entities.entity_id
+- entity_relationships.child_entity_id → legal_entities.entity_id
+
+CROSS-DATABASE INTEGRATIONS:
+- gl_journal_headers integrate with eurostyle_operational.orders (perfect revenue match)
+- cost_centers integrate with eurostyle_hr.employees for payroll allocation
+- fixed_assets integrate with eurostyle_pos for store equipment tracking
+
+================================================================================
+                           TECHNICAL ARCHITECTURE
+================================================================================
+
+DATABASE TECHNOLOGY:
+- Engine: ClickHouse 23.12
+- Architecture: Columnar storage optimized for financial reporting
+- Deployment: Docker containerized with persistent storage
+- Compliance: SOX-compliant audit trail and data retention
+
+CONNECTION DETAILS:
+- HTTP Interface: localhost:8124
+- Native Interface: localhost:9002
+- Container: eurostyle_clickhouse_retail
+- Network: eurostyle_retail_network
+
+FINANCIAL CONTROL FEATURES:
+- Audit Trail: Complete transaction history with user tracking
+- Data Integrity: Automated balance validation and reconciliation
+- Period Control: Soft and hard period closing capabilities
+- Approval Workflow: Multi-level approval for journal entries
+
+================================================================================
+                              API CAPABILITIES
+================================================================================
+
+REST API ENDPOINTS:
+GET /api/v3/gl-entries - General ledger query with advanced filtering
+POST /api/v3/gl-entries - Create journal entries with validation
+GET /api/v3/trial-balance - Real-time trial balance reporting
+GET /api/v3/consolidation - Multi-entity consolidation data
+GET /api/v3/budgets - Budget vs actual analysis
+GET /api/v3/fixed-assets - Asset register and depreciation schedules
+
+AUTHENTICATION:
+- Method: OAuth 2.0 Bearer Token with financial access controls
+- Scopes: read:finance, write:finance, admin:finance, audit:finance
+- Rate Limiting: 500 requests/hour per API key (financial data protection)
+
+DATA FORMATS:
+- Primary: JSON (application/json)
+- Export: CSV (text/csv) for reporting tools
+- Integration: XML (application/xml) for ERP integration
+
+================================================================================
+                              DATA QUALITY METRICS
+================================================================================
+
+FINANCIAL ACCURACY:
+- Cross-System Revenue Match: 100% (Operations = Finance GL)
+- Trial Balance: Automatically balanced (debits = credits)
+- Depreciation Accuracy: 100% automated calculation compliance
+- Budget Variance: Real-time variance analysis available
+
+PERFORMANCE METRICS:
+- Average Query Time: 35ms for standard financial reports
+- Peak Transaction Volume: 1,000 GL entries/hour
+- Data Growth Rate: ~300 financial records/day
+- System Availability: 99.99% uptime SLA (financial grade)
+
+COMPLIANCE METRICS:
+- Audit Trail Completeness: 100% (all transactions logged)
+- IFRS Compliance: Full compliance with international standards
+- SOX Controls: Automated internal controls validation
+- Data Retention: 7-year financial record retention
+
+================================================================================
+                           COMPLIANCE & SECURITY
+================================================================================
+
+FINANCIAL COMPLIANCE:
+- IFRS Standards: Full International Financial Reporting Standards compliance
+- SOX Compliance: Sarbanes-Oxley internal controls automation
+- GDPR: European data protection for employee financial data
+- Local GAAP: Country-specific accounting standards support
+
+SECURITY FEATURES:
+- Encryption: AES-256 encryption at rest for financial data
+- Network Security: TLS 1.3 with certificate pinning
+- Access Control: Role-based with financial segregation of duties
+- Audit Logging: Complete financial transaction audit trail
+
+BACKUP & RECOVERY:
+- Frequency: Every 4 hours for financial data
+- Retention: 3 years for full backups, 7 years for transaction logs
+- Recovery Time: <15 minutes RTO for critical financial operations
+- Testing: Monthly disaster recovery testing
+
+================================================================================
+                              INTEGRATION GUIDE
+================================================================================
+
+TYPICAL INTEGRATION PATTERNS:
+
+1. REAL-TIME FINANCIAL POSTING:
+   - Automatic GL entry creation from operational transactions
+   - Real-time trial balance updates
+   - Cross-system revenue reconciliation validation
+
+2. PERIOD-END PROCESSING:
+   - Automated depreciation calculations and postings
+   - Budget vs actual variance reporting
+   - Multi-entity consolidation processing
+
+3. FINANCIAL REPORTING:
+   - Standard financial statements (P&L, Balance Sheet, Cash Flow)
+   - Management reporting with KPI calculations
+   - Regulatory reporting for multiple jurisdictions
+
+SAMPLE INTEGRATION CODE:
+```bash
+# Trial balance query
+curl -H "Authorization: Bearer FINANCE_TOKEN" \
+     "http://localhost:8124/api/v3/trial-balance?period=2024-10&entity=ALL"
+
+# Create GL entry
+curl -X POST -H "Authorization: Bearer FINANCE_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"source": "OPERATIONS", "entries": [...]}' \
+     "http://localhost:8124/api/v3/gl-entries"
+```
+
+================================================================================
+                            SUPPORT INFORMATION
+================================================================================
+
+TECHNICAL SUPPORT:
+- Company: FinanceCore Solutions AG
+- Email: support@financecore-solutions.ch
+- Phone: +41 44 123 4567
+- Hours: 24/7 for critical financial systems, 8-18 CET for standard support
+
+FINANCIAL CONSULTING:
+- IFRS Implementation: Certified IFRS consultants available
+- SOX Compliance: Internal controls design and testing
+- System Integration: Financial system integration specialists
+- Training: Comprehensive user and administrator training
+
+MAINTENANCE WINDOWS:
+- Scheduled: Sunday 01:00-03:00 CET (monthly)
+- Emergency: As needed with 4-hour advance notice (financial impact)
+- Backup Windows: Every 4 hours, 2-minute impact
+
+================================================================================
+                              LEGAL ENTITY STRUCTURE
+================================================================================
+
+EUROSTYLE FASHION HOLDING STRUCTURE:
+
+1. ESLH - EuroStyle Fashion Holding B.V. (Netherlands)
+   - Entity Type: Holding Company
+   - Tax ID: NL123456789B01
+   - Function: Group parent and treasury center
+
+2. ESDE - EuroStyle Fashion Deutschland GmbH (Germany)
+   - Entity Type: Operating Subsidiary (BV)
+   - Tax ID: DE812345678
+   - Function: German retail operations
+
+3. ESFR - EuroStyle Fashion France SARL (France)
+   - Entity Type: Operating Subsidiary (BV)
+   - Tax ID: FR82123456789
+   - Function: French retail operations
+
+4. ESBE - EuroStyle Fashion Belgium BVBA (Belgium)
+   - Entity Type: Operating Subsidiary (BV)
+   - Tax ID: BE0123.456.789
+   - Function: Belgian retail operations
+
+5. ESLU - EuroStyle Fashion Luxembourg S.à r.l. (Luxembourg)
+   - Entity Type: Operating Subsidiary (BV)
+   - Tax ID: LU12345678
+   - Function: Luxembourg retail operations
+
+================================================================================
+                              DOCUMENT CONTROL
+================================================================================
+
+Document Version: v3.0
+Publication Date: October 15, 2024
+Document Type: Technical Specification
+Classification: Confidential - Customer Use Only
+Intended Audience: Financial System Integrators, CFO Office, IT Architects
+
+Copyright: © 2024 FinanceCore Solutions AG. All rights reserved.
+This document contains proprietary and confidential financial information.
+
+REVISION HISTORY:
+- v3.0 (Oct 2024): Updated with current production schema and record counts
+- v2.1 (Sep 2024): Added cross-database revenue reconciliation specifications
+- v2.0 (Aug 2024): Initial production release with IFRS compliance
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================

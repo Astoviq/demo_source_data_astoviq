@@ -147,12 +147,13 @@ After starting the system:
 - **Container**: `eurostyle_clickhouse_retail`
 
 ### Multi-Database Structure with Perfect Consistency
-- `eurostyle_operational` - Main ERP data (50K customers, 5K orders, 2.5K products)
-- `eurostyle_finance` - Financial GL data (25K+ journal lines with perfect revenue matching)
-- `eurostyle_hr` - HR data (830 employees with payroll GL integration)
-- `eurostyle_webshop` - Analytics data (25K sessions aligned with actual orders)
+- `eurostyle_operational` - Main ERP data (26,764 records: 1,070+ customers, 600+ orders, 530+ products)
+- `eurostyle_finance` - Financial GL data (13,718 records: 10,836+ journal lines with perfect revenue matching)
+- `eurostyle_hr` - HR data (11,163 records: 320+ employees with comprehensive management)
+- `eurostyle_webshop` - Analytics data (20,279 records: 3,000+ sessions, 7,500+ events, complete customer journey)
+- `eurostyle_pos` - Point of Sales data (7,359 records: 1,750+ transactions with European VAT compliance)
 
-**✅ Guaranteed Consistency**: Operations revenue = Finance GL revenue (exact match)
+**✅ Guaranteed Consistency**: Operations revenue = Finance GL revenue (exact match across all 5 databases)
 
 ## 💡 Data Lake Testing Scenarios
 

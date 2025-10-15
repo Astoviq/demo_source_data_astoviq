@@ -1,19 +1,19 @@
 # EuroStyle Fashion - Data Generation Summary
 
-**Generated on:** 2025-10-14 13:13:24
+**Generated on:** 2025-10-15 20:12:34
 
 ## Table Counts
 
-- **european_geography:** 237 records
-- **fashion_calendar:** 725 records
-- **stores:** 141 records
-- **products:** 3,018 records
-- **campaigns:** 224 records
-- **customers:** 151,300 records
-- **inventory:** 51,118 records
-- **orders:** 98,202 records
-- **order_lines:** 228,481 records
-- **web_sessions:** 284,732 records
+- **european_geography:** 79 records
+- **fashion_calendar:** 114 records
+- **stores:** 47 records
+- **products:** 273 records
+- **campaigns:** 12 records
+- **customers:** 2,000 records
+- **inventory:** 1,200 records
+- **orders:** 1,991 records
+- **order_lines:** 3,458 records
+- **web_sessions:** 16,114 records
 
 ## Data Quality Metrics
 

@@ -1,0 +1,351 @@
+================================================================================
+                        EUROSTYLE WEBSHOP ANALYTICS v3.0
+                            TECHNICAL SPECIFICATIONS
+================================================================================
+
+SUPPLIER: DigitalCommerce Analytics Ltd.
+PRODUCT: EuroStyle Webshop Analytics Platform
+VERSION: v3.0
+DATABASE: eurostyle_webshop
+PUBLICATION DATE: October 15, 2024
+DOCUMENT CLASSIFICATION: Technical Specification - Customer Integration
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+The EuroStyle Webshop Analytics Platform provides comprehensive e-commerce
+analytics and customer behavior tracking for modern retail operations. Built on
+ClickHouse columnar database technology, the system processes high-volume web
+analytics data with real-time insights and GDPR-compliant visitor tracking.
+
+CORE CAPABILITIES:
+- Real-time customer session tracking (3,000+ sessions)
+- Advanced customer behavior analytics (7,500+ events)
+- AI/ML-powered product recommendations (3,000+ recommendations)
+- Customer review and rating management (500+ reviews)
+- Shopping cart analytics and abandonment tracking (2,000+ activities)
+- Email marketing campaign effectiveness (45+ campaigns)
+- A/B testing framework with conversion optimization (10+ tests)
+- GDPR-compliant visitor privacy management
+
+================================================================================
+                               DATABASE SCHEMA
+================================================================================
+
+DATABASE NAME: eurostyle_webshop
+TABLES: 12 analytics tables
+TOTAL RECORDS: 20,279 (as of October 15, 2024)
+ENGINE: ClickHouse MergeTree() with real-time analytics optimization
+
+TABLE SPECIFICATIONS:
+
+1. WEB_SESSIONS (3,000 records)
+   Primary Key: session_id
+   Engine: MergeTree() ORDER BY session_id
+   Description: Customer web session tracking with behavior analytics
+   Key Fields: session_id, customer_id, start_time, duration_seconds, pages_viewed
+
+2. WEB_ANALYTICS_EVENTS (7,500 records)
+   Primary Key: event_id
+   Engine: MergeTree() ORDER BY event_id
+   Description: Detailed web event tracking for customer behavior analysis
+   Key Fields: event_id, session_id, event_type, page_url, timestamp
+
+3. PRODUCT_REVIEWS (500 records)
+   Primary Key: review_id
+   Engine: MergeTree() ORDER BY review_id
+   Description: Customer product reviews and ratings
+   Key Fields: review_id, product_id, customer_id, rating, review_text
+
+4. PRODUCT_RECOMMENDATIONS (3,000 records)
+   Primary Key: recommendation_id
+   Engine: MergeTree() ORDER BY recommendation_id
+   Description: AI/ML-powered product recommendation engine results
+   Key Fields: recommendation_id, customer_id, recommended_product_id, confidence_score
+
+5. SEARCH_QUERIES (2,400 records)
+   Primary Key: query_id
+   Engine: MergeTree() ORDER BY query_id
+   Description: Customer search behavior and query analytics
+   Key Fields: query_id, session_id, search_term, results_count, clicked_result
+
+6. CART_ACTIVITIES (2,000 records)
+   Primary Key: activity_id
+   Engine: MergeTree() ORDER BY activity_id
+   Description: Shopping cart behavior and abandonment analysis
+   Key Fields: activity_id, session_id, product_id, action_type, timestamp
+
+7. WISHLIST_ITEMS (1,600 records)
+   Primary Key: wishlist_id
+   Engine: MergeTree() ORDER BY wishlist_id
+   Description: Customer wishlist tracking and conversion analysis
+   Key Fields: wishlist_id, customer_id, product_id, added_date, purchased_date
+
+8. EMAIL_MARKETING (45 records)
+   Primary Key: campaign_id
+   Engine: MergeTree() ORDER BY campaign_id
+   Description: Email marketing campaign tracking and effectiveness
+   Key Fields: campaign_id, campaign_name, sent_date, open_rate, click_rate
+
+9. MARKETING_CAMPAIGNS (12 records)
+   Primary Key: marketing_campaign_id
+   Engine: MergeTree() ORDER BY marketing_campaign_id
+   Description: Digital marketing campaign performance tracking
+   Key Fields: marketing_campaign_id, campaign_name, channel, budget_eur, roi
+
+10. CART_ANALYTICS (212 records)
+    Primary Key: analytics_id
+    Engine: MergeTree() ORDER BY analytics_id
+    Description: Shopping cart conversion and abandonment analytics
+    Key Fields: analytics_id, date, abandonment_rate, average_cart_value
+
+11. AB_TEST_RESULTS (10 records)
+    Primary Key: test_id
+    Engine: MergeTree() ORDER BY test_id
+    Description: A/B testing results for conversion optimization
+    Key Fields: test_id, test_name, variant_a_conversion, variant_b_conversion
+
+12. PAGE_VIEWS (0 records - real-time aggregated data)
+    Primary Key: page_view_id
+    Engine: MergeTree() ORDER BY page_view_id
+    Description: Individual page view tracking (aggregated in analytics_events)
+    Key Fields: page_view_id, session_id, page_url, view_duration, bounce_rate
+
+================================================================================
+                              DATA RELATIONSHIPS
+================================================================================
+
+FOREIGN KEY RELATIONSHIPS:
+- web_sessions.customer_id → eurostyle_operational.customers.customer_id
+- product_reviews.product_id → eurostyle_operational.products.product_id
+- product_reviews.customer_id → eurostyle_operational.customers.customer_id
+- product_recommendations.customer_id → eurostyle_operational.customers.customer_id
+- web_analytics_events.session_id → web_sessions.session_id
+- cart_activities.session_id → web_sessions.session_id
+- wishlist_items.customer_id → eurostyle_operational.customers.customer_id
+
+CROSS-DATABASE INTEGRATIONS:
+- web_sessions correlate with eurostyle_operational.orders for conversion analysis
+- product_reviews integrate with eurostyle_operational.products for ratings
+- customer behavior aligns with eurostyle_operational.customer purchase patterns
+
+================================================================================
+                           TECHNICAL ARCHITECTURE
+================================================================================
+
+DATABASE TECHNOLOGY:
+- Engine: ClickHouse 23.12
+- Architecture: Columnar storage optimized for web analytics
+- Deployment: Docker containerized with real-time data processing
+- Performance: High-speed event ingestion and real-time analytics
+
+CONNECTION DETAILS:
+- HTTP Interface: localhost:8124
+- Native Interface: localhost:9002
+- Container: eurostyle_clickhouse_retail
+- Network: eurostyle_retail_network
+
+ANALYTICS FEATURES:
+- Real-time Data: Sub-second event processing and aggregation
+- Customer Journey: Complete cross-session customer behavior tracking
+- Conversion Funnel: Multi-step conversion analysis and optimization
+- Behavioral Segmentation: AI-powered customer segment identification
+
+================================================================================
+                              API CAPABILITIES
+================================================================================
+
+REST API ENDPOINTS:
+GET /api/v3/sessions - Web session data with customer journey analytics
+GET /api/v3/events - Real-time web event stream and behavior tracking
+GET /api/v3/reviews - Product review analytics and sentiment analysis
+GET /api/v3/recommendations - AI product recommendation engine
+GET /api/v3/search - Search behavior analytics and query optimization
+GET /api/v3/cart - Shopping cart analytics and abandonment insights
+POST /api/v3/events - Real-time event ingestion endpoint
+
+AUTHENTICATION:
+- Method: OAuth 2.0 Bearer Token with analytics-specific scopes
+- Scopes: read:analytics, write:analytics, admin:analytics, gdpr:analytics
+- Rate Limiting: 2000 requests/hour per API key (high-volume analytics)
+
+DATA FORMATS:
+- Primary: JSON (application/json)
+- Export: CSV (text/csv) for business intelligence tools
+- Real-time: WebSocket for live event streaming
+
+REAL-TIME FEATURES:
+- Event Streaming: WebSocket-based real-time event ingestion
+- Live Dashboards: Real-time analytics dashboard support
+- Alert System: Automated alerts for conversion rate changes
+
+================================================================================
+                              DATA QUALITY METRICS
+================================================================================
+
+ANALYTICS DATA ACCURACY:
+- Session Tracking: 99.8% accuracy (cookies and fingerprinting)
+- Event Capture: 99.5% event capture rate
+- Customer Journey: 95% cross-session customer identification
+- Conversion Attribution: 98% accurate conversion tracking
+
+PERFORMANCE METRICS:
+- Event Ingestion: 10,000+ events/second capacity
+- Query Response Time: <50ms for standard analytics queries
+- Data Freshness: <1 second latency for real-time data
+- System Availability: 99.95% uptime SLA
+
+BUSINESS IMPACT METRICS:
+- Conversion Rate Optimization: Average 15% improvement
+- Cart Abandonment Reduction: 12% average reduction
+- Personalization Effectiveness: 23% increase in engagement
+- Email Campaign ROI: 18% average improvement
+
+================================================================================
+                           COMPLIANCE & SECURITY
+================================================================================
+
+GDPR COMPLIANCE (EU REGULATION 2016/679):
+- Cookie Consent: GDPR-compliant cookie consent management
+- Data Minimization: Only collect necessary analytics data
+- Right to Erasure: Customer data deletion on request
+- Data Portability: Export customer analytics data on request
+
+PRIVACY FEATURES:
+- IP Anonymization: Automatic IP address anonymization
+- Session Privacy: Configurable session data retention periods
+- Consent Management: Granular consent for different data types
+- Data Masking: Personal data masking for non-authorized access
+
+SECURITY FEATURES:
+- Encryption: AES-256 encryption for customer behavior data
+- Network Security: TLS 1.3 with certificate pinning
+- Access Control: Role-based analytics access permissions
+- Audit Trail: Complete analytics data access logging
+
+================================================================================
+                              INTEGRATION GUIDE
+================================================================================
+
+TYPICAL INTEGRATION PATTERNS:
+
+1. REAL-TIME ANALYTICS:
+   - JavaScript tracking pixel integration
+   - Real-time event streaming via WebSocket
+   - Live dashboard and alerting integration
+
+2. CUSTOMER JOURNEY ANALYSIS:
+   - Cross-session customer behavior tracking
+   - Conversion funnel analysis and optimization
+   - Customer segment identification and targeting
+
+3. BUSINESS INTELLIGENCE:
+   - E-commerce KPI dashboard integration
+   - Customer lifetime value analytics
+   - Product performance and recommendation analytics
+
+SAMPLE INTEGRATION CODE:
+```javascript
+// Real-time event tracking
+const analytics = new EuroStyleAnalytics('your-api-key');
+analytics.track('product_view', {
+  product_id: 'PROD_001',
+  category: 'dresses',
+  value: 89.99
+});
+
+// Customer behavior query
+fetch('/api/v3/sessions?customer_id=CUST_001&period=30d', {
+  headers: {
+    'Authorization': 'Bearer ANALYTICS_TOKEN'
+  }
+});
+```
+
+GDPR-COMPLIANT TRACKING:
+```javascript
+// GDPR consent integration
+if (cookieConsent.hasConsent('analytics')) {
+  analytics.enableTracking();
+} else {
+  analytics.disableTracking();
+}
+```
+
+================================================================================
+                          E-COMMERCE ANALYTICS FEATURES
+================================================================================
+
+CUSTOMER BEHAVIOR ANALYTICS:
+- Session Tracking: Complete customer journey mapping
+- Conversion Funnels: Multi-step conversion analysis
+- Cohort Analysis: Customer retention and lifetime value
+- Behavioral Segmentation: AI-powered customer segments
+
+PRODUCT ANALYTICS:
+- Product Performance: Sales, views, conversion rates
+- Review Analytics: Sentiment analysis and rating trends
+- Recommendation Engine: AI/ML-powered product suggestions
+- Search Analytics: Query optimization and result relevance
+
+MARKETING ANALYTICS:
+- Campaign Performance: Multi-channel campaign tracking
+- Email Marketing: Open rates, click-through rates, conversions
+- A/B Testing: Statistical significance testing for optimization
+- Attribution Modeling: Multi-touch attribution analysis
+
+CONVERSION OPTIMIZATION:
+- Cart Abandonment: Real-time cart abandonment tracking
+- Checkout Analytics: Conversion funnel optimization
+- Personalization: Dynamic content and product recommendations
+- User Experience: Heat maps and user interaction analysis
+
+================================================================================
+                            SUPPORT INFORMATION
+================================================================================
+
+TECHNICAL SUPPORT:
+- Company: DigitalCommerce Analytics Ltd.
+- Email: support@digitalcommerce-analytics.com
+- Phone: +44 20 1234 5678
+- Hours: 24/7 for real-time analytics, 9-18 GMT for standard support
+
+ANALYTICS CONSULTING:
+- Implementation: E-commerce analytics implementation specialists
+- Optimization: Conversion rate optimization consultants
+- GDPR Compliance: Privacy-compliant analytics implementation
+- Training: Analytics platform user and administrator training
+
+DATA SCIENCE SERVICES:
+- Custom Analytics: Tailored analytics solutions and KPIs
+- AI/ML Models: Custom recommendation and segmentation models
+- Predictive Analytics: Customer behavior prediction models
+- Business Intelligence: Executive dashboard and reporting services
+
+MAINTENANCE WINDOWS:
+- Scheduled: Sunday 01:00-02:00 GMT (monthly)
+- Emergency: As needed with 1-hour advance notice
+- Real-time: Zero-downtime deployments for critical updates
+
+================================================================================
+                              DOCUMENT CONTROL
+================================================================================
+
+Document Version: v3.0
+Publication Date: October 15, 2024
+Document Type: Technical Specification
+Classification: Confidential - Customer Use Only
+Intended Audience: E-commerce Integrators, Marketing Teams, IT Architects
+
+Copyright: © 2024 DigitalCommerce Analytics Ltd. All rights reserved.
+This document contains proprietary and confidential analytics information.
+
+REVISION HISTORY:
+- v3.0 (Oct 2024): Updated with current production schema and record counts
+- v2.1 (Sep 2024): Enhanced GDPR compliance and privacy features
+- v2.0 (Aug 2024): Initial production release with real-time analytics
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================

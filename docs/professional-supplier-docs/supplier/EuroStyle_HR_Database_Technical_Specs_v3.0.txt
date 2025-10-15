@@ -1,0 +1,354 @@
+================================================================================
+                            EUROSTYLE HR SYSTEM v3.0
+                            TECHNICAL SPECIFICATIONS
+================================================================================
+
+SUPPLIER: PeopleFirst HR Technologies B.V.
+PRODUCT: EuroStyle Human Resources Management Platform
+VERSION: v3.0
+DATABASE: eurostyle_hr
+PUBLICATION DATE: October 15, 2024
+DOCUMENT CLASSIFICATION: Technical Specification - Customer Integration
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+The EuroStyle Human Resources Management Platform provides comprehensive HR
+management capabilities with full European employment law compliance. Built on
+ClickHouse columnar database technology, the system manages the complete employee
+lifecycle with GDPR compliance and advanced analytics capabilities.
+
+CORE CAPABILITIES:
+- European employment law compliance (NL, DE, FR, BE, LU)
+- Complete employee lifecycle management (320+ employees)
+- GDPR-compliant data management with advanced privacy controls
+- Performance management and review cycles (1,828+ reviews)
+- Training and development tracking (1,863+ training records)
+- Leave management with statutory compliance (1,077+ leave requests)
+- Employee surveys and engagement analytics (4,510+ responses)
+- Compensation and benefits administration (147+ salary changes)
+
+================================================================================
+                               DATABASE SCHEMA
+================================================================================
+
+DATABASE NAME: eurostyle_hr
+TABLES: 13 HR management tables
+TOTAL RECORDS: 11,163 (as of October 15, 2024)
+ENGINE: ClickHouse MergeTree() with GDPR-compliant data protection
+
+TABLE SPECIFICATIONS:
+
+1. EMPLOYEES (320 records)
+   Primary Key: employee_id
+   Engine: MergeTree() ORDER BY employee_id
+   Description: Core employee master data with GDPR compliance
+   Key Fields: employee_id, first_name, last_name, email, country, visa_status
+
+2. DEPARTMENTS (5 records)
+   Primary Key: department_id
+   Engine: MergeTree() ORDER BY department_id
+   Description: Organizational department structure
+   Key Fields: department_id, department_name, manager_id, cost_center_id
+
+3. JOB_POSITIONS (1 record)
+   Primary Key: position_id
+   Engine: MergeTree() ORDER BY position_id
+   Description: Job position definitions and requirements
+   Key Fields: position_id, position_title, department_id, salary_grade
+
+4. EMPLOYMENT_CONTRACTS (315 records)
+   Primary Key: contract_id
+   Engine: MergeTree() ORDER BY contract_id
+   Description: Employment contract details and terms
+   Key Fields: contract_id, employee_id, contract_type, start_date, salary_eur
+
+5. PERFORMANCE_CYCLES (5 records)
+   Primary Key: cycle_id
+   Engine: MergeTree() ORDER BY cycle_id
+   Description: Performance review cycle definitions
+   Key Fields: cycle_id, cycle_name, cycle_type, start_date, end_date
+
+6. PERFORMANCE_REVIEWS (1,828 records)
+   Primary Key: review_id
+   Engine: MergeTree() ORDER BY review_id
+   Description: Individual employee performance reviews
+   Key Fields: review_id, employee_id, cycle_id, overall_rating, review_date
+
+7. TRAINING_PROGRAMS (108 records)
+   Primary Key: program_id
+   Engine: MergeTree() ORDER BY program_id
+   Description: Corporate training program catalog
+   Key Fields: program_id, program_name, provider, duration_hours, cost_eur
+
+8. EMPLOYEE_TRAINING (1,863 records)
+   Primary Key: training_id
+   Engine: MergeTree() ORDER BY training_id
+   Description: Employee training participation and completion
+   Key Fields: training_id, employee_id, program_id, completion_date, status
+
+9. EMPLOYEE_SURVEYS (39 records)
+   Primary Key: survey_id
+   Engine: MergeTree() ORDER BY survey_id
+   Description: Employee engagement and satisfaction surveys
+   Key Fields: survey_id, survey_name, launch_date, response_deadline
+
+10. SURVEY_RESPONSES (4,510 records)
+    Primary Key: response_id
+    Engine: MergeTree() ORDER BY response_id
+    Description: Individual employee survey responses
+    Key Fields: response_id, survey_id, employee_id, response_score, submit_date
+
+11. LEAVE_BALANCES (945 records)
+    Primary Key: balance_id
+    Engine: MergeTree() ORDER BY balance_id
+    Description: Employee leave entitlements and balances
+    Key Fields: balance_id, employee_id, leave_type, entitled_days, used_days
+
+12. LEAVE_REQUESTS (1,077 records)
+    Primary Key: request_id
+    Engine: MergeTree() ORDER BY request_id
+    Description: Employee leave requests and approvals
+    Key Fields: request_id, employee_id, leave_type, start_date, days_requested
+
+13. COMPENSATION_HISTORY (147 records)
+    Primary Key: compensation_id
+    Engine: MergeTree() ORDER BY compensation_id
+    Description: Employee salary and compensation changes
+    Key Fields: compensation_id, employee_id, effective_date, new_salary_eur
+
+================================================================================
+                              DATA RELATIONSHIPS
+================================================================================
+
+FOREIGN KEY RELATIONSHIPS:
+- employees.department_id → departments.department_id
+- employment_contracts.employee_id → employees.employee_id
+- performance_reviews.employee_id → employees.employee_id
+- performance_reviews.cycle_id → performance_cycles.cycle_id
+- employee_training.employee_id → employees.employee_id
+- employee_training.program_id → training_programs.program_id
+- survey_responses.employee_id → employees.employee_id
+- leave_requests.employee_id → employees.employee_id
+- compensation_history.employee_id → employees.employee_id
+
+CROSS-DATABASE INTEGRATIONS:
+- departments.cost_center_id → eurostyle_finance.cost_centers.cost_center_id
+- employee payroll integrates with eurostyle_finance.gl_journal_lines
+- employee assignments integrate with eurostyle_pos.employee_assignments
+
+================================================================================
+                           TECHNICAL ARCHITECTURE
+================================================================================
+
+DATABASE TECHNOLOGY:
+- Engine: ClickHouse 23.12
+- Architecture: Columnar storage with GDPR-compliant data handling
+- Deployment: Docker containerized with encrypted persistent storage
+- Compliance: GDPR Article 32 technical and organizational measures
+
+CONNECTION DETAILS:
+- HTTP Interface: localhost:8124
+- Native Interface: localhost:9002
+- Container: eurostyle_clickhouse_retail
+- Network: eurostyle_retail_network
+
+GDPR COMPLIANCE FEATURES:
+- Data Encryption: AES-256 encryption for personal data fields
+- Access Logging: Complete audit trail for personal data access
+- Data Masking: Dynamic data masking for non-authorized users
+- Right to Erasure: Automated employee data deletion capabilities
+
+================================================================================
+                              API CAPABILITIES
+================================================================================
+
+REST API ENDPOINTS:
+GET /api/v3/employees - Employee directory with GDPR-compliant filtering
+POST /api/v3/employees - Create new employee records
+GET /api/v3/performance - Performance review data and analytics
+GET /api/v3/training - Training programs and employee participation
+GET /api/v3/leave - Leave balance and request management
+GET /api/v3/surveys - Employee survey results and analytics
+
+AUTHENTICATION:
+- Method: OAuth 2.0 Bearer Token with HR-specific scopes
+- Scopes: read:hr, write:hr, admin:hr, gdpr:hr
+- Rate Limiting: 200 requests/hour per API key (personal data protection)
+
+DATA FORMATS:
+- Primary: JSON (application/json)
+- Export: CSV (text/csv) with GDPR compliance controls
+- Reports: PDF (application/pdf) for official HR documents
+
+GDPR API FEATURES:
+- Data Subject Access: GET /api/v3/gdpr/data-subject/{employee_id}
+- Right to Erasure: DELETE /api/v3/gdpr/data-subject/{employee_id}
+- Consent Management: POST /api/v3/gdpr/consent
+
+================================================================================
+                              DATA QUALITY METRICS
+================================================================================
+
+HR DATA ACCURACY:
+- Employee Data Completeness: 99.5% (minimal missing personal data)
+- Performance Review Coverage: 95% of eligible employees reviewed
+- Training Completion Rate: 87% program completion rate
+- Leave Balance Accuracy: 100% (automated statutory calculations)
+
+PERFORMANCE METRICS:
+- Average Query Time: 28ms for HR reports
+- Peak Transaction Volume: 200 HR transactions/hour
+- Data Growth Rate: ~150 HR records/day
+- System Availability: 99.95% uptime SLA
+
+COMPLIANCE METRICS:
+- GDPR Compliance: 100% (all personal data processed lawfully)
+- Data Access Audit: 100% of personal data access logged
+- Right to Erasure Response: <72 hours (GDPR Article 17)
+- Data Breach Detection: Real-time monitoring and alerting
+
+================================================================================
+                           COMPLIANCE & SECURITY
+================================================================================
+
+GDPR COMPLIANCE (EU REGULATION 2016/679):
+- Article 5: Lawful processing of personal data
+- Article 6: Legal basis for processing employment data
+- Article 17: Right to erasure implementation
+- Article 32: Technical and organizational security measures
+- Article 33: Data breach notification procedures
+
+EUROPEAN EMPLOYMENT LAW COMPLIANCE:
+- Netherlands: Working Hours Act, Annual Leave Act
+- Germany: Federal Employee Data Protection Act
+- France: Labor Code data protection requirements
+- Belgium: Employment Contract Act compliance
+- Luxembourg: Data Protection Act implementation
+
+SECURITY FEATURES:
+- Encryption: AES-256 encryption at rest for personal data
+- Network Security: TLS 1.3 with certificate pinning
+- Access Control: Role-based with HR segregation of duties
+- Audit Logging: Complete personal data access audit trail
+
+================================================================================
+                              INTEGRATION GUIDE
+================================================================================
+
+TYPICAL INTEGRATION PATTERNS:
+
+1. EMPLOYEE LIFECYCLE MANAGEMENT:
+   - Automated onboarding workflow integration
+   - Payroll system synchronization
+   - Performance review cycle automation
+
+2. GDPR DATA SUBJECT REQUESTS:
+   - Automated data subject access reports
+   - Right to erasure processing
+   - Consent management integration
+
+3. HR ANALYTICS AND REPORTING:
+   - Employee engagement trend analysis
+   - Training effectiveness reporting
+   - Performance distribution analytics
+
+SAMPLE INTEGRATION CODE:
+```bash
+# Employee lookup with GDPR compliance
+curl -H "Authorization: Bearer HR_TOKEN" \
+     -H "X-GDPR-Lawful-Basis: Legitimate Interest" \
+     "http://localhost:8124/api/v3/employees?department=IT&gdpr_mask=true"
+
+# Performance review submission
+curl -X POST -H "Authorization: Bearer HR_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"employee_id": "EMP_001", "cycle_id": "PERF_2024", "rating": 4}' \
+     "http://localhost:8124/api/v3/performance"
+```
+
+================================================================================
+                          EUROPEAN EMPLOYMENT LAW FEATURES
+================================================================================
+
+COUNTRY-SPECIFIC COMPLIANCE:
+
+NETHERLANDS (NL):
+- Working Time Directive: 40-hour work week tracking
+- Annual Leave: 20 days minimum + additional days calculation
+- Sick Leave: Up to 2 years with salary continuation tracking
+- Privacy: AVG (Dutch GDPR implementation) compliance
+
+GERMANY (DE):
+- Federal Employee Data Protection Act compliance
+- Works Council: Employee representation requirements
+- Annual Leave: 24 days minimum (EU directive)
+- Sick Leave: 6 weeks full pay tracking
+
+FRANCE (FR):
+- Labor Code: 35-hour work week compliance
+- Annual Leave: 25 days paid leave entitlement
+- Training Rights: Individual training account (CPF) tracking
+- Privacy: CNIL data protection authority compliance
+
+BELGIUM (BE):
+- Employment Contract Act: Fixed-term contract limitations
+- Annual Leave: 20 days + public holiday tracking
+- Language Requirements: Dutch/French language compliance
+- Social Security: Integration with Belgian social security
+
+LUXEMBOURG (LU):
+- Employment legislation: Trilingual requirement tracking
+- Annual Leave: 25 days + public holiday calculation
+- Banking Sector: Additional financial sector compliance
+- Cross-border: EU worker rights compliance
+
+================================================================================
+                            SUPPORT INFORMATION
+================================================================================
+
+TECHNICAL SUPPORT:
+- Company: PeopleFirst HR Technologies B.V.
+- Email: support@peoplefirst-hr.nl
+- Phone: +31 20 456 7890
+- Hours: 8-18 CET for HR support, 24/7 for GDPR incidents
+
+HR CONSULTING:
+- GDPR Implementation: Certified data protection consultants
+- Employment Law: Country-specific legal compliance support
+- System Integration: HR system integration specialists
+- Training: GDPR awareness and system user training
+
+GDPR INCIDENT RESPONSE:
+- Data Breach Hotline: +31 20 456 7899 (24/7)
+- Response Time: <1 hour for data breach incidents
+- Documentation: Complete incident documentation for DPA reporting
+- Notification: Automated GDPR breach notification procedures
+
+MAINTENANCE WINDOWS:
+- Scheduled: Sunday 02:00-04:00 CET (monthly)
+- Emergency: As needed with 2-hour advance notice
+- GDPR Updates: Real-time compliance updates as needed
+
+================================================================================
+                              DOCUMENT CONTROL
+================================================================================
+
+Document Version: v3.0
+Publication Date: October 15, 2024
+Document Type: Technical Specification
+Classification: Confidential - Customer Use Only
+Intended Audience: HR System Integrators, CHRO Office, IT Architects
+
+Copyright: © 2024 PeopleFirst HR Technologies B.V. All rights reserved.
+This document contains proprietary and confidential HR information.
+
+REVISION HISTORY:
+- v3.0 (Oct 2024): Updated with current production schema and record counts
+- v2.1 (Sep 2024): Enhanced GDPR compliance features and procedures
+- v2.0 (Aug 2024): Initial production release with European law compliance
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================

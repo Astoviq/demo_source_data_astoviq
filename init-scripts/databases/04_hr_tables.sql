@@ -304,8 +304,8 @@ CREATE TABLE IF NOT EXISTS performance_reviews (
     -- Goals and Development
     goals_met UInt8,                    -- Number of goals achieved
     total_goals UInt8,                  -- Total number of goals
-    development_needs Array(String),    -- ['Communication', 'Technical Skills']
-    strengths Array(String),            -- ['Problem Solving', 'Teamwork']
+    development_needs String,           -- Semicolon-delimited: 'Communication; Technical Skills'
+    strengths String,                   -- Semicolon-delimited: 'Problem Solving; Teamwork'
     
     -- Comments
     employee_self_assessment String,
@@ -344,7 +344,7 @@ CREATE TABLE IF NOT EXISTS training_programs (
     max_participants Nullable(UInt16),
     
     -- Prerequisites and Target Audience
-    target_positions Array(String),     -- ['Software Developer', 'Senior Developer']
+    target_positions String,            -- Semicolon-delimited: 'Software Developer; Senior Developer'
     prerequisites String,
     skill_level String,                 -- BEGINNER, INTERMEDIATE, ADVANCED
     

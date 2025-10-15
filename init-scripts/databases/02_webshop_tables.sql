@@ -223,8 +223,36 @@ CREATE TABLE IF NOT EXISTS eurostyle_webshop.product_recommendations (
 ) ENGINE = MergeTree()
 ORDER BY (country_code, shown_timestamp, session_id);
 
--- A/B Test Results Table
--- Track A/B testing performance
+-- Cart Analytics Table (Simplified)
+-- Analytics for cart abandonment and recovery
+CREATE TABLE IF NOT EXISTS eurostyle_webshop.cart_analytics (
+    session_id String,
+    customer_id Nullable(String),
+    abandonment_stage Nullable(String), -- cart_page, checkout_start, payment_info, etc.
+    recovery_email_sent Bool,
+    recovered_via_email Bool,
+    created_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (session_id, created_at);
+
+-- Marketing Campaigns Table
+-- Track marketing campaign performance
+CREATE TABLE IF NOT EXISTS eurostyle_webshop.marketing_campaigns (
+    campaign_id String,
+    campaign_name String,
+    campaign_type String, -- EMAIL, SOCIAL_MEDIA, DISPLAY, etc.
+    start_date Date,
+    end_date Nullable(Date),
+    campaign_status String, -- ACTIVE, COMPLETED, PAUSED
+    target_audience String, -- ALL_CUSTOMERS, NEW_CUSTOMERS, etc.
+    budget_eur Decimal(18, 2),
+    created_at DateTime DEFAULT now(),
+    updated_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (campaign_id, start_date);
+
+-- A/B Testing Results Table
+-- Track experiment performance
 CREATE TABLE IF NOT EXISTS eurostyle_webshop.ab_test_results (
     ab_test_id String,
     session_id String,

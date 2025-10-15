@@ -402,6 +402,61 @@ tables:
       approved_by:
         nullable: true
 
+  currencies:
+    csv_file_pattern: "eurostyle_finance.currencies.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      currency_code: "currency_code"
+      currency_name: "currency_name"
+      currency_symbol: "currency_symbol"
+      is_base_currency: "is_base_currency"
+      is_active: "is_active"
+      decimal_places: "decimal_places"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      is_base_currency:
+        type: "boolean_conversion"
+        true_values: ["true", "1", "True"]
+        false_values: ["false", "0", "False"]
+      is_active:
+        type: "boolean_conversion"
+        true_values: ["true", "1", "True"]
+        false_values: ["false", "0", "False"]
+
+  exchange_rates:
+    csv_file_pattern: "eurostyle_finance.exchange_rates.csv.gz"
+    csv_delimiter: ","
+    csv_header: true
+    csv_encoding: "utf-8"
+    
+    column_mappings:
+      exchange_rate_id: "exchange_rate_id"
+      base_currency: "base_currency"
+      target_currency: "target_currency"
+      exchange_rate: "exchange_rate"
+      rate_date: "rate_date"
+      rate_type: "rate_type"
+      data_source: "data_source"
+      
+    auto_generated_columns:
+      created_date: "now()"
+      updated_date: "now()"
+      
+    transformations:
+      exchange_rate:
+        type: "decimal_conversion"
+        precision: 6
+      rate_date:
+        type: "date_conversion"
+        input_format: "YYYY-MM-DD"
+
   entity_accounts:
     csv_file_pattern: "eurostyle_finance.entity_accounts.csv.gz"
     csv_delimiter: ","
@@ -422,6 +477,10 @@ tables:
     transformations:
       local_account_code:
         nullable: true
+      is_active:
+        type: "boolean_conversion"
+        true_values: ["true", "1", "True"]
+        false_values: ["false", "0", "False"]
 
   entity_relationships:
     csv_file_pattern: "eurostyle_finance.entity_relationships.csv.gz"
