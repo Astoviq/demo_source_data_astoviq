@@ -1,8 +1,50 @@
-# 🏪 EuroStyle Fashion - Retail Demo Platform
+# 🏪 EuroStyle Retail Demo Platform
 
-A comprehensive European fashion retail demo system built on ClickHouse with **perfect cross-database consistency**, designed for testing and demonstrating modern data platform capabilities with realistic business intelligence scenarios.
+<div align="center">
+  <img src="https://img.shields.io/badge/ClickHouse-FFCC02?style=for-the-badge&logo=clickhouse&logoColor=white" alt="ClickHouse">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="MIT License">
+</div>
 
-> **📦 Standalone Project**: This is now an independent retail demo platform, extracted from the ClickHouse experiments for broader use across data engineering teams.
+<div align="center">
+  <h3>🚀 Production-Ready Multi-Database Demo Platform</h3>
+  <p><em>A comprehensive European fashion retail demo system with perfect cross-database consistency, designed for testing and demonstrating modern data platform capabilities.</em></p>
+</div>
+
+## ✨ What Makes This Special
+
+🎯 **Perfect Data Consistency** - Operations revenue = Finance GL = POS transactions (guaranteed)  
+🌍 **European Market Focused** - GDPR compliant, multi-currency, VAT handling  
+📊 **78K+ Realistic Records** - Across 5 integrated databases with business intelligence ready data  
+🔄 **Incremental Updates** - Simulate daily business operations with new orders AND operational changes  
+🐳 **Docker Ready** - One-command deployment with isolated ports  
+📈 **Business Intelligence Ready** - Pre-built queries for analytics and reporting  
+
+> **💡 Perfect for**: Data engineering demos, BI tool testing, ClickHouse learning, analytics platform evaluation
+
+---
+
+## ⚡ Quick Demo (2 Minutes)
+
+```bash
+# Clone and start the complete demo system
+git clone https://github.com/Astoviq/demo_source_data_astoviq.git
+cd demo_source_data_astoviq
+chmod +x eurostyle.sh
+
+# Start containers and generate demo data
+./eurostyle.sh start
+./eurostyle.sh demo-fast    # ~2K customers, 1K orders
+
+# Access the system
+open http://localhost:8124  # ClickHouse interface
+./eurostyle.sh status       # Check system health
+```
+
+**✅ You now have**: 5 databases, 78K+ records, perfect data consistency, ready for BI tools!
+
+---
 
 ## 📋 Overview
 
@@ -627,7 +669,50 @@ This demo system is provided for educational and testing purposes. The EuroStyle
 
 ---
 
+---
+
+## ⭐ Star This Repository
+
+**Found this useful?** Please star this repository to show your support and help others discover this demo platform!
+
+<div align="center">
+  <a href="https://github.com/Astoviq/demo_source_data_astoviq/stargazers">
+    <img src="https://img.shields.io/github/stars/Astoviq/demo_source_data_astoviq?style=social" alt="GitHub stars">
+  </a>
+  <a href="https://github.com/Astoviq/demo_source_data_astoviq/network/members">
+    <img src="https://img.shields.io/github/forks/Astoviq/demo_source_data_astoviq?style=social" alt="GitHub forks">
+  </a>
+  <a href="https://github.com/Astoviq/demo_source_data_astoviq/issues">
+    <img src="https://img.shields.io/github/issues/Astoviq/demo_source_data_astoviq" alt="GitHub issues">
+  </a>
+</div>
+
+## 🤝 Contributing
+
+We welcome contributions! Whether it's:
+- 🐛 **Bug reports** and fixes
+- ✨ **New features** and business scenarios  
+- 📚 **Documentation** improvements
+- 🔧 **Integration examples** (dbt, Superset, etc.)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## 👨‍💻 Contributors
+
+Thanks to everyone who has contributed to making this demo platform better!
+
+<div align="center">
+  <a href="https://github.com/Astoviq/demo_source_data_astoviq/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=Astoviq/demo_source_data_astoviq" alt="Contributors">
+  </a>
+</div>
+
+*Want to be featured here? Check out our [contribution guide](CONTRIBUTING.md)!*
+
+---
+
 **🏪 EuroStyle Fashion** - *European retail data, reimagined for the modern data stack*
+
 ## 🗜️ Data Compression
 
 The CSV data files are stored in compressed format (gzip) to reduce repository size:
