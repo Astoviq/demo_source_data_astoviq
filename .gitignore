@@ -72,5 +72,14 @@ generated_data/
 *.temp
 .cache/
 
+# Environment files (CRITICAL SECURITY)
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+# Allow .env.example as template
+!.env.example
+
 # None of your business
 WARP.mddata/csv/
