@@ -1,0 +1,217 @@
+# EuroStyle Fashion – Metrics Catalog
+
+kpis:
+  - key: financial.net_revenue
+    name: Net Revenue (EUR)
+    definition: Total order revenue including tax and shipping less discounts
+    owner_role: Finance
+    target: yoy >= 8%
+    thresholds: { green: ">=target", yellow: ">=target-2pp", red: "<target-2pp" }
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT sum(total_amount_eur) AS net_revenue_eur
+      FROM eurostyle_operational.orders
+      WHERE order_date >= toDate('2024-01-01');
+
+  - key: financial.gross_margin_pct_pos
+    name: Gross Margin % (POS)
+    definition: (POS revenue - COGS) / POS revenue
+    owner_role: Finance
+    target: ">=58%"
+    db_source: [eurostyle_pos.transaction_items, eurostyle_operational.products]
+    clickhouse_query: |
+      SELECT
+        (sum(ti.line_total_eur) - sum(ti.quantity * p.cost_price_eur)) / nullIf(sum(ti.line_total_eur), 0) AS gross_margin_pct
+      FROM eurostyle_pos.transaction_items ti
+      LEFT JOIN eurostyle_operational.products p ON ti.product_id = p.product_id;
+
+  - key: finance.revenue_reconciliation_variance
+    name: Revenue Reconciliation Variance (Ops vs Finance)
+    definition: Finance GL revenue minus Operational revenue (monthly)
+    owner_role: Finance
+    target: 0
+    db_source: [eurostyle_operational.orders, eurostyle_finance.gl_journal_lines]
+    clickhouse_query: |
+      WITH operational AS (
+        SELECT toStartOfMonth(order_date) AS month, sum(total_amount_eur) AS ops_revenue
+        FROM eurostyle_operational.orders
+        GROUP BY month
+      ), finance AS (
+        SELECT toStartOfMonth(journal_date) AS month, sum(credit_amount) AS fin_revenue
+        FROM eurostyle_finance.gl_journal_lines
+        WHERE account_id LIKE '4%'
+        GROUP BY month
+      )
+      SELECT o.month, o.ops_revenue, f.fin_revenue, (f.fin_revenue - o.ops_revenue) AS variance
+      FROM operational o
+      LEFT JOIN finance f ON o.month = f.month
+      ORDER BY month;
+
+  - key: digital.conversion_rate
+    name: Conversion Rate (Webshop)
+    definition: Converting sessions / total sessions
+    owner_role: E-commerce
+    target: ">=2.5%"
+    db_source: [eurostyle_webshop.web_sessions]
+    clickhouse_query: |
+      SELECT (countIf(conversion_session = 1) * 100.0) / nullIf(count(), 0) AS conversion_rate_pct
+      FROM eurostyle_webshop.web_sessions
+      WHERE session_date >= toDate('2024-01-01');
+
+  - key: customer.repeat_purchase_rate
+    name: Repeat Purchase Rate
+    definition: Customers with >=2 orders / customers with >=1 order (rolling 12m)
+    owner_role: CRM
+    target: ">=32%"
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      WITH co AS (
+        SELECT customer_id, count() AS orders
+        FROM eurostyle_operational.orders
+        WHERE order_date >= addYears(today(), -1)
+        GROUP BY customer_id
+      )
+      SELECT sum(orders >= 2) / nullIf(sum(orders >= 1), 0) AS repeat_purchase_rate
+      FROM co;
+
+  - key: trading.aov
+    name: Average Order Value (AOV)
+    definition: Net revenue / number of orders
+    owner_role: Merchandising
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT sum(total_amount_eur) / nullIf(count(), 0) AS aov_eur
+      FROM eurostyle_operational.orders
+      WHERE order_date >= addMonths(today(), -3);
+
+  - key: ops.order_cycle_time_days
+    name: Order Cycle Time (days)
+    definition: Avg days from order_datetime to delivery_date
+    owner_role: Operations
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT avg(dateDiff('day', order_datetime, delivery_date)) AS cycle_days
+      FROM eurostyle_operational.orders
+      WHERE delivery_date IS NOT NULL;
+
+  - key: ops.on_time_fulfillment_rate
+    name: On-Time Fulfillment Rate
+    definition: % delivered orders on/before promised_delivery_date
+    owner_role: Operations
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT countIf(delivery_date <= promised_delivery_date) / nullIf(countIf(promised_delivery_date IS NOT NULL), 0) AS on_time_rate
+      FROM eurostyle_operational.orders
+      WHERE delivery_date IS NOT NULL;
+
+  - key: ops.return_rate
+    name: Return Rate
+    definition: Returned orders / total orders
+    owner_role: Operations
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT countIf(order_status = 'returned') / nullIf(count(), 0) AS return_rate
+      FROM eurostyle_operational.orders
+      WHERE order_date >= addMonths(today(), -3);
+
+  - key: pos.sales_per_employee
+    name: Sales per Employee (EUR)
+    definition: POS revenue per employee over a period
+    owner_role: Retail Ops, HR
+    db_source: [eurostyle_pos.transactions]
+    clickhouse_query: |
+      SELECT employee_id, sum(total_amount_eur) AS sales_eur
+      FROM eurostyle_pos.transactions
+      WHERE transaction_date >= addMonths(today(), -1)
+      GROUP BY employee_id
+      ORDER BY sales_eur DESC
+      LIMIT 20;
+
+  - key: pos.upt
+    name: Units per Transaction (UPT)
+    definition: Units sold / number of transactions
+    owner_role: Retail Ops
+    db_source: [eurostyle_pos.transaction_items]
+    clickhouse_query: |
+      SELECT sum(quantity) / nullIf(countDistinct(transaction_id), 0) AS upt
+      FROM eurostyle_pos.transaction_items
+      WHERE toDate(now()) >= toDate(addMonths(today(), -1));
+
+  - key: pos.refund_void_rate
+    name: Refund/Void Rate
+    definition: Voided/refunded transactions / total
+    owner_role: Retail Ops, Finance
+    db_source: [eurostyle_pos.transactions]
+    clickhouse_query: |
+      SELECT countIf(payment_status IN ('voided','refunded')) / nullIf(count(), 0) AS refund_void_rate
+      FROM eurostyle_pos.transactions
+      WHERE transaction_date >= addMonths(today(), -1);
+
+  - key: hr.revenue_per_planned_hour
+    name: Revenue per Planned Hour (POS)
+    definition: Sales EUR / planned hours in period
+    owner_role: HR, Retail Ops
+    db_source: [eurostyle_pos.transactions, eurostyle_pos.employee_assignments]
+    clickhouse_query: |
+      WITH sales AS (
+        SELECT employee_id, sum(total_amount_eur) AS sales_eur
+        FROM eurostyle_pos.transactions
+        WHERE transaction_date >= addMonths(today(), -1)
+        GROUP BY employee_id
+      ), hours AS (
+        SELECT employee_id, sum(planned_hours) AS planned_hours
+        FROM eurostyle_pos.employee_assignments
+        WHERE assignment_date >= addMonths(today(), -1)
+        GROUP BY employee_id
+      )
+      SELECT s.employee_id, sales_eur / nullIf(planned_hours, 0) AS revenue_per_planned_hour
+      FROM sales s
+      LEFT JOIN hours h ON s.employee_id = h.employee_id
+      ORDER BY revenue_per_planned_hour DESC;
+
+  - key: compliance.vat_compliance_rate
+    name: VAT Compliance Rate (POS)
+    definition: Share of transactions with valid VAT rate per country
+    owner_role: Finance
+    db_source: [eurostyle_pos.transactions]
+    clickhouse_query: |
+      SELECT
+        country_code,
+        countIf(
+          (country_code='NL' AND vat_rate_percentage IN (21)) OR
+          (country_code='DE' AND vat_rate_percentage IN (19)) OR
+          (country_code='FR' AND vat_rate_percentage IN (20)) OR
+          (country_code='BE' AND vat_rate_percentage IN (21)) OR
+          (country_code='LU' AND vat_rate_percentage IN (17))
+        ) / nullIf(count(), 0) AS compliance_rate
+      FROM eurostyle_pos.transactions
+      GROUP BY country_code
+      ORDER BY country_code;
+
+  - key: sustainability.product_coverage
+    name: Product Sustainability Coverage
+    definition: % of active products with sustainability_score populated
+    owner_role: Merchandising, Sustainability
+    db_source: [eurostyle_operational.products]
+    clickhouse_query: |
+      SELECT countIf(is_active AND sustainability_score > 0) / nullIf(countIf(is_active), 0) AS sustainability_coverage
+      FROM eurostyle_operational.products;
+
+  - key: ops.otifni
+    name: OTIFNI (%)
+    definition: Share of delivered orders that were on time, in full (proxy = no returns), and with no issues recorded
+    owner_role: Operations
+    target: ">=95%"
+    db_source: [eurostyle_operational.orders]
+    clickhouse_query: |
+      SELECT
+        (countIf(
+          delivery_date IS NOT NULL
+          AND promised_delivery_date IS NOT NULL
+          AND delivery_date <= promised_delivery_date
+          AND order_status != 'returned'
+          AND isNull(return_reason)
+          AND payment_status = 'completed'
+          AND isNull(customer_service_notes)
+        ) * 100.0) / nullIf(countIf(delivery_date IS NOT NULL AND promised_delivery_date IS NOT NULL), 0) AS otifni_pct
+      FROM eurostyle_operational.orders;

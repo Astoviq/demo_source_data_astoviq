@@ -1,0 +1,25 @@
+brand: "EuroStyle Fashion"
+tagline: "Sustainable style. Seamless experience."
+markets:
+  - NL
+  - DE
+  - FR
+  - BE
+  - LU
+languages:
+  - en
+channels:
+  - webshop
+  - stores
+values:
+  - customer_centricity
+  - sustainability
+  - compliance
+  - innovation
+  - people_first
+strategic_pillars:
+  - omnichannel_excellence
+  - merchandising
+  - store_operations
+  - finance_compliance
+  - people_culture

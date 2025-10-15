@@ -1,0 +1,15 @@
+---
+id: {{ meta.id }}
+title: {{ meta.title }}
+version: {{ meta.version | default('0.1') }}
+audience: {{ meta.audience | default('internal') }}
+owner: {{ meta.owner | default('TBD') }}
+brand: {{ meta.brand | default('EuroStyle Fashion') }}
+confidentiality: {{ meta.confidentiality | default('Internal') }}
+created_at: {{ meta.created_at | default('2025-10-15') }}
+updated_at: {{ meta.updated_at | default('2025-10-15') }}
+---
+
+# {{ meta.title }}
+
+{{ content | default('') }}

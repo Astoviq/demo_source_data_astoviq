@@ -1,0 +1,10 @@
+| KPI | Definition | Owner | Target | Thresholds | Sources |
+|---|---|---|---|---|---|
+{% for k in kpis %}
+| {{ k.name }} | {{ k.definition }} | {{ k.owner_role }} | {{ k.target | default('TBD') }} | {{ k.thresholds | default('TBD') }} | {{ k.db_source | join(', ') }} |
+{% endfor %}
+
+```sql
+-- Example query
+{{ example_query | default('-- provided per KPI') }}
+```

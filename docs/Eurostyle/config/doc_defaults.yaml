@@ -1,0 +1,13 @@
+defaults:
+  version: "0.1"
+  confidentiality: Internal
+  owner: "TBD"
+  audience: internal
+  brand: "EuroStyle Fashion"
+  created_at: "2025-10-15"
+  updated_at: "2025-10-15"
+
+governance:
+  review_cycle: "quarterly"
+  change_log_required: true
+  archive_superseded_in: "archive/"
