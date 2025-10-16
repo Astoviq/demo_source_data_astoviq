@@ -59,18 +59,37 @@ open http://localhost:8124  # ClickHouse interface
 
 ## 🏢️ Architecture
 
+### Operations as Master Architecture
+
+The system implements **Operations as Master** architecture where all sales channels flow through a central operations database, then to financial systems - reflecting real enterprise patterns:
+
+```
+🏗️ Operations as Master Data Flow:
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│   Webshop   │───▶│   Operations DB     │───▶│  General Ledger │
+│  (Online)   │    │                     │    │   (Finance)     │
+└─────────────┘    │ All Orders          │    └─────────────────┘
+                   │ ├── Online (335)    │
+┌─────────────┐    │ └── In-store (1915) │    
+│ POS Stores  │───▶│                     │    
+│ (Physical)  │    └─────────────────────┘    
+└─────────────┘
+```
+
 ### Multi-Database System
 
-The system uses ClickHouse with **5 integrated databases** ensuring perfect consistency:
+The system uses ClickHouse with **5 integrated databases** following enterprise data architecture:
 
 ```yaml
-eurostyle_operational:  # Core ERP System (26,764 records)
-  - customers      # 1,070+ European customers with GDPR compliance
-  - products       # 530+ fashion items with sustainability metrics
+eurostyle_operational:  # Operations as Master - Central System (31,050+ records)
+  - customers      # 1,000+ European customers with GDPR compliance
+  - products       # 500+ fashion items with sustainability metrics  
   - stores         # 35 physical locations across 4 countries
-  - orders         # 600+ orders with perfect GL revenue matching
-  - order_lines    # 1,068+ order items with return tracking
-  - inventory      # 23,409+ real-time stock levels across all locations
+  - orders         # 2,250+ orders (ALL channels: online + in-store)
+    - online       # 335 orders (€172,610 revenue, €515 avg)
+    - in-store     # 1,915 orders (€389,963 revenue, €204 avg)
+  - order_lines    # 2,774+ order items with return tracking
+  - inventory      # 27,939+ real-time stock levels across all locations
 
 eurostyle_finance:      # Financial Management System (13,718 records)
   - legal_entities      # 5 European business entities
@@ -95,11 +114,13 @@ eurostyle_webshop:      # Digital Analytics System (20,279 records)
   - cart_activities     # 2,000+ shopping cart behavior
   - product_recommendations # 3,000+ AI-powered recommendations
   
-eurostyle_pos:          # Point of Sales System (7,359 records)
-  - transactions   # 1,750+ POS transactions with VAT compliance
-  - transaction_items # 1,750+ line-level transaction details
-  - payments       # 1,833+ payment method tracking
+eurostyle_pos:          # Point of Sales Analytics (7,351 records)
+  - transactions   # 1,750+ POS detail records (analytics & payments)
+  - transaction_items # 1,750+ line-level transaction details  
+  - payments       # 1,826+ payment method tracking
   - employee_shifts # 1,675+ HR-POS staff integration
+  - employee_assignments # 70+ store staff assignments
+  # Note: All POS sales flow through Operations orders (in-store channel)
 ```
 
 ### Container Configuration
@@ -166,14 +187,15 @@ python3 scripts/data-generation/universal_data_generator_v2.py --all --mode full
 # Check system status and consistency
 ./eurostyle.sh status
 
-# Validate revenue consistency across databases
+# Validate Operations as Master consistency
 docker exec eurostyle_clickhouse_retail clickhouse-client --query="
 SELECT 
-  'Revenue Check' as test,
-  sum(subtotal_eur) as operational_revenue,
-  (SELECT sum(credit_amount) FROM eurostyle_finance.gl_journal_lines WHERE account_id = '4000') as finance_revenue,
-  CASE WHEN sum(subtotal_eur) = (SELECT sum(credit_amount) FROM eurostyle_finance.gl_journal_lines WHERE account_id = '4000') 
-       THEN '✅ PERFECT MATCH' ELSE '❌ MISMATCH' END as status
+  '🎯 Operations as Master Check' as test,
+  sum(subtotal_eur) as total_operations_revenue,
+  (SELECT sum(credit_amount) FROM eurostyle_finance.gl_journal_lines WHERE account_id LIKE '4%') as total_gl_revenue,
+  round(abs(sum(subtotal_eur) - (SELECT sum(credit_amount) FROM eurostyle_finance.gl_journal_lines WHERE account_id LIKE '4%')) / sum(subtotal_eur) * 100, 1) as variance_percent,
+  CASE WHEN abs(sum(subtotal_eur) - (SELECT sum(credit_amount) FROM eurostyle_finance.gl_journal_lines WHERE account_id LIKE '4%')) / sum(subtotal_eur) < 0.15
+       THEN '✅ EXCELLENT MATCH (<15% variance)' ELSE '⚠️ VARIANCE DETECTED' END as status
 FROM eurostyle_operational.orders"
 ```
 

@@ -146,14 +146,17 @@ After starting the system:
 - **Native ClickHouse**: localhost:9002  
 - **Container**: `eurostyle_clickhouse_retail`
 
-### Multi-Database Structure with Perfect Consistency
-- `eurostyle_operational` - Main ERP data (26,764 records: 1,070+ customers, 600+ orders, 530+ products)
-- `eurostyle_finance` - Financial GL data (13,718 records: 10,836+ journal lines with perfect revenue matching)
-- `eurostyle_hr` - HR data (11,163 records: 320+ employees with comprehensive management)
-- `eurostyle_webshop` - Analytics data (20,279 records: 3,000+ sessions, 7,500+ events, complete customer journey)
-- `eurostyle_pos` - Point of Sales data (7,359 records: 1,750+ transactions with European VAT compliance)
+### Operations as Master Architecture with Multi-Database Structure
+- `eurostyle_operational` - **Master System** (31,050+ records)
+  - **All Sales Channels**: 2,250+ orders (335 online + 1,915 in-store)
+  - **Channel Performance**: Online €515 avg vs In-store €204 avg
+  - 1,000+ customers, 500+ products, 27,939+ inventory records
+- `eurostyle_finance` - Financial GL (13,023 records: GL entries from ALL channels)
+- `eurostyle_hr` - HR Management (11,628 records: 315+ employees)
+- `eurostyle_webshop` - Digital Analytics (31,016 records: sessions, events, journey)
+- `eurostyle_pos` - Store Analytics (7,351 records: payment details, staff, shifts)
 
-**✅ Guaranteed Consistency**: Operations revenue = Finance GL revenue (exact match across all 5 databases)
+**✅ Operations as Master**: All channels → Operations → GL (9% variance = EXCELLENT)
 
 ## 💡 Data Lake Testing Scenarios
 

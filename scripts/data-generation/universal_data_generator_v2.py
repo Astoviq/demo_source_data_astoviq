@@ -932,7 +932,8 @@ class UniversalDataGeneratorV2:
         
         self._save_csv_data(orders, 'eurostyle_operational', 'orders')
         self._save_csv_data(gl_headers, 'eurostyle_finance', 'gl_journal_headers')
-        self._save_csv_data(gl_lines, 'eurostyle_finance', 'gl_journal_lines')
+        # Initialize GL entries list with order entries
+        self.generated_data['gl_entries'] = gl_lines.copy()
         
         # Phase 2a: Missing Operational Tables (WARP.md Configuration-driven)
         self.logger.info("📍 Phase 2a: Missing Operational Tables (WARP.md Rules 1, 6 compliant)")
@@ -946,9 +947,8 @@ class UniversalDataGeneratorV2:
         employees, payroll_gl = self.generate_employees_with_payroll_gl(mode)
         
         self._save_csv_data(employees, 'eurostyle_hr', 'employees')
-        # Extend GL lines with payroll entries
+        # Extend GL lines with payroll entries (don't save yet - more entries coming)
         self.generated_data['gl_entries'].extend(payroll_gl)
-        self._save_csv_data(self.generated_data['gl_entries'], 'eurostyle_finance', 'gl_journal_lines')
         
         # Phase 4: HR training, surveys and performance data
         self.logger.info("📍 Phase 4: HR training, surveys and performance data")
@@ -1002,7 +1002,7 @@ class UniversalDataGeneratorV2:
         self._save_csv_data(pos_daily_summaries, 'eurostyle_pos', 'store_daily_summaries')
         self._save_csv_data(pos_promotions, 'eurostyle_pos', 'promotions')
         
-        # Update GL entries with POS transactions
+        # Final save: All GL entries now accumulated (Orders + Payroll + POS)
         self._save_csv_data(self.generated_data['gl_entries'], 'eurostyle_finance', 'gl_journal_lines')
         
         # Phase 6: Webshop aligned with operations
@@ -1122,11 +1122,11 @@ class UniversalDataGeneratorV2:
             'checks': []
         }
         
-        # Check 1: Revenue consistency
+        # Check 1: Revenue consistency (Orders subtotal should match GL revenue credits)
         if self.generated_data['orders'] and self.generated_data['gl_entries']:
             total_order_revenue = sum(Decimal(str(order['subtotal_eur'])) for order in self.generated_data['orders'])
             total_gl_revenue = sum(entry['credit_amount'] for entry in self.generated_data['gl_entries'] 
-                                 if entry.get('account_id') == '4000')
+                                 if entry.get('account_id') in ['4000', '4100'])  # Include shipping revenue
             
             revenue_variance = abs(total_order_revenue - total_gl_revenue)
             
