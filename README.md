@@ -25,6 +25,18 @@
 
 ---
 
+## 🏗️ Visual Architecture
+
+<div align="center">
+  <img src="screenshots/DB__overview.png" alt="ClickHouse interface showing 5 databases: eurostyle_finance, eurostyle_hr, eurostyle_operational, eurostyle_pos, eurostyle_webshop" width="400">
+</div>
+
+_**5-Database Architecture**: Unified ClickHouse instance demonstrating Operations as Master architecture with cross-database analytics capability. All databases accessible via single connection (localhost:8124) with perfect referential integrity._
+
+**🔗 Explore More**: [Complete database schemas](docs/SCHEMA.md) | [Visual documentation](SCREENSHOTS.md)
+
+---
+
 ## ⚡ Quick Demo (2 Minutes)
 
 ```bash
@@ -130,6 +142,30 @@ eurostyle_pos:          # Point of Sales Analytics (7,351 records)
 - **Native Port**: `9002` (isolated from production)
 - **Database**: `eurostyle_operational`
 - **Memory Limit**: 2GB (demo-optimized)
+
+## 🖥️ Visual Tour
+
+### Database Tables and Record Counts
+
+See the actual ClickHouse interface with production-scale data volumes:
+
+| Operations (Master System) | Finance (GL System) |
+|---------------------------|---------------------|
+| ![Operations Database](screenshots/DB__eurostyle_operations.png) | ![Finance Database](screenshots/DB__eurostyle_finance.png) |
+| _Core operational database with 626K inventory records, 61K customers, and 14K orders demonstrating production-scale data volumes._ | _Financial management system with 85K GL journal lines achieving perfect revenue consistency with operational data._ |
+
+| HR (European Compliance) | Webshop (Analytics) |
+|--------------------------|--------------------|
+| ![HR Database](screenshots/DB_eurostyle_hr.png) | ![Webshop Database](screenshots/DB__eurostyle_webshop.png) |
+| _Human resources system with 41K employees, comprehensive performance tracking, and European employment law compliance._ | _Digital analytics platform with 104K behavioral events, complete customer journey tracking, and marketing attribution._ |
+
+**🔍 Point of Sales Database**
+
+![POS Database](screenshots/DB__eurostyle_pos.png)
+
+_Point of Sales system with 32K transactions, European VAT compliance, and integrated employee performance tracking._
+
+**📊 Key Features**: Production-scale volumes, perfect cross-database consistency, realistic business relationships, and European market compliance.
 
 ## 🚀 Quick Start
 
@@ -441,6 +477,53 @@ Consistency Guarantees:
 - **Loyalty Program**: 35% adoption
 - **Marketing Opt-in**: 42% (GDPR compliant)
 - **Customer Segments**: New (25%), Developing (35%), Established (25%), Loyal (15%)
+
+## 🔍 Real Queries and Results
+
+### Perfect Revenue Consistency: Operations vs Finance GL
+
+![Perfect revenue consistency](screenshots/Example_Query_Consistency.png)
+
+_**Operations as Master Validation**: Operational order revenue exactly matching Finance GL revenue demonstrates perfect cross-database consistency._
+
+**SQL Query**:
+```sql
+WITH 
+  operations AS (SELECT round(sum(subtotal_eur), 2) AS revenue FROM eurostyle_operational.orders),
+  finance AS (SELECT round(sum(credit_amount), 2) AS revenue FROM eurostyle_finance.gl_journal_lines WHERE account_id LIKE '4%')
+SELECT 
+  'Perfect Consistency Demo' as validation_type,
+  concat('€', toString(operations.revenue)) as operational_revenue,
+  concat('€', toString(finance.revenue)) as finance_gl_revenue,
+  CASE WHEN operations.revenue = finance.revenue 
+       THEN '✅ EXCELLENT MATCH (<5% variance)' 
+       ELSE '⚠️ VARIANCE DETECTED' END as consistency_status
+FROM operations, finance;
+```
+
+### Cross-Database Customer Engagement Analytics
+
+![Customer engagement query](screenshots/Example_Query_Customer_Engagement.png)
+
+_**Multi-Database Analytics**: Customer engagement analysis combining webshop sessions with operational orders to calculate conversion rates by country._
+
+**SQL Query**:
+```sql
+SELECT 
+  c.country_code,
+  count(DISTINCT c.customer_id) as total_customers,
+  count(DISTINCT o.customer_id) as customers_with_orders,
+  count(DISTINCT ws.customer_id) as customers_with_web_sessions,
+  round(count(DISTINCT o.customer_id) / count(DISTINCT c.customer_id) * 100, 1) as order_conversion_rate,
+  round(count(DISTINCT ws.customer_id) / count(DISTINCT c.customer_id) * 100, 1) as web_engagement_rate
+FROM eurostyle_operational.customers c
+LEFT JOIN eurostyle_operational.orders o ON c.customer_id = o.customer_id
+LEFT JOIN eurostyle_webshop.web_sessions ws ON c.customer_id = ws.customer_id
+GROUP BY c.country_code
+ORDER BY total_customers DESC;
+```
+
+**💡 Note**: Confirm exact column names using [docs/SCHEMA.md](docs/SCHEMA.md) before running queries as schemas may evolve.
 
 ## 🎯 Use Cases
 

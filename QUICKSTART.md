@@ -158,6 +158,8 @@ After starting the system:
 
 **✅ Operations as Master**: All channels → Operations → GL (9% variance = EXCELLENT)
 
+**📸 Visual Tour**: See actual database interfaces and query results in [README Visual Tour](README.md#visual-tour) | [Screenshots Documentation](SCREENSHOTS.md)
+
 ## 💡 Data Lake Testing Scenarios
 
 ### Scenario 1: Daily ETL Processing with Perfect Consistency

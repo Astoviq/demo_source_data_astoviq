@@ -1,0 +1,153 @@
+# EuroStyle Screenshot Manifest
+# Configuration-driven visual asset registry following WARP.md principles
+# 
+# This file defines all screenshot assets, their metadata, and usage locations
+# to prevent hard-coding and enable automated documentation generation.
+
+version: "1.0"
+project: "eurostyle-retail-demo"
+last_updated: "2025-10-16"
+
+# Screenshot asset definitions
+screenshots:
+  # =============================================================================
+  # Architecture Overview
+  # =============================================================================
+  - id: db-architecture-overview
+    file: screenshots/DB__overview.png
+    title: "5-Database Architecture Overview"
+    alt: "ClickHouse interface showing 5 databases: eurostyle_finance, eurostyle_hr, eurostyle_operational, eurostyle_pos, eurostyle_webshop"
+    caption: "Unified ClickHouse instance with five logical databases demonstrating Operations as Master architecture with cross-database analytics capability."
+    description: "Shows the complete multi-database structure accessible via single ClickHouse connection on localhost:8124"
+    tags: [architecture, overview, clickhouse, multi-database]
+    used_in:
+      - "README.md#visual-architecture"
+      - "SCREENSHOTS.md#architecture"
+    display:
+      preferred_width: 400
+      alignment: center
+
+  # =============================================================================
+  # Database Structure Screenshots  
+  # =============================================================================
+  - id: db-operational-tables
+    file: screenshots/DB__eurostyle_operations.png
+    title: "Operations Database Tables"
+    alt: "Operations database table list showing customers (61K), orders (14K), products (12K), inventory (626K), and other core business tables"
+    caption: "Core operational database with 626K inventory records, 61K customers, and 14K orders demonstrating production-scale data volumes."
+    description: "Operational database serves as the master system for all business transactions in the Operations as Master architecture"
+    tags: [database, operational, tables, master-system]
+    used_in:
+      - "README.md#visual-tour"
+      - "SCREENSHOTS.md#database-structures"
+    display:
+      preferred_width: 500
+
+  - id: db-finance-tables
+    file: screenshots/DB__eurostyle_finance.png
+    title: "Finance Database Tables"
+    alt: "Finance database showing GL journal headers (3.2K), GL journal lines (85K), chart of accounts (2.1K), and other financial tables"
+    caption: "Financial management system with 85K GL journal lines achieving perfect revenue consistency with operational data."
+    description: "Finance database contains complete double-entry bookkeeping with automated GL entries for every operational transaction"
+    tags: [database, finance, gl-entries, consistency]
+    used_in:
+      - "README.md#visual-tour"
+      - "SCREENSHOTS.md#database-structures"
+    display:
+      preferred_width: 500
+
+  - id: db-hr-tables
+    file: screenshots/DB_eurostyle_hr.png
+    title: "HR Database Tables"  
+    alt: "HR database displaying employees (41K), performance reviews (67K), training programs (4.4K), and European compliance tables"
+    caption: "Human resources system with 41K employees, comprehensive performance tracking, and European employment law compliance."
+    description: "HR database manages workforce across 4 European countries with GDPR compliance and integrated payroll GL posting"
+    tags: [database, hr, employees, compliance, european]
+    used_in:
+      - "README.md#visual-tour"
+      - "SCREENSHOTS.md#database-structures"
+    display:
+      preferred_width: 500
+
+  - id: db-webshop-tables
+    file: screenshots/DB__eurostyle_webshop.png
+    title: "Webshop Analytics Database"
+    alt: "Webshop database with web sessions (22K), analytics events (104K), product reviews (7.3K), and marketing campaign tables"
+    caption: "Digital analytics platform with 104K behavioral events, complete customer journey tracking, and marketing attribution."
+    description: "Webshop analytics database provides comprehensive e-commerce insights with session correlation to operational orders"
+    tags: [database, webshop, analytics, sessions, marketing]
+    used_in:
+      - "README.md#visual-tour"
+      - "SCREENSHOTS.md#database-structures"
+    display:
+      preferred_width: 500
+
+  - id: db-pos-tables
+    file: screenshots/DB__eurostyle_pos.png
+    title: "POS Database Tables"
+    alt: "POS database showing transactions (32K), transaction items (28K), payments (15K), and employee shift management tables"
+    caption: "Point of Sales system with 32K transactions, European VAT compliance, and integrated employee performance tracking."
+    description: "POS database manages physical store transactions with perfect integration to operational orders and finance GL entries"
+    tags: [database, pos, transactions, vat, retail]
+    used_in:
+      - "README.md#visual-tour"
+      - "SCREENSHOTS.md#database-structures"
+    display:
+      preferred_width: 500
+
+  # =============================================================================
+  # Query Result Screenshots
+  # =============================================================================
+  - id: query-revenue-consistency
+    file: screenshots/Example_Query_Consistency.png
+    title: "Perfect Revenue Consistency Validation"
+    alt: "Query result showing exact match: operational revenue €257,212.23 equals finance GL revenue €257,212.23 with 0% variance"
+    caption: "Demonstrates perfect cross-database consistency with operations revenue exactly matching finance GL entries - the hallmark of Operations as Master architecture."
+    description: "Real query execution showing the revenue reconciliation that validates data integrity across databases"
+    tags: [query, consistency, revenue, validation, operations-as-master]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+      
+  - id: query-customer-engagement
+    file: screenshots/Example_Query_Customer_Engagement.png
+    title: "Cross-Database Customer Engagement Analytics"
+    alt: "Query result showing customer engagement by country: NL (259 customers, 39.8% conversion), DE (255 customers, 41.2% conversion)"
+    caption: "Multi-database analytics combining webshop sessions with operational orders to calculate conversion rates and engagement metrics by country."
+    description: "Demonstrates cross-database query capability joining webshop analytics with operational data for business insights"
+    tags: [query, analytics, cross-database, engagement, conversion]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+# =============================================================================
+# Display Configuration
+# =============================================================================
+display_defaults:
+  max_width: 1200
+  quality: high
+  format: png
+  alignment: left
+  
+# =============================================================================
+# Usage Guidelines
+# =============================================================================
+usage_guidelines:
+  alt_text_max_length: 150
+  caption_max_sentences: 2
+  title_max_words: 8
+  required_tags_minimum: 2
+  
+# =============================================================================
+# Automation Settings
+# =============================================================================
+automation:
+  validate_files_exist: true
+  check_dimensions: true
+  verify_usage_links: true
+  generate_thumbnails: false
+  compress_originals: false
