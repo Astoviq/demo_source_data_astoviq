@@ -978,7 +978,12 @@ class UniversalDataGeneratorV2:
         
         # Phase 5: POS (Point of Sales) with perfect revenue reconciliation and enhanced entities
         self.logger.info("📍 Phase 5: POS with perfect revenue reconciliation and comprehensive business entities")
-        pos_assignments = self.generate_pos_employee_assignments(mode)
+        # Use improved country-balanced POS assignment generation
+        pos_config = self._load_domain_config('pos')
+        employee_mgmt_config = pos_config.get('employee_management', {})
+        pos_assignments = self._generate_pos_employee_assignments_from_config(employee_mgmt_config, mode)
+        # Store assignments in generated_data for transaction generation
+        self.generated_data['pos_employee_assignments'] = pos_assignments
         pos_transactions, pos_items, pos_gl_entries = self.generate_pos_transactions_with_revenue_matching(mode)
         
         # Phase 5a: POS Domain Data (WARP.md Configuration-driven)
@@ -2637,7 +2642,7 @@ class UniversalDataGeneratorV2:
     # Configuration-driven generation methods for POS domain
     
     def _generate_pos_employee_assignments_from_config(self, config: Dict, mode: str) -> List[Dict]:
-        """Generate POS employee assignments from domain configuration."""
+        """Generate POS employee assignments from domain configuration with balanced country distribution."""
         assignments = []
         data_patterns = config.get('data_patterns', {}).get('role_hierarchy', {})
         
@@ -2648,43 +2653,89 @@ class UniversalDataGeneratorV2:
         if not stores or not employees:
             return assignments
         
-        assignment_id = 1
+        # Group stores by country for balanced assignment
+        stores_by_country = {}
         for store in stores:
-            store_employees = []
+            country = store.get('country_code', 'NL')
+            if country not in stores_by_country:
+                stores_by_country[country] = []
+            stores_by_country[country].append(store)
+        
+        # Calculate total assignments needed to ensure balanced distribution
+        total_assignments_per_country = {}
+        for country, country_stores in stores_by_country.items():
+            total_assignments = 0
+            for store in country_stores:
+                for role, role_config in data_patterns.items():
+                    count_config = role_config.get('count_per_store', 1)
+                    if isinstance(count_config, list):
+                        count = (count_config[0] + count_config[1]) // 2  # Use average
+                    else:
+                        count = count_config
+                    total_assignments += count
+            total_assignments_per_country[country] = total_assignments
+        
+        # Log distribution for transparency
+        self.logger.info(f"📍 POS assignments planned by country: {total_assignments_per_country}")
+        
+        # Ensure all countries get POS assignments
+        available_employees = employees.copy()
+        assignment_id = 1
+        
+        # Process each country to ensure balanced distribution
+        for country, country_stores in stores_by_country.items():
+            self.logger.info(f"🏪 Processing {len(country_stores)} stores in {country}")
             
-            # Assign employees to store based on role hierarchy from config
-            for role, role_config in data_patterns.items():
-                count_config = role_config.get('count_per_store', 1)
-                if isinstance(count_config, list):
-                    count = random.randint(count_config[0], count_config[1])
-                else:
-                    count = count_config
+            for store in country_stores:
+                store_employees = []
                 
-                # Find available employees for this role
-                available_employees = [emp for emp in employees if emp['employee_id'] not in [a['employee_id'] for a in store_employees]]
-                
-                for i in range(min(count, len(available_employees))):
-                    employee = random.choice(available_employees)
-                    hourly_rates = role_config.get('hourly_rate_eur', [12, 16])
-                    hourly_rate = random.uniform(hourly_rates[0], hourly_rates[1])
+                # Assign employees to store based on role hierarchy from config
+                for role, role_config in data_patterns.items():
+                    count_config = role_config.get('count_per_store', 1)
+                    if isinstance(count_config, list):
+                        count = random.randint(count_config[0], count_config[1])
+                    else:
+                        count = count_config
                     
-                    assignment = {
-                        'assignment_id': f"POSASSIGN_{assignment_id:06d}",
-                        'employee_id': employee['employee_id'],
-                        'store_id': store['store_id'],
-                        'pos_role': role,
-                        'hourly_rate_eur': round(hourly_rate, 2),
-                        'start_date': '2024-01-01',
-                        'end_date': None,
-                        'is_active': True,
-                        'responsibilities': ', '.join(role_config.get('responsibilities', [])),
-                        'created_date': self._generate_realistic_timestamp('assignment'),
-                        'updated_date': self._generate_realistic_timestamp('assignment')
-                    }
-                    assignments.append(assignment)
-                    store_employees.append(assignment)
-                    available_employees.remove(employee)
-                    assignment_id += 1
+                    # Find available employees for this role (not already assigned to this store)
+                    available_for_store = [emp for emp in available_employees 
+                                         if emp['employee_id'] not in [a['employee_id'] for a in store_employees]]
+                    
+                    for i in range(min(count, len(available_for_store))):
+                        if not available_for_store:
+                            break
+                            
+                        employee = random.choice(available_for_store)
+                        hourly_rates = role_config.get('hourly_rate_eur', [12, 16])
+                        hourly_rate = random.uniform(hourly_rates[0], hourly_rates[1])
+                        
+                        assignment = {
+                            'assignment_id': f"POSASSIGN_{assignment_id:06d}",
+                            'employee_id': employee['employee_id'],
+                            'store_id': store['store_id'],
+                            'pos_role': role,
+                            'hourly_rate_eur': round(hourly_rate, 2),
+                            'start_date': '2024-01-01',
+                            'end_date': None,
+                            'is_active': True,
+                            'responsibilities': ', '.join(role_config.get('responsibilities', [])),
+                            'created_date': self._generate_realistic_timestamp('assignment'),
+                            'updated_date': self._generate_realistic_timestamp('assignment')
+                        }
+                        assignments.append(assignment)
+                        store_employees.append(assignment)
+                        available_for_store.remove(employee)
+                        assignment_id += 1
+        
+        # Log final distribution by country for verification
+        final_distribution = {}
+        for assignment in assignments:
+            store = next((s for s in stores if s['store_id'] == assignment['store_id']), None)
+            if store:
+                country = store.get('country_code', 'NL')
+                final_distribution[country] = final_distribution.get(country, 0) + 1
+        
+        self.logger.info(f"✅ Final POS assignment distribution by country: {final_distribution}")
         
         return assignments
     
@@ -5874,7 +5925,7 @@ class UniversalDataGeneratorV2:
             'shift_id': f"SHIFT_{employee_id}_{transaction_date}",
             'register_number': random.randint(1, 4),
             'receipt_number': f"R{txn_id:010d}",
-            'subtotal_amount_eur': round(float(final_subtotal), 2),
+            'subtotal_eur': round(float(final_subtotal), 2),
             'tax_amount_eur': round(float(final_tax), 2),
             'discount_amount_eur': round(float(transaction_discount), 2),
             'total_amount_eur': round(float(final_total), 2),
@@ -5889,8 +5940,9 @@ class UniversalDataGeneratorV2:
             'updated_date': self._generate_realistic_timestamp('transaction')
         }
         
-        # Create GL entries for this transaction
-        gl_entries = self._create_pos_gl_entries(transaction, gl_line_id, patterns, vat_rates, country_code)
+        # DISABLED: Create GL entries for this transaction (to avoid double-counting with operational orders)
+        # gl_entries = self._create_pos_gl_entries(transaction, gl_line_id, patterns, vat_rates, country_code)
+        gl_entries = []  # POS transactions no longer generate GL entries - operational integration handles this
         
         return transaction, items, gl_entries
     
@@ -5963,7 +6015,7 @@ class UniversalDataGeneratorV2:
             'shift_id': f"SHIFT_{pos_assignment['employee_id']}_{transaction_date}",
             'register_number': random.randint(1, 4),
             'receipt_number': f"R{txn_id:010d}",
-            'subtotal_amount_eur': round(float(subtotal), 2),
+            'subtotal_eur': round(float(subtotal), 2),
             'tax_amount_eur': round(float(tax_amount), 2),
             'discount_amount_eur': float(line_discount),
             'total_amount_eur': round(float(total_amount), 2),
@@ -5978,7 +6030,9 @@ class UniversalDataGeneratorV2:
             'updated_date': '2024-01-01 10:00:00'
         }
         
-        gl_entries = self._create_pos_gl_entries(transaction, gl_line_id, patterns, vat_rates, country_code)
+        # DISABLED: GL entries (to avoid double-counting with operational orders)
+        # gl_entries = self._create_pos_gl_entries(transaction, gl_line_id, patterns, vat_rates, country_code)
+        gl_entries = []  # Exact revenue transactions no longer generate GL entries - operational integration handles this
         
         return transaction, [item], gl_entries
     
@@ -6067,7 +6121,7 @@ class UniversalDataGeneratorV2:
         country_vat_account = vat_accounts.get(country_code, '2200')  # Default fallback
         
         total_amount = Decimal(str(transaction['total_amount_eur']))
-        subtotal = Decimal(str(transaction['subtotal_amount_eur']))
+        subtotal = Decimal(str(transaction['subtotal_eur']))
         tax_amount = Decimal(str(transaction['tax_amount_eur']))
         
         payment_method = transaction['payment_method']
@@ -6102,7 +6156,7 @@ class UniversalDataGeneratorV2:
             'journal_line_id': f"POS_GL_{gl_line_id + 1}",
             'journal_header_id': f"POS_HDR_{transaction_date.replace('-', '')}",
             'line_number': 2,
-            'account_id': gl_mapping.get('sales_revenue', '4000'),
+            'account_id': gl_mapping.get('sales_revenue', '4200'),  # POS revenue (separate from operational 4000)
             'debit_amount': 0.00,
             'credit_amount': float(subtotal),
             'currency_code': 'EUR',
@@ -6254,7 +6308,7 @@ class UniversalDataGeneratorV2:
                 'transaction_id': transaction['transaction_id'],
                 'discount_type': random.choice(discount_types),
                 'discount_percentage': random.choice([5.0, 10.0, 15.0, 20.0, 25.0]),
-                'discount_amount_eur': round(float(transaction['subtotal_amount_eur']) * random.uniform(0.05, 0.25), 2),
+                'discount_amount_eur': round(float(transaction['subtotal_eur']) * random.uniform(0.05, 0.25), 2),
                 'promotion_code': random.choice([f"PROMO{random.randint(100, 999)}", None, None]),
                 'authorized_by_employee_id': transaction['employee_id'],
                 'reason': random.choice([

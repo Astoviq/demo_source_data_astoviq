@@ -124,6 +124,113 @@ screenshots:
     display:
       preferred_width: 800
 
+  - id: query-customer-value-intelligence
+    file: screenshots/Example_Query_Customer_Value_Intelligence.png
+    title: "Customer Value Intelligence Dashboard"
+    alt: "Advanced customer analysis showing VIP and Loyal customers with value scores, lifetime values, and customer segmentation across European markets"
+    caption: "Customer Value Intelligence Dashboard combining purchase behavior, loyalty metrics, and customer segmentation for targeted marketing strategies."
+    description: "Comprehensive customer analysis calculating value scores from order history, loyalty points, and marketing preferences to identify high-value customers"
+    tags: [query, customer-intelligence, value-scoring, segmentation, loyalty]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  - id: query-customer-sessions-device
+    file: screenshots/Example_Query_Customer_Sessions_by_Device.png
+    title: "Customer Engagement by Device Type"
+    alt: "Device engagement analysis showing desktop (1,163 sessions), mobile (1,089 sessions), and tablet (248 sessions) with conversion rates"
+    caption: "Device engagement analytics showing session metrics, cart conversion rates, and user behavior patterns across desktop, mobile, and tablet."
+    description: "Cross-device customer behavior analysis combining session duration, page views, and cart activities to optimize digital experience"
+    tags: [query, device-analytics, mobile, engagement, conversion]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  - id: query-customer-journey
+    file: screenshots/Example_Query_Customer_Journey.png
+    title: "Cross-Database Customer Journey Analytics"
+    alt: "Customer journey analysis by country showing total customers, order conversions, and web engagement rates"
+    caption: "Multi-database customer journey analysis tracking customers from web sessions through order conversion across European markets."
+    description: "Comprehensive customer journey tracking joining customer, order, and webshop data to calculate conversion rates by country"
+    tags: [query, customer-journey, cross-database, conversion, analytics]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  - id: query-effective-vat
+    file: screenshots/Example_Query_Effective_VAT.png
+    title: "European VAT Compliance Analysis"
+    alt: "VAT analysis by country showing POS transactions, subtotals, VAT collected, and effective VAT rates for European compliance"
+    caption: "Point-of-sales VAT analysis across European countries showing transaction volumes, tax collections, and compliance with country-specific VAT rates."
+    description: "European VAT compliance dashboard analyzing POS transactions to verify correct VAT calculations and regulatory compliance"
+    tags: [query, vat-compliance, european, pos, taxation]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  - id: query-multi-country-revenue
+    file: screenshots/Example_Query_Multi-Country_Revenue.png
+    title: "Multi-Country Revenue Analysis"
+    alt: "Revenue breakdown by country showing customers, orders, revenue totals, and average order values across European markets"
+    caption: "Geographic revenue analysis breaking down business performance by country with customer counts, order volumes, and average values."
+    description: "Multi-country business intelligence showing revenue distribution and performance metrics across the European market presence"
+    tags: [query, geographic, revenue, multi-country, business-intelligence]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  - id: query-row-counts
+    file: screenshots/Example_Query_row_counts.png
+    title: "System Overview Database Record Counts"
+    alt: "System overview showing record counts across all databases with readable formatting and data volumes"
+    caption: "Database system overview displaying record counts and data volumes across all 5 databases in the EuroStyle platform."
+    description: "System health and scale overview showing the data volumes and distribution across operational, finance, HR, webshop, and POS databases"
+    tags: [query, system-overview, record-counts, database-health, scale]
+    used_in:
+      - "README.md#real-queries-and-results"
+      - "SCREENSHOTS.md#query-examples"
+    display:
+      preferred_width: 800
+
+  # =============================================================================
+  # System Procedure Screenshots  
+  # =============================================================================
+  - id: example-generating-procedure
+    file: screenshots/Example_Generating_Procedure.png
+    title: "Data Generation Procedure"
+    alt: "Terminal output showing the data generation process with Universal Data Generator creating all 5 databases with perfect consistency"
+    caption: "Universal Data Generator V2 in action, creating integrated demo data across all databases with guaranteed cross-database consistency."
+    description: "Real terminal output showing the complete data generation workflow using the Universal Data Generator for perfect revenue matching"
+    tags: [procedure, generation, universal-generator, consistency, terminal]
+    used_in:
+      - "README.md#data-generation"
+      - "SCREENSHOTS.md#procedures"
+    display:
+      preferred_width: 800
+
+  - id: example-loading-procedure
+    file: screenshots/Example_Loading_Procedure.png
+    title: "Data Loading Procedure"
+    alt: "Terminal output showing the data loading process loading CSV files into ClickHouse databases with validation"
+    caption: "Data loading workflow showing CSV import into ClickHouse with automatic validation and consistency checks."
+    description: "Terminal output demonstrating the data loading process with file counts, record validation, and system verification"
+    tags: [procedure, loading, csv-import, validation, clickhouse]
+    used_in:
+      - "README.md#data-loading"
+      - "SCREENSHOTS.md#procedures"
+    display:
+      preferred_width: 800
+
 # =============================================================================
 # Display Configuration
 # =============================================================================

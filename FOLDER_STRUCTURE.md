@@ -91,9 +91,9 @@ eurostyle-retail-demo/
 │       ├── start-eurostyle.sh              # Complete system startup
 │       ├── stop-eurostyle.sh               # System shutdown
 │       ├── generate-demo-data.sh           # Comprehensive data generation
-│       ├── load_finance_data.sh            # Finance data loader
-│       ├── load_hr_data.sh                 # HR data loader  
-│       ├── load_webshop_data.sh            # Webshop data loader
+│       ├── load_full_dataset.sh            # Unified data loader (used by eurostyle.sh)
+│       ├── load_incremental_data.sh        # Incremental data loader (used by eurostyle.sh)
+│       ├── archive/                        # Archived individual loaders (use ./eurostyle.sh instead)
 │       ├── create_webshop_tables.sh        # Webshop table creation
 │       ├── generate_complete_finance_data.py    # Finance data generator
 │       ├── generate_complete_hr_data.py         # HR data generator

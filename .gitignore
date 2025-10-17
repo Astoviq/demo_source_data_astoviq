@@ -59,6 +59,13 @@ generated_data/
 *.swo
 *~
 
+# Logging
+logs/**/**
+logs/
+logs/**/*
+logs/*
+
+
 # macOS
 .DS_Store
 .AppleDouble
@@ -82,4 +89,5 @@ generated_data/
 !.env.example
 
 # None of your business
-WARP.mddata/csv/
+WARP.md
+data/csv/

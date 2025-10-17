@@ -264,7 +264,7 @@ docker logs eurostyle_clickhouse_retail
 head -5 eurostyle_webshop.*.csv
 
 # Manual data loading
-./scripts/load_webshop_data.sh
+./eurostyle.sh demo-fast  # Load all systems including webshop
 ```
 
 ### Performance Tuning
@@ -298,9 +298,9 @@ docker update --memory=8g --cpus=4 eurostyle_clickhouse_retail
    - Test with `--tables new_table_name`
 
 2. **Webshop Tables**
-   - Add generation logic to `scripts/generate_complete_webshop_data.py`
-   - Update loading script `scripts/load_webshop_data.sh`
-   - Test with `--system webshop`
+   - Add generation logic to `scripts/data-generation/universal_data_generator_v2.py`
+   - Tables are loaded automatically via `./eurostyle.sh demo-fast` or `demo-full`
+   - Test with `./eurostyle.sh demo-fast`
 
 ### Script Customization
 

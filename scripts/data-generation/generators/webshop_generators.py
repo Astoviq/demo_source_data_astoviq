@@ -289,16 +289,20 @@ class WebshopEntityGenerator:
                 search_query = search_query[:-1] + random.choice('abcdefghijklmnopqrstuvwxyz')
             
             query = {
-                'query_id': f"SEARCH_{i + 1:08d}",
+                'search_query_id': f"SEARCH_{i + 1:08d}",
                 'session_id': session['session_id'],
                 'customer_id': session.get('customer_id'),
-                'search_query': search_query,
-                'search_type': search_type,
-                'results_count': random.choice([0] + list(range(1, 101))),
-                'clicked_result': random.random() < 0.65,
+                'country_code': session.get('country_code', 'NL'),
+                'search_term': search_query,
                 'search_timestamp': self.faker.date_time_between(start_date='-1y', end_date='now').strftime('%Y-%m-%d %H:%M:%S'),
-                'created_date': self.faker.date_time_between(start_date='-1y', end_date='now').strftime('%Y-%m-%d %H:%M:%S'),
-                'updated_date': self.faker.date_time_between(start_date='-1y', end_date='now').strftime('%Y-%m-%d %H:%M:%S')
+                'results_count': random.choice([0] + list(range(1, 101))),
+                'clicked_result_position': random.randint(1, 10) if random.random() < 0.65 else None,
+                'clicked_product_id': None,  # Could be enhanced to link to actual products
+                'filters_applied': [],  # Empty array for now
+                'sort_order': random.choice(['RELEVANCE', 'PRICE_LOW_HIGH', 'PRICE_HIGH_LOW', 'NEWEST', 'RATING']),
+                'search_refinements': random.randint(0, 3),
+                'no_results': random.random() < 0.05,  # 5% chance of no results
+                'created_at': self.faker.date_time_between(start_date='-1y', end_date='now').strftime('%Y-%m-%d %H:%M:%S')
             }
             queries.append(query)
             

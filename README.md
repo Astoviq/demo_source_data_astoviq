@@ -501,9 +501,80 @@ SELECT
 FROM operations, finance;
 ```
 
-### Cross-Database Customer Engagement Analytics
+### Customer Value Intelligence Dashboard
 
-![Customer engagement query](screenshots/Example_Query_Customer_Engagement.png)
+![Customer Value Intelligence](screenshots/Example_Query_Customer_Value_Intelligence.png)
+
+_**Customer Value Intelligence Dashboard**: Advanced customer analysis combining purchase behavior, loyalty metrics, and customer segmentation with calculated value scores for targeted marketing and retention strategies._
+
+**SQL Query**:
+```sql
+WITH customer_order_stats AS (
+    SELECT 
+        o.customer_id,
+        COUNT(*) as actual_total_orders,
+        SUM(o.subtotal_eur) as actual_total_spent,
+        AVG(o.subtotal_eur) as actual_avg_order_value,
+        MAX(o.order_date) as actual_last_order_date
+    FROM eurostyle_operational.orders o
+    GROUP BY o.customer_id
+)
+SELECT 
+    c.customer_id,
+    concat(c.first_name, ' ', c.last_name) AS customer_name,
+    c.country_code AS customer_country,
+    c.loyalty_tier,
+    c.loyalty_points,
+    COALESCE(cos.actual_total_orders, 0) AS orders_placed,
+    ROUND(COALESCE(cos.actual_total_spent, 0), 2) AS lifetime_value_eur,
+    ROUND(COALESCE(cos.actual_avg_order_value, 0), 2) AS avg_order_value_eur,
+    CASE
+        WHEN cos.actual_total_orders >= 3 AND cos.actual_total_spent >= 200 THEN 'VIP_Customer'
+        WHEN cos.actual_total_orders >= 2 AND cos.actual_total_spent >= 100 THEN 'Loyal_Customer'
+        WHEN cos.actual_total_orders >= 1 THEN 'Active_Customer'
+        ELSE 'Browser_Only'
+    END AS customer_segment,
+    ROUND(
+        (COALESCE(cos.actual_total_orders, 0) * 10 + 
+         COALESCE(cos.actual_total_spent, 0) * 0.1 + 
+         c.loyalty_points * 0.05 + 
+         IF(c.marketing_opt_in, 15, 0) +
+         IF(c.newsletter_subscription, 10, 0)) * 0.8, 1
+    ) AS customer_value_score
+FROM eurostyle_operational.customers c
+LEFT JOIN customer_order_stats cos ON c.customer_id = cos.customer_id
+WHERE c.customer_id IS NOT NULL
+ORDER BY customer_value_score DESC, lifetime_value_eur DESC
+LIMIT 20;
+```
+
+### Customer Engagement Analysis by Device Type
+
+![Customer Sessions by Device](screenshots/Example_Query_Customer_Sessions_by_Device.png)
+
+_**Device Engagement Analytics**: Customer behavior analysis across desktop, mobile, and tablet devices showing session metrics, cart conversion rates, and engagement patterns._
+
+**SQL Query**:
+```sql
+SELECT 
+    ws.device_type,
+    COUNT(DISTINCT ws.session_id) AS total_sessions,
+    COUNT(DISTINCT ws.customer_id) AS unique_customers,
+    ROUND(AVG(ws.session_duration_seconds) / 60.0, 2) AS avg_session_duration_minutes,
+    AVG(ws.page_views) AS avg_pages_per_session,
+    COUNT(DISTINCT ca.session_id) AS sessions_with_cart_activity,
+    ROUND(COUNT(DISTINCT ca.session_id) * 100.0 / COUNT(DISTINCT ws.session_id), 1) AS cart_conversion_rate_pct,
+    ROUND(SUM(CASE WHEN ws.conversion_session THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT ws.session_id), 1) AS purchase_conversion_rate_pct,
+    ROUND(SUM(CASE WHEN ws.bounce_session THEN 1 ELSE 0 END) * 100.0 / COUNT(DISTINCT ws.session_id), 1) AS bounce_rate_pct
+FROM eurostyle_webshop.web_sessions ws
+LEFT JOIN eurostyle_webshop.cart_activities ca ON ws.session_id = ca.session_id
+GROUP BY ws.device_type
+ORDER BY total_sessions DESC;
+```
+
+### Cross-Database Customer Journey Analytics
+
+![Customer Journey Analysis](screenshots/Example_Query_Customer_Journey.png)
 
 _**Multi-Database Analytics**: Customer engagement analysis combining webshop sessions with operational orders to calculate conversion rates by country._
 
@@ -521,6 +592,32 @@ LEFT JOIN eurostyle_operational.orders o ON c.customer_id = o.customer_id
 LEFT JOIN eurostyle_webshop.web_sessions ws ON c.customer_id = ws.customer_id
 GROUP BY c.country_code
 ORDER BY total_customers DESC;
+```
+
+### European VAT Compliance Analysis
+
+![Multi-Country VAT Analysis](screenshots/Example_Query_Effective_VAT.png)
+
+_**VAT Compliance Dashboard**: Point-of-sales VAT analysis across European countries showing transaction volumes, tax collections, and effective VAT rates by country._
+
+**SQL Query**:
+```sql
+SELECT 
+    s.country_code AS country,
+    count(*) AS pos_transactions,
+    round(sum(t.subtotal_eur), 0) AS subtotal_eur,
+    round(sum(t.tax_amount_eur), 0) AS vat_collected_eur,
+    concat(
+        round(
+            if(sum(t.subtotal_eur) != 0, sum(t.tax_amount_eur) / sum(t.subtotal_eur) * 100, 0),
+            1
+        ),
+        '%'
+    ) AS effective_vat_rate
+FROM eurostyle_pos.transactions t
+JOIN eurostyle_operational.stores s ON t.store_id = s.store_id
+GROUP BY s.country_code
+ORDER BY sum(t.tax_amount_eur) DESC;
 ```
 
 **💡 Note**: Confirm exact column names using [docs/SCHEMA.md](docs/SCHEMA.md) before running queries as schemas may evolve.
