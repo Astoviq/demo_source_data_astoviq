@@ -89,5 +89,4 @@ logs/*
 !.env.example
 
 # None of your business
-WARP.md
 data/csv/
