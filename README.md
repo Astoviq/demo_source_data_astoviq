@@ -7,9 +7,8 @@
   <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="MIT License">
 </div>
 
-<div align="center">
-  <h3>EuroStyle Retail Demo Platform</h3>
-</div>
+## EuroStyle Retail Demo Platform
+
   <p><em>A comprehensive European fashion retail demo system with perfect cross-database consistency, designed for testing and demonstrating modern data platform capabilities.</em></p>
 
 
