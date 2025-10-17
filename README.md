@@ -1,4 +1,4 @@
-# 🏪 EuroStyle Retail Demo Platform
+# Production-Ready Multi-Database Demo Platform
 
 <div align="center">
   <img src="https://img.shields.io/badge/ClickHouse-FFCC02?style=for-the-badge&logo=clickhouse&logoColor=white" alt="ClickHouse">
@@ -8,18 +8,19 @@
 </div>
 
 <div align="center">
-  <h3>🚀 Production-Ready Multi-Database Demo Platform</h3>
-  <p><em>A comprehensive European fashion retail demo system with perfect cross-database consistency, designed for testing and demonstrating modern data platform capabilities.</em></p>
+  <h3>EuroStyle Retail Demo Platform</h3>
 </div>
+  <p><em>A comprehensive European fashion retail demo system with perfect cross-database consistency, designed for testing and demonstrating modern data platform capabilities.</em></p>
 
-## ✨ What Makes This Special
 
-🎯 **Perfect Data Consistency** - Operations revenue = Finance GL = POS transactions (guaranteed)  
-🌍 **European Market Focused** - GDPR compliant, multi-currency, VAT handling  
-📊 **78K+ Realistic Records** - Across 5 integrated databases with business intelligence ready data  
-🔄 **Incremental Updates** - Simulate daily business operations with new orders AND operational changes  
-🐳 **Docker Ready** - One-command deployment with isolated ports  
-📈 **Business Intelligence Ready** - Pre-built queries for analytics and reporting  
+## Overall
+
+**Perfect Data Consistency** - Operations revenue = Finance GL = POS transactions
+**European Market Focused** - GDPR compliant, multi-currency, VAT handling  
+**78K+ Realistic Records** - Across 5 integrated databases with business intelligence ready data  
+**Incremental Updates** - Simulate daily business operations with new orders AND operational changes  
+**Docker Ready** - One-command deployment with isolated ports  
+**Business Intelligence Ready** - Pre-built queries for analytics and reporting  
 
 > **💡 Perfect for**: Data engineering demos, BI tool testing, ClickHouse learning, analytics platform evaluation
 
