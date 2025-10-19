@@ -88,5 +88,3 @@ logs/*
 # Allow .env.example as template
 !.env.example
 
-# None of your business
-data/csv/

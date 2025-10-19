@@ -14,9 +14,9 @@
 
 ## Overall
 
-**Perfect Data Consistency** - Operations revenue = Finance GL = POS transactions
+**Data Consistency** - Operations revenue = Finance GL = POS transactions
 **European Market Focused** - GDPR compliant, multi-currency, VAT handling  
-**78K+ Realistic Records** - Across 5 integrated databases with business intelligence ready data  
+**Realistic Records** - Across 5 integrated databases with business intelligence ready data  
 **Incremental Updates** - Simulate daily business operations with new orders AND operational changes  
 **Docker Ready** - One-command deployment with isolated ports  
 **Business Intelligence Ready** - Pre-built queries for analytics and reporting  
