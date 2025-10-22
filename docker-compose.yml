@@ -11,8 +11,8 @@ services:
     volumes:
       # Database initialization
       - ./init-scripts:/docker-entrypoint-initdb.d:ro
-      - ./data:/var/lib/clickhouse:rw
-      - ./logs:/var/log/clickhouse-server:rw
+      - ../DMShared/clickhouse/data:/var/lib/clickhouse:rw
+      - ../DMShared/clickhouse/logs:/var/log/clickhouse-server:rw
       - ./config:/etc/clickhouse-server/config.d:ro
       - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
       
@@ -41,14 +41,34 @@ services:
         reservations:
           memory: 2G
           cpus: '1.0'
+  python:
+    container_name: python_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    
+    volumes:
+      - ./ /app:rw
+    
+    working_dir: /app
+    
+    environment:
+      CLICKHOUSE_HOST: ${CLICKHOUSE_HOST:-eurostyle-clickhouse}
+      CLICKHOUSE_PORT: ${CLICKHOUSE_NATIVE_PORT:-9000}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-eurostyle_user}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-eurostyle_demo_2024}
+      CLICKHOUSE_DATABASE: ${DEFAULT_DATABASE:-eurostyle_operational}
+    
+    networks:
+      - eurostyle-retail-network
+    
+    depends_on:
+      eurostyle-clickhouse:
+        condition: service_healthy
 
 networks:
   eurostyle-retail-network:
     driver: bridge
     name: ${DOCKER_NETWORK:-eurostyle_retail_network}
 
-volumes:
-  eurostyle-retail-data:
-    name: eurostyle_clickhouse_retail_data
-  eurostyle-retail-logs:
-    name: eurostyle_clickhouse_retail_logs
